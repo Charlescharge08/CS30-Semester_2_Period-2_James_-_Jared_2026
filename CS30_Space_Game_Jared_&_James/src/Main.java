@@ -1,10 +1,46 @@
+import java.util.*;
+
 public class Main {
+
+    public static int[][][] map = new int[5][5][5];
+
+    ArrayList<ArrayList<Star>> universe = new ArrayList<>();
+
     public static void main(String[] args) throws Exception {
-        Star proximaCentauri = new Star(134, 1.5, "Proxima Centauri", "Red Dwarf", "Red", 3);
-        Exoplanet proximaCentauriB = new Exoplanet(0.0037, 0.11, "Proxima Centauri B", "Superearth", false, 0, 234.0, "Incredibly Minimal", proximaCentauri);
-        System.out.println(proximaCentauri.basicScan());
-        System.out.println(proximaCentauri.scan());
-        System.out.println(proximaCentauriB.basicScan());
-        System.out.println(proximaCentauriB.scan());
+        initialize();
+        printMap();
     }
+
+    public static void initialize()
+    {
+        for (int i = 0; i < map.length; i ++)
+        {
+            for (int n = 0; n < map.length; n ++)
+            {
+                for (int j = 0; j < map.length; j ++)
+                {
+                    map[i][n][j] = j + (5
+                        *n) + (25*i);
+                }
+            }
+        }
+    }
+
+    public static void printMap()
+    {
+        for (int i = 0; i < map.length; i ++)
+            {
+                System.out.println("Row " + (i + 1) + ":");
+                for (int n = 0; n < map.length; n ++)
+                {
+                    System.out.println("Box " + (n + 1) + ":");
+                    for (int j = 0; j < map.length; j ++)
+                    {
+                        System.out.print(" " + map[i][n][j] + " ");
+                    }
+                    System.out.println();
+                }
+            }
+    }
+
 }
