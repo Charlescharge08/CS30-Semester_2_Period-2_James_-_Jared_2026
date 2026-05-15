@@ -17,6 +17,6 @@ colour: surface colour based on surface temperature
 planets: # of planets orbiting star, not including unconfirmed planets, moons, asteroids, etc.
 
 Moon:
-type: "Rocky", "Ice-covered", "Irregular", "Sattelite", "Gaseous"
+type: "Rocky", "Ice-covered", "Irregular", "Satelite", "Gaseous"
 hasLife, temperature, atmosphere same as exoplanet
 parent: an actual Exoplanet object

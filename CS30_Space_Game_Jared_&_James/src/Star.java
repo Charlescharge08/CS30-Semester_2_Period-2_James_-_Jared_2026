@@ -17,7 +17,7 @@ public class Star extends CelestialBody{
     {
         return name + " is a type " + type + " star with " + planets + " planets. It's surface is " + colour + ".";
     }
-
+    
     public void createSystem(ArrayList<Exoplanet> input)
     {
         for (int i = 0; i < planets; i ++)

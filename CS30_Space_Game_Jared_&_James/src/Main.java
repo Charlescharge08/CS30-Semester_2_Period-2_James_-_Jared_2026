@@ -4,12 +4,22 @@ public class Main {
 
     public static int[][][] map = new int[5][5][5];
 
-    ArrayList<ArrayList<Star>> universe = new ArrayList<>();
+    public static ArrayList<ArrayList<Star>> universe = new ArrayList<>();
     // universe represents each of the 125 different sectors as an index. Each of these indeces points to an arraylist of stars, around which the planets are orbiting
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args)
+    {
         initialize();
-        printMap();
+        ArrayList<Star> systemSave = new ArrayList<>();
+        ArrayList<Exoplanet> orbitingPlanets = new ArrayList<>();
+        for (int i = 0; i < 125; i ++)
+        {
+            for (char n = 'A'; n < 'Z'; n ++)
+            {
+                String name = (n + (int)n + "" + i);
+                System.out.println(name);
+            }
+        }
     }
 
     public static void initialize()
