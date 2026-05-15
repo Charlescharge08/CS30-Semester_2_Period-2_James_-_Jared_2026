@@ -5,6 +5,7 @@ public class Main {
     public static int[][][] map = new int[5][5][5];
 
     ArrayList<ArrayList<Star>> universe = new ArrayList<>();
+    // universe represents each of the 125 different sectors as an index. Each of these indeces points to an arraylist of stars, around which the planets are orbiting
 
     public static void main(String[] args) throws Exception {
         initialize();
