@@ -18,7 +18,22 @@ public class Main {
             {
                 String name = n + "-" + (((int)n - (int)(Math.random() * 17))) + "." + i;
                 System.out.println(name);
+                double mass = getMass();
+                String type = getType(mass);
+                int planets = (int)(Math.random() * 8) + 1;
+                Star saveStar = new Star(mass, Math.pow(mass, Math.pow(mass, 0.8)), name, type, getColour(type), planets);
+                for (int j = 0; j < planets; j ++)
+                {
+                    double planetMass = Math.pow(10, (int)((Math.random()/5) - 1));
+                    String planetName = name + (char)('A' + i);
+                    Exoplanet planetSave = new Exoplanet(planetMass, Math.pow(planetMass, 0.8), planetName, getPlanetType(planetMass), (Math.random() > 0.99), getMoons(planetMass), (int)(Math.random()*512), getAtmosphere(planetMass), saveStar);
+                    orbitingPlanets.add(planetSave);
+                }
+                saveStar.createSystem(orbitingPlanets);
+                systemSave.add(saveStar);
             }
+            universe.add(systemSave);
+            systemSave.clear();
         }
     }
 
