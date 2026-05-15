@@ -1,12 +1,16 @@
 import java.util.Scanner;
 public class Main {
     public static void main(String[] args) throws Exception {
-        if (args.length == 0 || !args[0].equals("opened")) {
+        boolean External_Terminal = false;  
+        if (External_Terminal == true){
+            if (args.length == 0 || !args[0].equals("opened")) {
 
-            Terminal_Oppener.main(new String[0]);
-            // stops the vscode terminal from opening
-            return;
+                Terminal_Oppener.main(new String[0]);
+                // stops the vscode terminal from opening
+                return;
+            }
         }
+        
         runApp();
         System.exit(0);
 
