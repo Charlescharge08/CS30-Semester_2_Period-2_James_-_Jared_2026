@@ -2,7 +2,7 @@ import java.util.*;
 
 public class Main {
 
-    public static int[][][] map = new int[5][5][5];
+    public static int[][][] map = new int[4][4][4];
 
     public static ArrayList<ArrayList<Star>> universe = new ArrayList<>();
     // universe represents each of the 125 different sectors as an index. Each of these indeces points to an arraylist of stars, around which the planets are orbiting
@@ -12,11 +12,11 @@ public class Main {
         initialize();
         ArrayList<Star> systemSave = new ArrayList<>();
         ArrayList<Exoplanet> orbitingPlanets = new ArrayList<>();
-        for (int i = 0; i < 125; i ++)
+        for (int i = 0; i < 64; i ++)
         {
-            for (char n = 'A'; n < 'Z'; n ++)
+            for (char n = 'A'; n <= 'Z'; n ++)
             {
-                String name = (n + (int)n + "" + i);
+                String name = n + "-" + (((int)n - (int)(Math.random() * 17))) + "." + i;
                 System.out.println(name);
             }
         }
@@ -30,8 +30,8 @@ public class Main {
             {
                 for (int j = 0; j < map.length; j ++)
                 {
-                    map[i][n][j] = j + (5
-                        *n) + (25*i);
+                    map[i][n][j] = j + (4
+                        *n) + (16*i);
                 }
             }
         }
