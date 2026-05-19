@@ -4,7 +4,7 @@ Radii are measured in Jupiter radii (Rj)
 Name is either colloquial (“proxima centauri”) or scientific (“Lalande 21185”)
 
 Exoplanet:
-type: "superearth", "earth", "subearth", "gas giant", "ice giant"
+type: "superrocky", "rocky", "subrocky", "gas giant", "ice giant"
 hasLife: true/false
 moons: any integer
 temperature: always in kelvin, up to two decimal places
