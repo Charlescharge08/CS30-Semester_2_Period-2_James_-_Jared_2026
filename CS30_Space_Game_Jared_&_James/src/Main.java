@@ -4,7 +4,7 @@ public class Main {
 
     public static int[][][] map = new int[4][4][4];
 
-    public static ArrayList<ArrayList<Star>> universe = new ArrayList<>();
+    public static ArrayList<ArrayList<Star>> universe = new ArrayList<ArrayList<Star>>();
     // universe represents each of the 125 different sectors as an index. Each of these indeces points to an arraylist of stars, around which the planets are orbiting
 
     public static void main(String[] args)
@@ -17,9 +17,9 @@ public class Main {
             for (char n = 'A'; n <= 'Z'; n ++)
             {
                 String name = n + "-" + (((int)n - (int)(Math.random() * 17))) + "." + i;
-                System.out.println(name);
                 double mass = getMass();
                 String type = getType(mass);
+                // System.out.println(name + "|||" + mass + "|||" + type);
                 int planets = (int)(Math.random() * 8) + 1;
                 Star saveStar = new Star(mass, Math.pow(mass, Math.pow(mass, 0.8)), name, type, getColour(type), planets);
                 for (int j = 0; j < planets; j ++)
@@ -34,9 +34,10 @@ public class Main {
                 saveStar.createSystem(orbitingPlanets);
                 systemSave.add(saveStar);
             }
-            universe.add(systemSave);
+            universe.add(new ArrayList<>(systemSave));
             systemSave.clear();
         }
+        System.out.println(universe.get(0).get(25).getSystem().get(0).scan());
     }
     // end main
 
@@ -132,27 +133,27 @@ public class Main {
     {
         String letterType = type.substring(0, 1);
 
-        if (letterType == "O")
+        if (letterType.equals("O"))
         {
             return "Violet-White";
         }
-        else if (letterType == "B")
+        else if (letterType.equals("B"))
         {
             return "Blue-White";
         }
-        else if (letterType == "A")
+        else if (letterType.equals("A"))
         {
             return "White";
         }
-        else if (letterType == "F")
+        else if (letterType.equals("F"))
         {
             return "Yellow-White";
         }
-        else if (letterType == "G")
+        else if (letterType.equals("G"))
         {
             return "Yellow";
         }
-        else if (letterType == "K")
+        else if (letterType.equals("K"))
         {
             return "Orange";
         }

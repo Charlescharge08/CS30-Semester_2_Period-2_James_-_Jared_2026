@@ -17,6 +17,11 @@ public class Star extends CelestialBody{
     {
         return name + " is a type " + type + " star with " + planets + " planets. It's surface is " + colour + ".";
     }
+
+    public String toString()
+    {
+        return name + " is a type " + type + " star with " + planets + " planets. It's surface is " + colour + ".";
+    }
     
     public void createSystem(ArrayList<Exoplanet> input)
     {
@@ -24,5 +29,10 @@ public class Star extends CelestialBody{
         {
             this.system.add(input.get(i));
         }
+    }
+
+    public ArrayList<Exoplanet> getSystem()
+    {
+        return system;
     }
 }
