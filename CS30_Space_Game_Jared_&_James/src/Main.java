@@ -17,7 +17,10 @@ public class Main {
     }
 
      private static void runApp() {
+        
+        
         //Scanner
+        
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("This is the command terminal for the game.");
