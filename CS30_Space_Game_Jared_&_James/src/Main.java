@@ -1,7 +1,7 @@
 import java.util.Scanner;
 public class Main {
     public static void main(String[] args) throws Exception {
-        boolean External_Terminal = false;  
+        boolean External_Terminal = true;  
         if (External_Terminal == true){
             if (args.length == 0 || !args[0].equals("opened")) {
 

@@ -14,14 +14,15 @@ public class Terminal_Oppener {
             //Curent program Location
             String classPath = System.getProperty("java.class.path");
             //comand to lanuch the terminal
-            String command =  "\"" + javaSDK + "\" -cp \"" + classPath + "\" Main opened";
 
             // Check if the operating system is Windows
             if (systemType.contains("win")) {
-                 new ProcessBuilder( "cmd", "/c", "start", "cmd", "/c", command).start();
+                 new ProcessBuilder( "wt", "cmd", "/c", javaSDK, "-cp", classPath, "Main", "opened").start();
             } else if (systemType.contains("mac")) {
+                String command = javaSDK + " -cp " + classPath + " Main opened";
                 new ProcessBuilder("osascript", "-e", "tell application \"Terminal\" to do script \"" + command.replace("\"", "\\\"") + "; exit\"").start();
             }else {
+                String command = javaSDK + " -cp " + classPath + " Main opened";
                 new ProcessBuilder("sh", "-c", "gnome-terminal -- " + command + " || xterm -e " + command ).start();
             }   
         } catch (IOException error) {
