@@ -1,14 +1,15 @@
+import java.util.Scanner;
+import com.googlecode.lanterna.screen.Screen;   
 import java.util.*;
-
 public class Main {
-
     public static int[][][] map = new int[4][4][4];
 
     public static ArrayList<ArrayList<Star>> universe = new ArrayList<>();
     // universe represents each of the 125 different sectors as an index. Each of these indeces points to an arraylist of stars, around which the planets are orbiting
-
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) throws Exception {
+        Terminal_Oppener opener = new Terminal_Oppener();
+        opener.openTerminal();
+        System.exit(0);
         initialize();
         ArrayList<Star> systemSave = new ArrayList<>();
         ArrayList<Exoplanet> orbitingPlanets = new ArrayList<>();
@@ -37,7 +38,6 @@ public class Main {
             systemSave.clear();
         }
     }
-    // end main
 
     public static void initialize()
     {
