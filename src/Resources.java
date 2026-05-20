@@ -3,17 +3,17 @@ import java.util.*;
 public class Resources {
     private static Random rand = new Random();
 
-    public static final String[] RESOURCES = {"Iron ore", "Copper Deposit", "Gold", "Water", "Uranium", "Food", "Alien Fossils", "Ancient Artifact", "Helium Gas", "Hydrogen Gas", "Rare Earth Elements"};
+    public static final String[] RESOURCES = {"Iron ore", "Copper Deposit", "Gold", "Water", "Uranium", "Food", "Alien Fossils", "Ancient Artifact", "Helium Gas", "Hydrogen Gas", "Rare rocky Elements"};
     
     public static List<String> planetResources(String Type){
 
         switch (Type.toLowerCase()){
-            case "superearth":
-                return superEarth();
-            case "earth":
-                return earth();
-            case "subearth":
-                return subEarth();
+            case "superrocky":
+                return superrocky();
+            case "rocky":
+                return rocky();
+            case "subrocky":
+                return subrocky();
             case "gas giant":
                 return gasGiant();
             case "ice giant":
@@ -23,7 +23,7 @@ public class Resources {
 
     }
 
-    private static List<String> superEarth(){
+    private static List<String> superrocky(){
         List<String> r = new ArrayList<>();
 
         r.add("Iron ore"); 
@@ -40,7 +40,7 @@ public class Resources {
             r.add("Uranium");
         }
         if (chance(40)){
-             r.add("Rare Earth Elements");
+             r.add("Rare rocky Elements");
         }
         if(chance(30)){
             r.add("Alien Fossils");
@@ -52,7 +52,7 @@ public class Resources {
         return r;
     }
 
-    private static List<String> earth(){
+    private static List<String> rocky(){
         List<String> r = new ArrayList<>();
         r.add("Iron ore");
         r.add("Water"); 
@@ -71,14 +71,14 @@ public class Resources {
             r.add("Ancient Artifact");
         }
         if(chance(15)){
-            r.add("Rare Earth Elements");
+            r.add("Rare rocky Elements");
         }
 
         return r;
     
     }
 
-    private static List<String> subEarth(){
+    private static List<String> subrocky(){
                 List<String> r = new ArrayList<>();
         r.add("Iron ore"); 
 
@@ -118,7 +118,7 @@ public class Resources {
              r.add("Alien Fossils");
         }
         if(chance(50)){
-            r.add("Rare Earth Elements");
+            r.add("Rare rocky Elements");
         }
 
         return r;
