@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import com.googlecode.lanterna.screen.Screen;
 public class Main {
     public static void main(String[] args) throws Exception {
         boolean External_Terminal = true;  
