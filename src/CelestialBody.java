@@ -1,7 +1,7 @@
 public class CelestialBody extends Main{
-    protected double mass;
-    protected double radius;
-    protected String name;
+    protected final double mass;
+    protected final double radius;
+    protected final String name;
 
     public CelestialBody(double mass, double radius, String name)
     {
