@@ -1,9 +1,9 @@
 public class Moon extends CelestialBody{
-    private String type;
-    private boolean hasLife;
-    private double temperature;
-    private String atmosphere;
-    private Exoplanet parent;
+    private final String type;
+    private final boolean hasLife;
+    private final double temperature;
+    private final String atmosphere;
+    private final Exoplanet parent;
     public Moon(double mass, double radius, String name, String type, boolean hasLife, double temperature, String atmosphere, Exoplanet parent)
     {
         super(mass, radius, name);

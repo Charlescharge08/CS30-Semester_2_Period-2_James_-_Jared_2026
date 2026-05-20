@@ -1,10 +1,10 @@
 public class Exoplanet extends CelestialBody{
-    private String type;
-    private boolean hasLife;
-    private int moons;
-    private double temperature;
-    private String atmosphere;
-    private Star parent;
+    private final String type;
+    private final boolean hasLife;
+    private final int moons;
+    private final double temperature;
+    private final String atmosphere;
+    private final Star parent;
     public Exoplanet(double mass, double radius, String name, String type, boolean hasLife, int moons, double temperature, String atmosphere, Star parent) {
         super(mass, radius, name);
         this.type = type;
