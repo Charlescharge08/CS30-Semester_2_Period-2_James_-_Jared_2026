@@ -35,4 +35,9 @@ public class Star extends CelestialBody{
     {
         return system;
     }
+
+    public int getNumPlanets()
+    {
+        return planets;
+    }
 }

@@ -4,7 +4,7 @@ public class Main {
 
     public static int[][][] map = new int[4][4][4];
 
-    public static ArrayList<ArrayList<Star>> universe = new ArrayList<ArrayList<Star>>();
+    public static ArrayList<ArrayList<Star>> universe = new ArrayList<>();
     // universe represents each of the 125 different sectors as an index. Each of these indeces points to an arraylist of stars, around which the planets are orbiting
 
     public static void main(String[] args)
@@ -19,13 +19,12 @@ public class Main {
                 String name = n + "-" + (((int)n - (int)(Math.random() * 17))) + "." + i;
                 double mass = getMass();
                 String type = getType(mass);
-                // System.out.println(name + "|||" + mass + "|||" + type);
                 int planets = (int)(Math.random() * 8) + 1;
                 Star saveStar = new Star(mass, Math.pow(mass, Math.pow(mass, 0.8)), name, type, getColour(type), planets);
                 for (int j = 0; j < planets; j ++)
                 {
                     double planetMass = Math.pow(10, (int)(-(Math.random()*6)) - 1);
-                    String planetName = name + (char)('A' + i);
+                    String planetName = name + " " + (char)('A'+ i);
                     String planetType = getPlanetType(planetMass);
                     String planetAtmosphere = getAtmosphere(planetMass);
                     Exoplanet planetSave = new Exoplanet(planetMass, Math.pow(planetMass, 0.8), planetName, planetType, getLife(planetType, planetAtmosphere), getMoons(planetMass), (int)(Math.random()*512), planetAtmosphere, saveStar);
@@ -37,7 +36,6 @@ public class Main {
             universe.add(new ArrayList<>(systemSave));
             systemSave.clear();
         }
-        System.out.println(universe.get(0).get(25).getSystem().get(0).scan());
     }
     // end main
 
