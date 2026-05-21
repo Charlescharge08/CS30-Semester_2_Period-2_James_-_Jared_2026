@@ -57,4 +57,7 @@ public class Inventory {
         }
     }
 
+    public boolean hasItem(String item, int amount) {
+        return items.getOrDefault(item, 0) >= amount;
+    }
 }

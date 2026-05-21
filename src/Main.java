@@ -1,16 +1,33 @@
-import java.util.Scanner;
 import com.googlecode.lanterna.screen.Screen;   
 import java.util.*;
 public class Main {
     public static int[][][] map = new int[4][4][4];
 
     public static ArrayList<ArrayList<Star>> universe = new ArrayList<>();
-    // universe represents each of the 125 different sectors as an index. Each of these indeces points to an arraylist of stars, around which the planets are orbiting
     public static void main(String[] args) throws Exception {
         Terminal_Oppener opener = new Terminal_Oppener();
-        opener.openTerminal();
+        Screen screen = opener.openTerminal();
+        Starship playerShip = new Starship("IDK what to name it yet");
+        Inventory inventory = new Inventory();
+        LanternaMenuEngine menu = new LanternaMenuEngine(screen, playerShip, inventory);
+        
+        GameConsole gameConsole = new GameConsole();
+        
+        GameOutput.initialize(gameConsole, menu);
+
+        
+        
+        GameOutput.println("Game started!");
+        GameOutput.println("Welcome to STELLAR TERMINAL");
+        generateUniverse();
+        GameOutput.println("Universe generated with " + universe.size() + " sectors!");
+        
+        menu.startMainMenu();
         System.exit(0);
-        initialize();
+
+    }
+
+    public static void generateUniverse(){
         ArrayList<Star> systemSave = new ArrayList<>();
         ArrayList<Exoplanet> orbitingPlanets = new ArrayList<>();
         for (int i = 0; i < 64; i ++)
@@ -38,6 +55,7 @@ public class Main {
             systemSave.clear();
         }
     }
+        
 
     public static void initialize()
     {
