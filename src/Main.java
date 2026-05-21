@@ -3,6 +3,10 @@ import java.util.*;
 public class Main {
     public static int[][][] map = new int[4][4][4];
 
+    public static int playerX;
+    public static int playerY;
+    public static int playerZ;
+
     public static ArrayList<ArrayList<Star>> universe = new ArrayList<>();
     public static void main(String[] args) throws Exception {
         Terminal_Oppener opener = new Terminal_Oppener();
@@ -70,6 +74,10 @@ public class Main {
                 }
             }
         }
+
+        playerX = 0;
+        playerY = 0;
+        playerZ = 0;
     }
     // end initialize
 
