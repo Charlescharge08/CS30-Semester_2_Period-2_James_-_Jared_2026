@@ -25,11 +25,10 @@ public class LanternaMenuEngine {
     
     public void updateConsole(String text) {
         consoleText = text;
-        drawAll();
     }// end of updateConsole
 
     public void startMainMenu() {
-
+        LanternaMenuEngine menu = new LanternaMenuEngine(screen, playerShip, inventory);
         try {
             String[] options = {"Navigation", "View Ship Status and Upgrades", "Inventory and Crafting", "Exit Game"};
             int selectedIndex = 0;
@@ -91,6 +90,216 @@ public class LanternaMenuEngine {
             e.printStackTrace();
         }
     }// end of startMainMenu()
+
+    public void openNavigationMenu() {
+
+        try {
+            String[] options = {"Move", "Get current position", "Back"};
+            int selectedIndex = 0;
+            boolean keepRunning = true;
+ 
+            while (keepRunning) {
+ 
+                int width = screen.getTerminalSize().getColumns();
+                int height = screen.getTerminalSize().getRows();
+ 
+
+                if(width != lastWidth || height != lastHeight){
+                    lastWidth = width;      
+                    lastHeight = height;    
+                    screen.clear();
+                    System.out.println("Screen resized to: " + width + "x" + height);
+                }
+
+                drawAll(options, selectedIndex);
+ 
+                KeyStroke keyStroke = screen.pollInput();
+                
+                if(keyStroke != null) {  
+                    KeyType keyType = keyStroke.getKeyType();
+ 
+                    if(keyType == KeyType.ArrowUp) {
+                        selectedIndex--;
+                        if (selectedIndex < 0) {
+                            selectedIndex = options.length - 1;
+                        }
+                    }else if(keyType == KeyType.ArrowDown) {
+                        selectedIndex++;
+                        if (selectedIndex >= options.length) {
+                            selectedIndex = 0;
+                        }
+                    }else if(keyType == KeyType.Enter) {
+                        keepRunning = handleNavigationMenuSelection(selectedIndex);
+                    }else if(keyType == KeyType.Character) {
+                        char c = keyStroke.getCharacter();
+                        if (Character.isDigit(c)) {
+                            int numPressed = Character.getNumericValue(c);
+                            if (numPressed >= 1 && numPressed <= options.length) {
+                                selectedIndex = numPressed - 1; 
+                                keepRunning = handleNavigationMenuSelection(selectedIndex);
+                            }
+                        }
+                    }
+                }
+                
+                Thread.sleep(20);
+            }
+ 
+            screen.stopScreen();
+ 
+        }catch(IOException e) {
+            e.printStackTrace();
+        } catch(InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    // end navigation menu
+
+    public void openMovementMenu() {
+
+        try {
+            String[] options = {"Move Forward(x)", "Move Backward(x)", "Move Up(y)", "Move Down(y)", "Move Right(z)", "Move Left(z)", "Back"};
+            int selectedIndex = 0;
+            boolean keepRunning = true;
+ 
+            while (keepRunning) {
+ 
+                int width = screen.getTerminalSize().getColumns();
+                int height = screen.getTerminalSize().getRows();
+ 
+
+                if(width != lastWidth || height != lastHeight){
+                    lastWidth = width;      
+                    lastHeight = height;    
+                    screen.clear();
+                    System.out.println("Screen resized to: " + width + "x" + height);
+                }
+
+                drawAll(options, selectedIndex);
+ 
+                KeyStroke keyStroke = screen.pollInput();
+                
+                if(keyStroke != null) {  
+                    KeyType keyType = keyStroke.getKeyType();
+ 
+                    if(keyType == KeyType.ArrowUp) {
+                        selectedIndex--;
+                        if (selectedIndex < 0) {
+                            selectedIndex = options.length - 1;
+                        }
+                    }else if(keyType == KeyType.ArrowDown) {
+                        selectedIndex++;
+                        if (selectedIndex >= options.length) {
+                            selectedIndex = 0;
+                        }
+                    }else if(keyType == KeyType.Enter) {
+                        keepRunning = handleMovementMenuSelection(selectedIndex);
+                    }else if(keyType == KeyType.Character) {
+                        char c = keyStroke.getCharacter();
+                        if (Character.isDigit(c)) {
+                            int numPressed = Character.getNumericValue(c);
+                            if (numPressed >= 1 && numPressed <= options.length) {
+                                selectedIndex = numPressed - 1; 
+                                keepRunning = handleMovementMenuSelection(selectedIndex);
+                            }
+                        }
+                    }
+                }
+                
+                Thread.sleep(20);
+            }
+ 
+            screen.stopScreen();
+ 
+        }catch(IOException e) {
+            e.printStackTrace();
+        } catch(InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    // end navigation menu
+
+    private boolean handleMovementMenuSelection(int selectedIndex) {
+        if(selectedIndex ==  0){
+            if (Main.movement(0))
+            {
+                GameOutput.println("Successful!");
+            }
+            else
+            {
+                GameOutput.println("Failure. You cannot move in that direction.");
+            }
+        }else if(selectedIndex == 1){
+            if (Main.movement(1))
+                {
+                    GameOutput.println("Successful!");
+                }
+                else
+                {
+                    GameOutput.println("Failure. You cannot move in that direction.");
+                }
+        }else if(selectedIndex == 2) {
+            if (Main.movement(2))
+                {
+                    GameOutput.println("Successful!");
+                }
+                else
+                {
+                    GameOutput.println("Failure. You cannot move in that direction.");
+                }
+        }else if (selectedIndex == 3) {
+            if (Main.movement(3))
+                {
+                    GameOutput.println("Successful!");
+                }
+                else
+                {
+                    GameOutput.println("Failure. You cannot move in that direction.");
+                }
+        }else if(selectedIndex ==  4){
+            if (Main.movement(4))
+                {
+                    GameOutput.println("Successful!");
+                }
+                else
+                {
+                    GameOutput.println("Failure. You cannot move in that direction.");
+                }
+        }else if(selectedIndex == 5){
+            if (Main.movement(5))
+                {
+                    GameOutput.println("Successful!");
+                }
+                else
+                {
+                    GameOutput.println("Failure. You cannot move in that direction.");
+                }
+        }else if (selectedIndex == 6) {
+            GameOutput.println("Returned");
+        }else if (selectedIndex == 0)
+        {
+            return false;
+        }
+        
+        openNavigationMenu();
+        return true; 
+    }//end of handleSelection
+
+    private boolean handleNavigationMenuSelection(int selectedIndex) {
+        if(selectedIndex ==  0){
+            GameOutput.println("Movement System opened");
+            openMovementMenu();
+        }else if(selectedIndex == 1){
+            GameOutput.println("You are in Sector " + Main.getPosition() + ".");
+            openNavigationMenu();
+        }else if(selectedIndex == 2) {
+            GameOutput.println("Returned");
+            startMainMenu();
+        }else if (selectedIndex == 3) {
+            return false;
+        }
+        return true;
+    }//end of handleSelection
 
 
     public void openShipStatusMenu() {
@@ -204,6 +413,10 @@ public class LanternaMenuEngine {
                                 keepRunning = handleInventoryMenuSelection(selectedIndex);
                             }
                         }
+                    }
+                    else if (keyType == KeyType.F1)
+                    {
+                        GameOutput.println("TEST");
                     }
                 }
                 
@@ -461,6 +674,7 @@ public class LanternaMenuEngine {
     private boolean handleSelection(int selectedIndex) {
         if(selectedIndex ==  0){
             GameOutput.println("Navigation system opened.");
+            openNavigationMenu();
         }else if(selectedIndex == 1){
             GameOutput.println("Ship system opened.");
             openShipStatusMenu();

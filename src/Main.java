@@ -7,12 +7,14 @@ public class Main {
     public static int playerY;
     public static int playerZ;
 
+    public static Starship playerShip = new Starship("IDK what to name it yet");
+    public static Inventory inventory = new Inventory();
+
     public static ArrayList<ArrayList<Star>> universe = new ArrayList<>();
     public static void main(String[] args) throws Exception {
         Terminal_Oppener opener = new Terminal_Oppener();
         Screen screen = opener.openTerminal();
-        Starship playerShip = new Starship("IDK what to name it yet");
-        Inventory inventory = new Inventory();
+        
         LanternaMenuEngine menu = new LanternaMenuEngine(screen, playerShip, inventory);
         
         GameConsole gameConsole = new GameConsole();
@@ -276,5 +278,111 @@ public class Main {
         }
     }
     // end getLife
+
+    public static String surroundings()
+    {
+        String surroundings = "";
+        int position = getPosition();
+        if (playerShip.getScanLevel())
+        {
+            for (int i = 0; i < 26; i ++)
+            {
+                surroundings += universe.get(position).get(i).scan();
+                surroundings += "\n";
+            }
+        }
+        else
+        {
+            for (int i = 0; i < 26; i ++)
+            {
+                surroundings += universe.get(position).get(i).basicScan();
+                surroundings += "\n";
+            }
+        }
+        
+        return surroundings;
+    }
+
+    public static int getPosition()
+    {
+        return (playerX + 4*playerY + 16*playerZ);
+    }
+
+    public static boolean movement(int moveType)
+    {
+        if (moveType == 0)
+        {
+            if (playerX != 3)
+            {
+                playerX++;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else if (moveType == 1)
+        {
+            if (playerX != 0)
+            {
+                playerX--;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else if (moveType == 2)
+        {
+            if (playerY != 3)
+            {
+                playerY++;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else if (moveType == 3)
+        {
+            if (playerY != 0)
+            {
+                playerY--;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else if (moveType == 4)
+        {
+            if (playerZ != 3)
+            {
+                playerZ++;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else if (moveType == 5)
+        {
+            if (playerZ != 0)
+            {
+                playerZ--;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+
+        playerShip.useFuel(100);
+        return true;
+    }
 }
 // end Main

@@ -1,26 +1,20 @@
 public class Starship {
     private String shipName;
 
-    private int hullHP;
-    private int maxHullHP;
-
-    private int fuel;
+    private double fuel;
     private int maxFuel;
 
     private int cargoSpace;
 
     private int engineLevel;
-    private int shieldLevel;
-    private int weaponLevel;
     private int cargoLevel;
+    private boolean scanUpgrade;
 
      public Starship(String name) {
 
         shipName = name;
 
         // Starting stats
-        maxHullHP = 100;
-        hullHP = 100;
 
         maxFuel = 500;
         fuel = 500;
@@ -29,11 +23,9 @@ public class Starship {
 
         // Starting upgrades
         engineLevel = 1;
-        shieldLevel = 1;
-        weaponLevel = 1;
         cargoLevel = 1;
+        scanUpgrade = false;
     }
-
     // did not have time to start on this and add to the string
     public String getStatus() {
 
@@ -51,6 +43,11 @@ public class Starship {
 
         return output;
     }
+    
+    public void upgradeScan()
+    {
+        scanUpgrade = true;
+    }
 
 
     public void upgradeEngine() {
@@ -58,14 +55,9 @@ public class Starship {
         maxFuel += 100;
     }
 
-    public void upgradeShields() {
-        shieldLevel++;
-        maxHullHP += 50;
-        hullHP = maxHullHP;
-    }
-
-    public void upgradeWeapons() {
-        weaponLevel++;
+    public int getCargoSpace()
+    {
+        return cargoSpace;
     }
 
     public void upgradeCargo() {
@@ -73,18 +65,9 @@ public class Starship {
         cargoSpace += 25;
     }
 
-    public void takeDamage(int damage) {
-
-        hullHP -= damage;
-
-        if(hullHP < 0) {
-            hullHP = 0;
-        }
-    }
-
     public void useFuel(int amount) {
 
-        fuel -= amount;
+        fuel -= amount / engineLevel;
 
         if(fuel < 0) {
             fuel = 0;
@@ -93,6 +76,11 @@ public class Starship {
 
     public void refuel() {
         fuel = maxFuel;
+    }
+
+    public boolean getScanLevel()
+    {
+        return scanUpgrade;
     }
 }
 
