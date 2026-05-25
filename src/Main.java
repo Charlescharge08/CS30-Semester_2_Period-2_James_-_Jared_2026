@@ -44,7 +44,7 @@ public class Main {
                 double mass = getMass();
                 String type = getType(mass);
                 int planets = (int)(Math.random() * 8) + 1;
-                Star saveStar = new Star(mass, Math.pow(mass, Math.pow(mass, 0.8)), name, type, getColour(type), planets);
+                Star saveStar = new Star(mass, Math.pow(mass,0.8), name, type, getColour(type), planets);
                 for (int j = 0; j < planets; j ++)
                 {
                     double planetMass = Math.pow(10, (int)(-(Math.random()*6)) - 1);

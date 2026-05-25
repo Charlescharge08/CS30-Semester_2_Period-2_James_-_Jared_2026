@@ -76,6 +76,11 @@ public class LanternaMenuEngine {
                             }
                         }
                     }
+                    else if (keyType == KeyType.Escape)
+                        {
+                            keepRunning = false;
+                            System.exit(0);
+                        }
                 }
                 
                 // the way i have it set up is that it redraws every cpu clock tik. this stops cpu from being pined at 100 and stop the screen from flickering. 
@@ -94,7 +99,7 @@ public class LanternaMenuEngine {
     public void openNavigationMenu() {
 
         try {
-            String[] options = {"Move", "Get current position", "Back"};
+            String[] options = {"Move", "Get current position", "Scan Surrounding Stars", "Back"};
             int selectedIndex = 0;
             boolean keepRunning = true;
  
@@ -140,6 +145,11 @@ public class LanternaMenuEngine {
                             }
                         }
                     }
+                    else if (keyType == KeyType.Escape)
+                        {
+                            keepRunning = false;
+                            System.exit(0);
+                        }
                 }
                 
                 Thread.sleep(20);
@@ -203,6 +213,11 @@ public class LanternaMenuEngine {
                                 keepRunning = handleMovementMenuSelection(selectedIndex);
                             }
                         }
+                    }
+                    else if (keyType == KeyType.Escape)
+                    {
+                        keepRunning = false;
+                        System.exit(0);
                     }
                 }
                 
@@ -280,7 +295,7 @@ public class LanternaMenuEngine {
         {
             return false;
         }
-        
+
         openNavigationMenu();
         return true; 
     }//end of handleSelection
@@ -292,7 +307,9 @@ public class LanternaMenuEngine {
         }else if(selectedIndex == 1){
             GameOutput.println("You are in Sector " + Main.getPosition() + ".");
             openNavigationMenu();
-        }else if(selectedIndex == 2) {
+        }else if (selectedIndex == 2){
+            GameOutput.println(Main.surroundings());
+        }else if(selectedIndex == 3) {
             GameOutput.println("Returned");
             startMainMenu();
         }else if (selectedIndex == 3) {
@@ -305,7 +322,7 @@ public class LanternaMenuEngine {
     public void openShipStatusMenu() {
 
         try {
-            String[] options = {"Show Ship Status", "Show Installed Upgrades", "Inventory and Crafting", "Back"};
+            String[] options = {"Show Ship Status", "Show Installed Upgrades", "Back"};
             int selectedIndex = 0;
             boolean keepRunning = true;
  
@@ -351,6 +368,11 @@ public class LanternaMenuEngine {
                             }
                         }
                     }
+                    else if (keyType == KeyType.Escape)
+                        {
+                            keepRunning = false;
+                            System.exit(0);
+                        }
                 }
                 
                 Thread.sleep(20);
@@ -414,9 +436,10 @@ public class LanternaMenuEngine {
                             }
                         }
                     }
-                    else if (keyType == KeyType.F1)
+                    else if (keyType == KeyType.Escape)
                     {
-                        GameOutput.println("TEST");
+                        keepRunning = false;
+                        System.exit(0);
                     }
                 }
                 
@@ -482,6 +505,11 @@ public class LanternaMenuEngine {
                             }
                         }
                     }
+                    else if (keyType == KeyType.Escape)
+                        {
+                            keepRunning = false;
+                            System.exit(0);
+                        }
                 }
                 
                 // the way i have it set up is that it redraws every cpu clock tik. this stops cpu from being pined at 100 and stop the screen from flickering. 
@@ -682,6 +710,7 @@ public class LanternaMenuEngine {
             GameOutput.println("Inventory system opened.");
             openInventoryMenu();
         }else if (selectedIndex == 3) {
+            System.exit(0);
             return false;
         }
         return true; 
@@ -690,16 +719,12 @@ public class LanternaMenuEngine {
     private boolean handleShipMenuSelection(int selectedIndex) {
 
         if (selectedIndex == 0) {
-            GameOutput.println("Navigation system opened.");
+            GameOutput.println("Status: " + Main.playerShip.getStatus());
         } 
         else if (selectedIndex == 1) {
-            GameOutput.println("Ship system opened.");
-            openShipStatusMenu();
-        } 
+            GameOutput.println("Upgrade status: " + Main.playerShip.getUpgradeStatus());
+        }
         else if (selectedIndex == 2) {
-            GameOutput.println("Inventory system opened.");
-        } 
-        else if (selectedIndex == 3) {
             startMainMenu();
         }
 

@@ -29,21 +29,17 @@ public class Starship {
     // did not have time to start on this and add to the string
     public String getStatus() {
 
-        String output = "";
-
-        return output;
+        return "Fuel: " + fuel + "/" + maxFuel + ". Cargo Space: " + cargoSpace + ".";
     }
 
     // did not have time to start on this and add to the string
     public String getUpgradeStatus() {
 
-        String output = "";
 
 
-
-        return output;
+        return "Engine Level: " + engineLevel + ". Cargo Level: " + cargoLevel + ". scanUpgrade: " + scanUpgrade + ". Max Fuel: " + maxFuel + ".";
     }
-    
+
     public void upgradeScan()
     {
         scanUpgrade = true;
