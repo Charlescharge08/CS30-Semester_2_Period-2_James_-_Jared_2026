@@ -1,20 +1,41 @@
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 import java.io.IOException;
+import java.util.ArrayList;
+import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.screen.Screen;
 
 public class LanternaMenuEngine { 
+    private ArrayList<String> consoleLines = new ArrayList<>();
     private Screen screen;
     private TextGraphics textGraphics;
-    private String consoleText = "";
     private Starship playerShip;
     private Inventory inventory;
+    private int scrollOffset = 0;
+    private MultiWindowTextGUI gui;
+    private TextBox consoleBox;
+    private TextBox inputBox;
 
 
     private int lastWidth = -1;
     private int lastHeight = -1;
+
+    public void initGUI() {
+    
+        gui = new MultiWindowTextGUI(screen);
+    
+        consoleBox = new TextBox(new TerminalSize(80, 20),
+                TextBox.Style.MULTI_LINE);
+    
+        consoleBox.setReadOnly(true);
+    
+        inputBox = new TextBox(new TerminalSize(80, 1));
+    }
+
 
     public LanternaMenuEngine(Screen screen, Starship playerShip, Inventory inventory) {
         this.screen = screen;
@@ -23,10 +44,18 @@ public class LanternaMenuEngine {
         this.textGraphics = screen.newTextGraphics();
     }// end of LanternaMenuEngine
     
+    public void appendConsole(String text) {
+
+        consoleLines.add(text);
+
+        if (consoleLines.size() > 200) {
+            consoleLines.remove(0);
+        }
+    }
+
     public void updateConsole(String text) {
-        consoleText = text;
-        drawAll();
-    }// end of updateConsole
+        appendConsole(text);
+    }
 
     public void startMainMenu() {
 
@@ -345,25 +374,15 @@ public class LanternaMenuEngine {
 
     private void drawAll(String[] options, int selectedIndex) throws IOException {
         screen.clear();
-        
-        drawMenu(options, selectedIndex);
-        drawSeparator();
-        drawConsole();
-        
-        screen.refresh();
+
+    drawMenu(options, selectedIndex);
+    drawSeparator();
+    drawConsole();
+
+    screen.refresh();
+
     }
 
-    private void drawAll() {
-        try {
-            screen.clear();
-            drawMenu(null, -1);
-            drawSeparator();
-            drawConsole();
-            screen.refresh();
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     //Draws the menu
     private void drawMenu(String[] options, int selectedIndex) throws IOException {
@@ -420,37 +439,6 @@ public class LanternaMenuEngine {
         }
     }
 
-    // Make the console for program output
-    private void drawConsole(){
-        int width = screen.getTerminalSize().getColumns();
-        int height = screen.getTerminalSize().getRows();
- 
-        int separator = getSeparator(height);
-        int startY = separator + 1;
- 
-        int availableLines = height - startY;
- 
-        if(availableLines <= 0){
-            return;
-        }
- 
-        textGraphics.setForegroundColor(TextColor.ANSI.GREEN);
-        textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
-        
-        String[] lines = consoleText.split("\n");
-        int startIndex = Math.max(0, lines.length - availableLines);
- 
-        // Draw console line
-        for (int i = 0; i < availableLines && (startIndex + i) < lines.length; i++) {
-            String line = lines[startIndex + i];
- 
-            if (line.length() > width - 2) {
-                line = line.substring(0, width - 2);
-            }
- 
-            textGraphics.putString(1, startY + i, line);
-        }
-    }//end of drawConsole()
 
     // separator bar height
     private int getSeparator(int hight){
@@ -529,4 +517,35 @@ public class LanternaMenuEngine {
 
         return true;
     }//end of handleShipMenuSelection
+
+    private void drawConsole() {
+
+    int width = screen.getTerminalSize().getColumns();
+    int height = screen.getTerminalSize().getRows();
+
+    int separator = getSeparator(height);
+    int startY = separator + 1;
+
+    int availableLines = height - startY;
+
+    if (availableLines <= 0) return;
+
+    textGraphics.setForegroundColor(TextColor.ANSI.GREEN);
+    textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
+
+    int maxStart = Math.max(0, consoleLines.size() - availableLines);
+    int startIndex = Math.max(0, maxStart - scrollOffset);
+
+    for (int i = 0; i < availableLines && (startIndex + i) < consoleLines.size(); i++) {
+
+        String line = consoleLines.get(startIndex + i);
+
+        if (line.length() > width - 2) {
+            line = line.substring(0, width - 2);
+        }
+
+        textGraphics.putString(1, startY + i, line);
+    }
+}
+
 }// end of class 
