@@ -50,8 +50,10 @@ public class Main {
                     String planetName = name + " " + (char)('A'+ i);
                     String planetType = getPlanetType(planetMass);
                     String planetAtmosphere = getAtmosphere(planetMass);
-                    Exoplanet planetSave = new Exoplanet(planetMass, Math.pow(planetMass, 0.8), planetName, planetType, getLife(planetType, planetAtmosphere), getMoons(planetMass), (int)(Math.random()*512), planetAtmosphere, saveStar);
+                    ArrayList<String> resources = new ArrayList<>(Resources.planetResources(planetType));
+                    Exoplanet planetSave = new Exoplanet(planetMass, Math.pow(planetMass, 0.8), planetName, planetType, getLife(planetType, planetAtmosphere), getMoons(planetMass), (int)(Math.random()*512), planetAtmosphere, saveStar, new ArrayList<>(resources));
                     orbitingPlanets.add(planetSave);
+                    resources.clear();
                 }
                 saveStar.createSystem(orbitingPlanets);
                 systemSave.add(saveStar);
