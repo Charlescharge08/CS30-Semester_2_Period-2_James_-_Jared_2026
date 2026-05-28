@@ -2,7 +2,7 @@ public class Starship {
     private String shipName;
 
     private double fuel;
-    private int maxFuel;
+    private double maxFuel;
 
     private int cargoSpace;
 
@@ -16,8 +16,8 @@ public class Starship {
 
         // Starting stats
 
-        maxFuel = 500;
-        fuel = 500;
+        maxFuel = 500.0;
+        fuel = 500.0;
 
         cargoSpace = 50;
 
@@ -77,6 +77,11 @@ public class Starship {
     public boolean getScanLevel()
     {
         return scanUpgrade;
+    }
+
+    public double getFuel()
+    {
+        return fuel;
     }
 }
 

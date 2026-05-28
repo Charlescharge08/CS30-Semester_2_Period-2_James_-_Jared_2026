@@ -8,7 +8,7 @@ public class Inventory {
     public Inventory(){
         items = new HashMap<>();
     }
-
+    
     public void addItem(String item, int amount){
         //If item already exsists
         if (items.containsKey(item)){

@@ -9,19 +9,18 @@ public class Main {
 
     public static Starship playerShip = new Starship("IDK what to name it yet");
     public static Inventory inventory = new Inventory();
+    
+    public static Terminal_Oppener opener = new Terminal_Oppener();
 
     public static ArrayList<ArrayList<Star>> universe = new ArrayList<>();
-    public static void main(String[] args) throws Exception {
-        Terminal_Oppener opener = new Terminal_Oppener();
-        Screen screen = opener.openTerminal();
-        
-        LanternaMenuEngine menu = new LanternaMenuEngine(screen, playerShip, inventory);
-        
-        GameConsole gameConsole = new GameConsole();
-        
-        GameOutput.initialize(gameConsole, menu);
 
-        
+    public static Screen screen = opener.openTerminal();
+    
+    public static GameConsole gameConsole = new GameConsole();
+
+    public static LanternaMenuEngine menu = new LanternaMenuEngine(screen, playerShip, inventory);
+    public static void main(String[] args) throws Exception {
+        GameOutput.initialize(gameConsole, menu);
         
         GameOutput.println("Game started!");
         GameOutput.println("Welcome to STELLAR TERMINAL");
@@ -310,6 +309,12 @@ public class Main {
 
     public static boolean movement(int moveType)
     {
+        if (playerShip.getFuel() <= 100.0)
+        {
+            GameOutput.println("Not enough fuel.");
+            return false;
+        }
+        
         if (moveType == 0)
         {
             if (playerX != 3)

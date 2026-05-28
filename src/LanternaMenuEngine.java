@@ -291,9 +291,6 @@ public class LanternaMenuEngine {
                 }
         }else if (selectedIndex == 6) {
             GameOutput.println("Returned");
-        }else if (selectedIndex == 0)
-        {
-            return false;
         }
 
         openNavigationMenu();
@@ -387,7 +384,7 @@ public class LanternaMenuEngine {
         }
     }
 
-    public void openInventoryMenu() {
+    public void openinventoryAndCraftingMenu() {
 
         try {
             String[] options = {"View Inventory", "Open Crafting", "Back"};
@@ -425,14 +422,14 @@ public class LanternaMenuEngine {
                             selectedIndex = 0;
                         }
                     }else if(keyType == KeyType.Enter) {
-                        keepRunning = handleInventoryMenuSelection(selectedIndex);
+                        keepRunning = handleinventoryAndCraftingMenuSelection(selectedIndex);
                     }else if(keyType == KeyType.Character) {
                         char c = keyStroke.getCharacter();
                         if (Character.isDigit(c)) {
                             int numPressed = Character.getNumericValue(c);
                             if (numPressed >= 1 && numPressed <= options.length) {
                                 selectedIndex = numPressed - 1; 
-                                keepRunning = handleInventoryMenuSelection(selectedIndex);
+                                keepRunning = handleinventoryAndCraftingMenuSelection(selectedIndex);
                             }
                         }
                     }
@@ -454,12 +451,20 @@ public class LanternaMenuEngine {
         } catch(InterruptedException e) {
             e.printStackTrace();
         }
-    }// end of openInventoryMenu
+    }// end of openinventoryAndCraftingMenu
 
-    private void openCraftingMenu(){
+    private void openCraftingAndUpgradesMenu(){
 
         try {
-            String[] options = {"View Inventory", "Open Crafting", "Back"};
+            String[] options = {"Copper Wire (Copper Deposit*2)",
+                "Fuel Cell (“Hydrogen Gas*5, Helium Gas*1”)",
+                "Iron Mesh (Iron Deposit*2)",
+                "Advanced Fuel Cell (“Uranium*1)",
+                "Advanced Info-Grabber (Uranium * 2, Ancient Artifact)",
+                "Scanner Upgrade (“Advanced Info-Grabber*1”, “Copper Wire*5”)",
+                "Engine Upgrade (Rare Rocky Elements*3, Uranium*2, Iron Ore*8, Copper Deposit*3, Copper Wire*3, Advanced Fuel Cell*1)",
+                "Cargo Space(Iron Mesh*2, Alien Fossils*3)",
+                "Back"}; // 9 options
             int selectedIndex = 0;
             boolean keepRunning = true;
  
@@ -494,39 +499,39 @@ public class LanternaMenuEngine {
                             selectedIndex = 0;
                         }
                     }else if(keyType == KeyType.Enter) {
-                        keepRunning = handleInventoryMenuSelection(selectedIndex);
+                        keepRunning = handleCrafting(selectedIndex);
                     }else if(keyType == KeyType.Character) {
                         char c = keyStroke.getCharacter();
                         if (Character.isDigit(c)) {
                             int numPressed = Character.getNumericValue(c);
                             if (numPressed >= 1 && numPressed <= options.length) {
                                 selectedIndex = numPressed - 1; 
-                                keepRunning = handleInventoryMenuSelection(selectedIndex);
+                                keepRunning = handleCrafting(selectedIndex);
                             }
                         }
                     }
                     else if (keyType == KeyType.Escape)
-                        {
-                            keepRunning = false;
-                            System.exit(0);
-                        }
+                    {
+                        keepRunning = false;
+                        System.exit(0);
+                    }
                 }
                 
                 // the way i have it set up is that it redraws every cpu clock tik. this stops cpu from being pined at 100 and stop the screen from flickering. 
                 Thread.sleep(20);
             }
- 
+
             screen.stopScreen();
- 
+
+
         }catch(IOException e) {
             e.printStackTrace();
         }catch(InterruptedException e) {
             e.printStackTrace();
         }
-    }// end of openCraftingMenu
+    }// end of openCraftingAndUpgradesMenu
 
-
-    private boolean handleCrafting(int selectedIndex, boolean inMenu) {
+    private boolean handleCrafting(int selectedIndex) {
 
     if (selectedIndex == 0) {
 
@@ -552,34 +557,12 @@ public class LanternaMenuEngine {
         }
     }else if (selectedIndex == 2) {
 
-        if (inventory.hasItem("Iron ore", 3) &&
-            inventory.hasItem("Copper Deposit", 1)) {
-
-            inventory.removeItems("Iron ore", 3);
-            inventory.removeItems("Copper Deposit", 1);
-            inventory.addItem("Steel Alloy", 1);
-
-            GameOutput.println("Crafted Steel Alloy!");
-        } else {
-            GameOutput.println("Not enough materials.");
-        }
     }else if (selectedIndex == 3) {
-
-        if (inventory.hasItem("Copper Wire", 3) &&
-            inventory.hasItem("Rare rocky Elements", 1)) {
-
-            inventory.removeItems("Copper Wire", 3);
-            inventory.removeItems("Rare rocky Elements", 1);
-            inventory.addItem("Electronics Kit", 1);
-
-            GameOutput.println("Crafted Electronics Kit!");
-        } else {
-            GameOutput.println("Not enough materials.");
-        }
-    }else if (selectedIndex == 4) {
+        
+    }else if (selectedIndex == 8) {
+        openinventoryAndCraftingMenu();
         return false;
     }
-
     return true;
 }
 
@@ -708,7 +691,7 @@ public class LanternaMenuEngine {
             openShipStatusMenu();
         }else if(selectedIndex == 2) {
             GameOutput.println("Inventory system opened.");
-            openInventoryMenu();
+            openinventoryAndCraftingMenu();
         }else if (selectedIndex == 3) {
             System.exit(0);
             return false;
@@ -731,19 +714,17 @@ public class LanternaMenuEngine {
         return true;
     }//end of handleShipMenuSelection
 
-    private boolean handleInventoryMenuSelection(int selectedIndex) {
+    private boolean handleinventoryAndCraftingMenuSelection(int selectedIndex) {
 
         if (selectedIndex == 0) {
-            GameOutput.println("Navigation system opened.");
+            GameOutput.println("Inventory Opened");
         } 
         else if (selectedIndex == 1) {
-            GameOutput.println("Ship system opened.");
-            openCraftingMenu();
+            GameOutput.println("Crafting system opened.");
+            openCraftingAndUpgradesMenu();
         } 
         else if (selectedIndex == 2) {
-            GameOutput.println("Inventory system opened.");
-        } 
-        else if (selectedIndex == 3) {
+            GameOutput.println("Returned");
             startMainMenu();
         }
 
@@ -757,7 +738,7 @@ public class LanternaMenuEngine {
         } 
         else if (selectedIndex == 1) {
             GameOutput.println("Ship system opened.");
-            openCraftingMenu();
+            openCraftingAndUpgradesMenu();
         } 
         else if (selectedIndex == 2) {
             GameOutput.println("Inventory system opened.");
