@@ -36,20 +36,12 @@ public class Starship {
 
     // did not have time to start on this and add to the string
     public String getStatus() {
-
-        String output = "";
-
-        return output;
+        return "Ship Name: " + shipName + "\n" + "Hull: " + hullHP + "/" + maxHullHP + "\n" + "Fuel: " + fuel + "/" + maxFuel + "\n" + "Cargo Space: " + cargoSpace;
     }
 
     // did not have time to start on this and add to the string
     public String getUpgradeStatus() {
-
-        String output = "";
-
-
-
-        return output;
+        return "Engine Level: " + engineLevel + "\n" + "Shield Level: " + shieldLevel + "\n" + "Weapon Level: " + weaponLevel + "\n" + "Cargo Level: " + cargoLevel;
     }
 
 
