@@ -391,5 +391,10 @@ public class Main {
         playerShip.useFuel(100);
         return true;
     }
+
+    public static ArrayList<Star> getSector()
+    {
+        return universe.get(getPosition());
+    }
 }
 // end Main
