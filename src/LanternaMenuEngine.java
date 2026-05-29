@@ -457,11 +457,11 @@ public class LanternaMenuEngine {
 
         try {
             String[] options = {"Copper Wire (Copper Deposit*2)",
-                "Fuel Cell (“Hydrogen Gas*5, Helium Gas*1”)",
+                "Fuel Cell (Hydrogen Gas*5, Helium Gas*1)",
                 "Iron Mesh (Iron Deposit*2)",
-                "Advanced Fuel Cell (“Uranium*1)",
+                "Advanced Fuel Cell (Uranium*1)",
                 "Advanced Info-Grabber (Uranium * 2, Ancient Artifact)",
-                "Scanner Upgrade (“Advanced Info-Grabber*1”, “Copper Wire*5”)",
+                "Scanner Upgrade (Advanced Info-Grabber*1, Copper Wire*5)",
                 "Engine Upgrade (Rare Rocky Elements*3, Uranium*2, Iron Ore*8, Copper Deposit*3, Copper Wire*3, Advanced Fuel Cell*1)",
                 "Cargo Space(Iron Mesh*2, Alien Fossils*3)",
                 "Back"}; // 9 options
@@ -546,19 +546,47 @@ public class LanternaMenuEngine {
         }
     }else if (selectedIndex == 1) {
 
-        if (inventory.hasItem("Hydrogen Gas", 5)) {
+        if (inventory.hasItem("Hydrogen Gas", 5) && inventory.hasItem("Helium Gas", 1)) {
 
             inventory.removeItems("Hydrogen Gas", 5);
+            inventory.removeItems("Helium Gas", 1);
             inventory.addItem("Fuel Cell", 1);
 
             GameOutput.println("Crafted Fuel Cell!");
         } else {
-            GameOutput.println("Not enough Hydrogen Gas.");
+            GameOutput.println("Not enough materials.");
         }
     }else if (selectedIndex == 2) {
+        if (inventory.hasItem("Uranium", 1)) {
 
+            inventory.removeItems("Uranium", 1);
+            inventory.addItem("Advanced Fuel Cell", 1);
+
+            GameOutput.println("Crafted Advanced Fuel Cell!");
+        } else {
+            GameOutput.println("Not enough materials.");
+        }
     }else if (selectedIndex == 3) {
-        
+        if (inventory.hasItem("Uranium", 2) && inventory.hasItem("Ancient Artifact", 1)) {
+
+            inventory.removeItems("Uranium", 2);
+            inventory.removeItems("Ancient Artifact", 1);
+            inventory.addItem("Advanced Info-Grabber", 1);
+
+            GameOutput.println("Crafted Advanced Info-Grabber!");
+        } else {
+            GameOutput.println("Not enough materials.");
+        }
+    }else if (selectedIndex == 4) {
+        if (inventory.hasItem("Copper Wire", 5) && inventory.hasItem("Advanced Info-Grabber", 1)) {
+
+            inventory.removeItems("Copper Wire", 5);
+            inventory.addItem("Advanced Fuel Cell", 1);
+
+            GameOutput.println("Crafted Advanced Fuel Cell!");
+        } else {
+            GameOutput.println("Not enough materials.");
+        }
     }else if (selectedIndex == 8) {
         openinventoryAndCraftingMenu();
         return false;
