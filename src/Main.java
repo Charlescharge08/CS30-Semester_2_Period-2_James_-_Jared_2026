@@ -37,7 +37,7 @@ public class Main {
         ArrayList<Exoplanet> orbitingPlanets = new ArrayList<>();
         for (int i = 0; i < 64; i ++)
         {
-            for (char n = 'A'; n <= 'Z'; n ++)
+            for (char n = 'A'; n <= 'G'; n ++)
             {
                 String name = n + "-" + (((int)n - (int)(Math.random() * 17))) + "." + i;
                 double mass = getMass();
@@ -286,7 +286,7 @@ public class Main {
         int position = getPosition();
         if (playerShip.getScanLevel())
         {
-            for (int i = 0; i < 26; i ++)
+            for (int i = 0; i < 7; i ++)
             {
                 surroundings += universe.get(position).get(i).scan();
                 surroundings += "\n";
@@ -294,7 +294,7 @@ public class Main {
         }
         else
         {
-            for (int i = 0; i < 26; i ++)
+            for (int i = 0; i < 7; i ++)
             {
                 surroundings += universe.get(position).get(i).basicScan();
                 surroundings += "\n";

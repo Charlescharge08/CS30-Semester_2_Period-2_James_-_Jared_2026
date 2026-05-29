@@ -47,17 +47,28 @@ public class Inventory {
 
     // print invitory
     public void printInventory(){
-        System.out.println("Inventory:");
-        
-        ArrayList<String> amount = new ArrayList<>(items.keySet());
-
-        for (int i = 0; i < amount.size(); i++){
-            String item = amount.get(i);
-            System.out.println(item + " = " + items.get(item));
-        }
+        System.out.println(getInventorySummary());
     }
 
     public boolean hasItem(String item, int amount) {
         return items.getOrDefault(item, 0) >= amount;
+    }
+
+    public String getInventorySummary() {
+        StringBuilder summary = new StringBuilder("Inventory:");
+
+        if (items.isEmpty()) {
+            summary.append("\n(empty)");
+            return summary.toString();
+        }
+
+        ArrayList<String> amount = new ArrayList<>(items.keySet());
+
+        for (int i = 0; i < amount.size(); i++) {
+            String item = amount.get(i);
+            summary.append("\n").append(item).append(" = ").append(items.get(item));
+        }
+
+        return summary.toString();
     }
 }

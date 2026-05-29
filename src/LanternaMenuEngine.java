@@ -1,780 +1,473 @@
-import com.googlecode.lanterna.TextColor;
-import com.googlecode.lanterna.graphics.TextGraphics;
-import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.gui2.BasicWindow;
+import com.googlecode.lanterna.gui2.Button;
+import com.googlecode.lanterna.gui2.Direction;
+import com.googlecode.lanterna.gui2.Label;
+import com.googlecode.lanterna.gui2.LinearLayout;
+import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
+import com.googlecode.lanterna.gui2.Panel;
+import com.googlecode.lanterna.gui2.TextBox;
 import com.googlecode.lanterna.screen.Screen;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
-public class LanternaMenuEngine { 
-    private Screen screen;
-    private TextGraphics textGraphics;
-    private String consoleText = "";
-    private Starship playerShip;
-    private Inventory inventory;
+public class LanternaMenuEngine {
+    private enum MenuChoice {
+        MAIN,
+        NAVIGATION,
+        MOVEMENT,
+        SHIP,
+        INVENTORY,
+        CRAFTING,
+        EXIT
+    }
 
-
-    private int lastWidth = -1;
-    private int lastHeight = -1;
+    private final ArrayList<String> consoleLines = new ArrayList<>();
+    private final Screen screen;
+    private final Starship playerShip;
+    private final Inventory inventory;
+    private final MultiWindowTextGUI gui;
+    private TextBox consoleBox;
+    private final String[] craftingRecipes = {
+        "Copper Wire (Copper Deposit x2)",
+        "Fuel Cell (Hydrogen Gas x5, Helium Gas x1)",
+        "Iron Mesh (Iron ore x2)",
+        "Advanced Fuel Cell (Uranium x1)",
+        "Advanced Info-Grabber (Uranium x2, Ancient Artifact x1)",
+        "Scanner Upgrade (Advanced Info-Grabber x1, Copper Wire x5)",
+        "Engine Upgrade (Rare rocky Elements x3, Uranium x2, Iron ore x8, Copper Deposit x3, Copper Wire x3, Advanced Fuel Cell x1)",
+        "Cargo Space (Iron Mesh x2, Alien Fossils x3)"
+    };
 
     public LanternaMenuEngine(Screen screen, Starship playerShip, Inventory inventory) {
         this.screen = screen;
         this.playerShip = playerShip;
         this.inventory = inventory;
-        this.textGraphics = screen.newTextGraphics();
-    }// end of LanternaMenuEngine
-    
+        this.gui = new MultiWindowTextGUI(screen);
+    }
+
     public void updateConsole(String text) {
-        consoleText = text;
-    }// end of updateConsole
+        if (text == null) {
+            text = "";
+        }
+
+        consoleLines.clear();
+        consoleLines.addAll(Arrays.asList(text.split("\\n", -1)));
+
+        if (consoleLines.size() > 200) {
+            consoleLines.subList(0, consoleLines.size() - 200).clear();
+        }
+
+        refreshConsoleBox();
+    }
 
     public void startMainMenu() {
-        LanternaMenuEngine menu = new LanternaMenuEngine(screen, playerShip, inventory);
         try {
-            String[] options = {"Navigation", "View Ship Status and Upgrades", "Inventory and Crafting", "Exit Game"};
-            int selectedIndex = 0;
-            boolean keepRunning = true;
- 
-            while (keepRunning) {
- 
-                int width = screen.getTerminalSize().getColumns();
-                int height = screen.getTerminalSize().getRows();
- 
-
-                if(width != lastWidth || height != lastHeight){
-                    lastWidth = width;      
-                    lastHeight = height;    
-                    screen.clear();
-                    System.out.println("Screen resized to: " + width + "x" + height);
-                }
-
-                drawAll(options, selectedIndex);
- 
-                KeyStroke keyStroke = screen.pollInput();
-                
-                if(keyStroke != null) {  
-                    KeyType keyType = keyStroke.getKeyType();
- 
-                    if(keyType == KeyType.ArrowUp) {
-                        selectedIndex--;
-                        if (selectedIndex < 0) {
-                            selectedIndex = options.length - 1;
-                        }
-                    }else if(keyType == KeyType.ArrowDown) {
-                        selectedIndex++;
-                        if (selectedIndex >= options.length) {
-                            selectedIndex = 0;
-                        }
-                    }else if(keyType == KeyType.Enter) {
-                        keepRunning = handleSelection(selectedIndex);
-                    }else if(keyType == KeyType.Character) {
-                        char c = keyStroke.getCharacter();
-                        if (Character.isDigit(c)) {
-                            int numPressed = Character.getNumericValue(c);
-                            if (numPressed >= 1 && numPressed <= options.length) {
-                                selectedIndex = numPressed - 1; 
-                                keepRunning = handleSelection(selectedIndex);
-                            }
-                        }
-                    }
-                    else if (keyType == KeyType.Escape)
-                        {
-                            keepRunning = false;
-                            System.exit(0);
-                        }
-                }
-                
-                // the way i have it set up is that it redraws every cpu clock tik. this stops cpu from being pined at 100 and stop the screen from flickering. 
-                Thread.sleep(20);
+            runMenu(MenuChoice.MAIN);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                screen.stopScreen();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
- 
-            screen.stopScreen();
-            //prints error
-        }catch(IOException e) {
-            e.printStackTrace();
-        } catch(InterruptedException e) {//prints why the cpu sleep did not work
-            e.printStackTrace();
-        }
-    }// end of startMainMenu()
-
-    public void openNavigationMenu() {
-
-        try {
-            String[] options = {"Move", "Get current position", "Scan Surrounding Stars", "Back"};
-            int selectedIndex = 0;
-            boolean keepRunning = true;
- 
-            while (keepRunning) {
- 
-                int width = screen.getTerminalSize().getColumns();
-                int height = screen.getTerminalSize().getRows();
- 
-
-                if(width != lastWidth || height != lastHeight){
-                    lastWidth = width;      
-                    lastHeight = height;    
-                    screen.clear();
-                    System.out.println("Screen resized to: " + width + "x" + height);
-                }
-
-                drawAll(options, selectedIndex);
- 
-                KeyStroke keyStroke = screen.pollInput();
-                
-                if(keyStroke != null) {  
-                    KeyType keyType = keyStroke.getKeyType();
- 
-                    if(keyType == KeyType.ArrowUp) {
-                        selectedIndex--;
-                        if (selectedIndex < 0) {
-                            selectedIndex = options.length - 1;
-                        }
-                    }else if(keyType == KeyType.ArrowDown) {
-                        selectedIndex++;
-                        if (selectedIndex >= options.length) {
-                            selectedIndex = 0;
-                        }
-                    }else if(keyType == KeyType.Enter) {
-                        keepRunning = handleNavigationMenuSelection(selectedIndex);
-                    }else if(keyType == KeyType.Character) {
-                        char c = keyStroke.getCharacter();
-                        if (Character.isDigit(c)) {
-                            int numPressed = Character.getNumericValue(c);
-                            if (numPressed >= 1 && numPressed <= options.length) {
-                                selectedIndex = numPressed - 1; 
-                                keepRunning = handleNavigationMenuSelection(selectedIndex);
-                            }
-                        }
-                    }
-                    else if (keyType == KeyType.Escape)
-                        {
-                            keepRunning = false;
-                            System.exit(0);
-                        }
-                }
-                
-                Thread.sleep(20);
-            }
- 
-            screen.stopScreen();
- 
-        }catch(IOException e) {
-            e.printStackTrace();
-        } catch(InterruptedException e) {
-            e.printStackTrace();
         }
     }
-    // end navigation menu
-
-    public void openMovementMenu() {
-
-        try {
-            String[] options = {"Move Forward(x)", "Move Backward(x)", "Move Up(y)", "Move Down(y)", "Move Right(z)", "Move Left(z)", "Back"};
-            int selectedIndex = 0;
-            boolean keepRunning = true;
- 
-            while (keepRunning) {
- 
-                int width = screen.getTerminalSize().getColumns();
-                int height = screen.getTerminalSize().getRows();
- 
-
-                if(width != lastWidth || height != lastHeight){
-                    lastWidth = width;      
-                    lastHeight = height;    
-                    screen.clear();
-                    System.out.println("Screen resized to: " + width + "x" + height);
-                }
-
-                drawAll(options, selectedIndex);
- 
-                KeyStroke keyStroke = screen.pollInput();
-                
-                if(keyStroke != null) {  
-                    KeyType keyType = keyStroke.getKeyType();
- 
-                    if(keyType == KeyType.ArrowUp) {
-                        selectedIndex--;
-                        if (selectedIndex < 0) {
-                            selectedIndex = options.length - 1;
-                        }
-                    }else if(keyType == KeyType.ArrowDown) {
-                        selectedIndex++;
-                        if (selectedIndex >= options.length) {
-                            selectedIndex = 0;
-                        }
-                    }else if(keyType == KeyType.Enter) {
-                        keepRunning = handleMovementMenuSelection(selectedIndex);
-                    }else if(keyType == KeyType.Character) {
-                        char c = keyStroke.getCharacter();
-                        if (Character.isDigit(c)) {
-                            int numPressed = Character.getNumericValue(c);
-                            if (numPressed >= 1 && numPressed <= options.length) {
-                                selectedIndex = numPressed - 1; 
-                                keepRunning = handleMovementMenuSelection(selectedIndex);
-                            }
-                        }
-                    }
-                    else if (keyType == KeyType.Escape)
-                    {
-                        keepRunning = false;
-                        System.exit(0);
-                    }
-                }
-                
-                Thread.sleep(20);
-            }
- 
-            screen.stopScreen();
- 
-        }catch(IOException e) {
-            e.printStackTrace();
-        } catch(InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-    // end navigation menu
-
-    private boolean handleMovementMenuSelection(int selectedIndex) {
-        if(selectedIndex ==  0){
-            if (Main.movement(0))
-            {
-                GameOutput.println("Successful!");
-            }
-            else
-            {
-                GameOutput.println("Failure. You cannot move in that direction.");
-            }
-        }else if(selectedIndex == 1){
-            if (Main.movement(1))
-                {
-                    GameOutput.println("Successful!");
-                }
-                else
-                {
-                    GameOutput.println("Failure. You cannot move in that direction.");
-                }
-        }else if(selectedIndex == 2) {
-            if (Main.movement(2))
-                {
-                    GameOutput.println("Successful!");
-                }
-                else
-                {
-                    GameOutput.println("Failure. You cannot move in that direction.");
-                }
-        }else if (selectedIndex == 3) {
-            if (Main.movement(3))
-                {
-                    GameOutput.println("Successful!");
-                }
-                else
-                {
-                    GameOutput.println("Failure. You cannot move in that direction.");
-                }
-        }else if(selectedIndex ==  4){
-            if (Main.movement(4))
-                {
-                    GameOutput.println("Successful!");
-                }
-                else
-                {
-                    GameOutput.println("Failure. You cannot move in that direction.");
-                }
-        }else if(selectedIndex == 5){
-            if (Main.movement(5))
-                {
-                    GameOutput.println("Successful!");
-                }
-                else
-                {
-                    GameOutput.println("Failure. You cannot move in that direction.");
-                }
-        }else if (selectedIndex == 6) {
-            GameOutput.println("Returned");
-        }
-
-        openNavigationMenu();
-        return true; 
-    }//end of handleSelection
-
-    private boolean handleNavigationMenuSelection(int selectedIndex) {
-        if(selectedIndex ==  0){
-            GameOutput.println("Movement System opened");
-            openMovementMenu();
-        }else if(selectedIndex == 1){
-            GameOutput.println("You are in Sector " + Main.getPosition() + ".");
-            openNavigationMenu();
-        }else if (selectedIndex == 2){
-            GameOutput.println(Main.surroundings());
-        }else if(selectedIndex == 3) {
-            GameOutput.println("Returned");
-            startMainMenu();
-        }else if (selectedIndex == 3) {
-            return false;
-        }
-        return true;
-    }//end of handleSelection
-
 
     public void openShipStatusMenu() {
-
         try {
-            String[] options = {"Show Ship Status", "Show Installed Upgrades", "Back"};
-            int selectedIndex = 0;
-            boolean keepRunning = true;
- 
-            while (keepRunning) {
- 
-                int width = screen.getTerminalSize().getColumns();
-                int height = screen.getTerminalSize().getRows();
- 
-
-                if(width != lastWidth || height != lastHeight){
-                    lastWidth = width;      
-                    lastHeight = height;    
-                    screen.clear();
-                    System.out.println("Screen resized to: " + width + "x" + height);
-                }
-
-                drawAll(options, selectedIndex);
- 
-                KeyStroke keyStroke = screen.pollInput();
-                
-                if(keyStroke != null) {  
-                    KeyType keyType = keyStroke.getKeyType();
- 
-                    if(keyType == KeyType.ArrowUp) {
-                        selectedIndex--;
-                        if (selectedIndex < 0) {
-                            selectedIndex = options.length - 1;
-                        }
-                    }else if(keyType == KeyType.ArrowDown) {
-                        selectedIndex++;
-                        if (selectedIndex >= options.length) {
-                            selectedIndex = 0;
-                        }
-                    }else if(keyType == KeyType.Enter) {
-                        keepRunning = handleShipMenuSelection(selectedIndex);
-                    }else if(keyType == KeyType.Character) {
-                        char c = keyStroke.getCharacter();
-                        if (Character.isDigit(c)) {
-                            int numPressed = Character.getNumericValue(c);
-                            if (numPressed >= 1 && numPressed <= options.length) {
-                                selectedIndex = numPressed - 1; 
-                                keepRunning = handleShipMenuSelection(selectedIndex);
-                            }
-                        }
-                    }
-                    else if (keyType == KeyType.Escape)
-                        {
-                            keepRunning = false;
-                            System.exit(0);
-                        }
-                }
-                
-                Thread.sleep(20);
-            }
- 
-            screen.stopScreen();
- 
-        }catch(IOException e) {
+            runMenu(MenuChoice.SHIP);
+        } catch (IOException e) {
             e.printStackTrace();
-        } catch(InterruptedException e) {
+        }
+    }
+
+    public void openNavigationMenu() {
+        try {
+            runMenu(MenuChoice.NAVIGATION);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void openMovementMenu() {
+        try {
+            runMenu(MenuChoice.MOVEMENT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void openInventoryMenu() {
+        try {
+            runMenu(MenuChoice.INVENTORY);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void openinventoryAndCraftingMenu() {
+        openInventoryMenu();
+    }
 
+    public void openCraftingAndUpgradesMenu() {
         try {
-            String[] options = {"View Inventory", "Open Crafting", "Back"};
-            int selectedIndex = 0;
-            boolean keepRunning = true;
- 
-            while (keepRunning) {
- 
-                int width = screen.getTerminalSize().getColumns();
-                int height = screen.getTerminalSize().getRows();
- 
-
-                if(width != lastWidth || height != lastHeight){
-                    lastWidth = width;      
-                    lastHeight = height;    
-                    screen.clear();
-                    System.out.println("Screen resized to: " + width + "x" + height);
-                }
-
-                drawAll(options, selectedIndex);
- 
-                KeyStroke keyStroke = screen.pollInput();
-                
-                if(keyStroke != null) {  
-                    KeyType keyType = keyStroke.getKeyType();
- 
-                    if(keyType == KeyType.ArrowUp) {
-                        selectedIndex--;
-                        if (selectedIndex < 0) {
-                            selectedIndex = options.length - 1;
-                        }
-                    }else if(keyType == KeyType.ArrowDown) {
-                        selectedIndex++;
-                        if (selectedIndex >= options.length) {
-                            selectedIndex = 0;
-                        }
-                    }else if(keyType == KeyType.Enter) {
-                        keepRunning = handleinventoryAndCraftingMenuSelection(selectedIndex);
-                    }else if(keyType == KeyType.Character) {
-                        char c = keyStroke.getCharacter();
-                        if (Character.isDigit(c)) {
-                            int numPressed = Character.getNumericValue(c);
-                            if (numPressed >= 1 && numPressed <= options.length) {
-                                selectedIndex = numPressed - 1; 
-                                keepRunning = handleinventoryAndCraftingMenuSelection(selectedIndex);
-                            }
-                        }
-                    }
-                    else if (keyType == KeyType.Escape)
-                    {
-                        keepRunning = false;
-                        System.exit(0);
-                    }
-                }
-                
-                // the way i have it set up is that it redraws every cpu clock tik. this stops cpu from being pined at 100 and stop the screen from flickering. 
-                Thread.sleep(20);
-            }
- 
-            screen.stopScreen();
- 
-        }catch(IOException e) {
-            e.printStackTrace();
-        } catch(InterruptedException e) {
+            runMenu(MenuChoice.CRAFTING);
+        } catch (IOException e) {
             e.printStackTrace();
         }
-    }// end of openinventoryAndCraftingMenu
+    }
 
-    private void openCraftingAndUpgradesMenu(){
+    private void runMenu(MenuChoice startingMenu) throws IOException {
+        MenuChoice currentMenu = startingMenu;
 
-        try {
-            String[] options = {"Copper Wire (Copper Deposit*2)",
-                "Fuel Cell (Hydrogen Gas*5, Helium Gas*1)",
-                "Iron Mesh (Iron Deposit*2)",
-                "Advanced Fuel Cell (Uranium*1)",
-                "Advanced Info-Grabber (Uranium * 2, Ancient Artifact)",
-                "Scanner Upgrade (Advanced Info-Grabber*1, Copper Wire*5)",
-                "Engine Upgrade (Rare Rocky Elements*3, Uranium*2, Iron Ore*8, Copper Deposit*3, Copper Wire*3, Advanced Fuel Cell*1)",
-                "Cargo Space(Iron Mesh*2, Alien Fossils*3)",
-                "Back"}; // 9 options
-            int selectedIndex = 0;
-            boolean keepRunning = true;
- 
-            while (keepRunning) {
- 
-                int width = screen.getTerminalSize().getColumns();
-                int height = screen.getTerminalSize().getRows();
- 
-
-                if(width != lastWidth || height != lastHeight){
-                    lastWidth = width;      
-                    lastHeight = height;    
-                    screen.clear();
-                    System.out.println("Screen resized to: " + width + "x" + height);
-                }
-
-                drawAll(options, selectedIndex);
- 
-                KeyStroke keyStroke = screen.pollInput();
-                
-                if(keyStroke != null) {  
-                    KeyType keyType = keyStroke.getKeyType();
- 
-                    if(keyType == KeyType.ArrowUp) {
-                        selectedIndex--;
-                        if (selectedIndex < 0) {
-                            selectedIndex = options.length - 1;
-                        }
-                    }else if(keyType == KeyType.ArrowDown) {
-                        selectedIndex++;
-                        if (selectedIndex >= options.length) {
-                            selectedIndex = 0;
-                        }
-                    }else if(keyType == KeyType.Enter) {
-                        keepRunning = handleCrafting(selectedIndex);
-                    }else if(keyType == KeyType.Character) {
-                        char c = keyStroke.getCharacter();
-                        if (Character.isDigit(c)) {
-                            int numPressed = Character.getNumericValue(c);
-                            if (numPressed >= 1 && numPressed <= options.length) {
-                                selectedIndex = numPressed - 1; 
-                                keepRunning = handleCrafting(selectedIndex);
-                            }
-                        }
-                    }
-                    else if (keyType == KeyType.Escape)
-                    {
-                        keepRunning = false;
-                        System.exit(0);
-                    }
-                }
-                
-                // the way i have it set up is that it redraws every cpu clock tik. this stops cpu from being pined at 100 and stop the screen from flickering. 
-                Thread.sleep(20);
+        while (currentMenu != MenuChoice.EXIT) {
+            if (currentMenu == MenuChoice.MAIN) {
+                currentMenu = showMainMenu();
+            } else if (currentMenu == MenuChoice.NAVIGATION) {
+                currentMenu = showNavigationMenu();
+            } else if (currentMenu == MenuChoice.MOVEMENT) {
+                currentMenu = showMovementMenu();
+            } else if (currentMenu == MenuChoice.SHIP) {
+                currentMenu = showShipStatusMenu();
+            } else if (currentMenu == MenuChoice.INVENTORY) {
+                currentMenu = showInventoryMenu();
+            } else if (currentMenu == MenuChoice.CRAFTING) {
+                currentMenu = showCraftingMenu();
+            } else {
+                currentMenu = MenuChoice.EXIT;
             }
-
-            screen.stopScreen();
-
-
-        }catch(IOException e) {
-            e.printStackTrace();
-        }catch(InterruptedException e) {
-            e.printStackTrace();
         }
-    }// end of openCraftingAndUpgradesMenu
+    }
 
-    private boolean handleCrafting(int selectedIndex) {
+    private MenuChoice showMainMenu() throws IOException {
+        final MenuChoice[] nextChoice = {MenuChoice.EXIT};
+        BasicWindow window = new BasicWindow("Stellar Terminal");
+        Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
 
-    if (selectedIndex == 0) {
+        root.addComponent(new Label("STELLAR TERMINAL"));
+        root.addComponent(new Label(""));
 
+        Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
+        buttons.addComponent(new Button("Navigation", () -> {
+            GameOutput.println("Navigation system opened.");
+            nextChoice[0] = MenuChoice.NAVIGATION;
+            window.close();
+        }));
+        buttons.addComponent(new Button("View Ship Status and Upgrades", () -> {
+            GameOutput.println("Ship system opened.");
+            nextChoice[0] = MenuChoice.SHIP;
+            window.close();
+        }));
+        buttons.addComponent(new Button("Inventory and Crafting", () -> {
+            GameOutput.println("Inventory system opened.");
+            nextChoice[0] = MenuChoice.INVENTORY;
+            window.close();
+        }));
+        buttons.addComponent(new Button("Exit Game", () -> {
+            nextChoice[0] = MenuChoice.EXIT;
+            window.close();
+        }));
+        root.addComponent(buttons);
+
+        root.addComponent(new Label(""));
+        root.addComponent(new Label("Console"));
+        consoleBox = createConsoleBox();
+        root.addComponent(consoleBox);
+        refreshConsoleBox();
+
+        window.setComponent(root);
+        gui.addWindowAndWait(window);
+
+        return nextChoice[0];
+    }
+
+    private MenuChoice showNavigationMenu() throws IOException {
+        final MenuChoice[] nextChoice = {MenuChoice.MAIN};
+        BasicWindow window = new BasicWindow("Navigation");
+        Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        root.addComponent(new Label("NAVIGATION"));
+        root.addComponent(new Label(""));
+
+        Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
+        buttons.addComponent(new Button("Move", () -> {
+            GameOutput.println("Movement System opened");
+            nextChoice[0] = MenuChoice.MOVEMENT;
+            window.close();
+        }));
+        buttons.addComponent(new Button("Get current position", () -> GameOutput.println("You are in Sector " + Main.getPosition() + ".")));
+        buttons.addComponent(new Button("Scan Surrounding Stars", () -> GameOutput.println(Main.surroundings())));
+        buttons.addComponent(new Button("Back", () -> {
+            GameOutput.println("Returned");
+            nextChoice[0] = MenuChoice.MAIN;
+            window.close();
+        }));
+        root.addComponent(buttons);
+
+        root.addComponent(new Label(""));
+        root.addComponent(new Label("Console"));
+        consoleBox = createConsoleBox();
+        root.addComponent(consoleBox);
+        refreshConsoleBox();
+
+        window.setComponent(root);
+        gui.addWindowAndWait(window);
+
+        return nextChoice[0];
+    }
+
+    private MenuChoice showMovementMenu() throws IOException {
+        final MenuChoice[] nextChoice = {MenuChoice.NAVIGATION};
+        BasicWindow window = new BasicWindow("Movement");
+        Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        root.addComponent(new Label("MOVEMENT"));
+        root.addComponent(new Label(""));
+
+        Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
+        buttons.addComponent(new Button("Move Forward (x)", () -> moveAndReturn(0, nextChoice, window)));
+        buttons.addComponent(new Button("Move Backward (x)", () -> moveAndReturn(1, nextChoice, window)));
+        buttons.addComponent(new Button("Move Up (y)", () -> moveAndReturn(2, nextChoice, window)));
+        buttons.addComponent(new Button("Move Down (y)", () -> moveAndReturn(3, nextChoice, window)));
+        buttons.addComponent(new Button("Move Right (z)", () -> moveAndReturn(4, nextChoice, window)));
+        buttons.addComponent(new Button("Move Left (z)", () -> moveAndReturn(5, nextChoice, window)));
+        buttons.addComponent(new Button("Back", () -> {
+            GameOutput.println("Returned");
+            nextChoice[0] = MenuChoice.NAVIGATION;
+            window.close();
+        }));
+        root.addComponent(buttons);
+
+        root.addComponent(new Label(""));
+        root.addComponent(new Label("Console"));
+        consoleBox = createConsoleBox();
+        root.addComponent(consoleBox);
+        refreshConsoleBox();
+
+        window.setComponent(root);
+        gui.addWindowAndWait(window);
+
+        return nextChoice[0];
+    }
+
+    private MenuChoice showShipStatusMenu() throws IOException {
+        final MenuChoice[] nextChoice = {MenuChoice.MAIN};
+        BasicWindow window = new BasicWindow("Ship Status");
+        Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        root.addComponent(new Label("SHIP STATUS"));
+        root.addComponent(new Label(""));
+
+        Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
+        buttons.addComponent(new Button("Show Ship Status", () -> GameOutput.println(playerShip.getStatus())));
+        buttons.addComponent(new Button("Show Installed Upgrades", () -> GameOutput.println(playerShip.getUpgradeStatus())));
+        buttons.addComponent(new Button("Inventory and Crafting", () -> {
+            GameOutput.println("Inventory system opened.");
+            nextChoice[0] = MenuChoice.INVENTORY;
+            window.close();
+        }));
+        buttons.addComponent(new Button("Back", () -> {
+            nextChoice[0] = MenuChoice.MAIN;
+            window.close();
+        }));
+        root.addComponent(buttons);
+
+        root.addComponent(new Label(""));
+        root.addComponent(new Label("Console"));
+        consoleBox = createConsoleBox();
+        root.addComponent(consoleBox);
+        refreshConsoleBox();
+
+        window.setComponent(root);
+        gui.addWindowAndWait(window);
+
+        return nextChoice[0];
+    }
+
+    private MenuChoice showInventoryMenu() throws IOException {
+        final MenuChoice[] nextChoice = {MenuChoice.MAIN};
+        BasicWindow window = new BasicWindow("Inventory and Crafting");
+        Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        root.addComponent(new Label("INVENTORY AND CRAFTING"));
+        root.addComponent(new Label(""));
+
+        Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
+        buttons.addComponent(new Button("View Inventory", () -> GameOutput.println(inventory.getInventorySummary())));
+        buttons.addComponent(new Button("Open Crafting", () -> {
+            GameOutput.println("Crafting system opened.");
+            nextChoice[0] = MenuChoice.CRAFTING;
+            window.close();
+        }));
+        buttons.addComponent(new Button("Back", () -> {
+            nextChoice[0] = MenuChoice.MAIN;
+            window.close();
+        }));
+        root.addComponent(buttons);
+
+        root.addComponent(new Label(""));
+        root.addComponent(new Label("Console"));
+        consoleBox = createConsoleBox();
+        root.addComponent(consoleBox);
+        refreshConsoleBox();
+
+        window.setComponent(root);
+        gui.addWindowAndWait(window);
+
+        return nextChoice[0];
+    }
+
+    private MenuChoice showCraftingMenu() throws IOException {
+        final MenuChoice[] nextChoice = {MenuChoice.INVENTORY};
+        BasicWindow window = new BasicWindow("Crafting");
+        Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        root.addComponent(new Label("CRAFTING"));
+        root.addComponent(new Label(""));
+
+        Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
+        buttons.addComponent(new Button(craftingRecipes[0], () -> craftCopperWire()));
+        buttons.addComponent(new Button(craftingRecipes[1], () -> craftFuelCell()));
+        buttons.addComponent(new Button(craftingRecipes[2], () -> craftIronMesh()));
+        buttons.addComponent(new Button(craftingRecipes[3], () -> craftAdvancedFuelCell()));
+        buttons.addComponent(new Button(craftingRecipes[4], () -> craftAdvancedInfoGrabber()));
+        buttons.addComponent(new Button(craftingRecipes[5], () -> craftScannerUpgrade()));
+        buttons.addComponent(new Button(craftingRecipes[6], () -> craftEngineUpgrade()));
+        buttons.addComponent(new Button(craftingRecipes[7], () -> craftCargoSpace()));
+        buttons.addComponent(new Button("Back", () -> {
+            nextChoice[0] = MenuChoice.INVENTORY;
+            window.close();
+        }));
+        root.addComponent(buttons);
+
+        root.addComponent(new Label(""));
+        root.addComponent(new Label("Console"));
+        consoleBox = createConsoleBox();
+        root.addComponent(consoleBox);
+        refreshConsoleBox();
+
+        window.setComponent(root);
+        gui.addWindowAndWait(window);
+
+        return nextChoice[0];
+    }
+
+    private TextBox createConsoleBox() {
+        TextBox box = new TextBox(new com.googlecode.lanterna.TerminalSize(80, 12), TextBox.Style.MULTI_LINE);
+        box.setReadOnly(true);
+        return box;
+    }
+
+    private void refreshConsoleBox() {
+        if (consoleBox != null) {
+            consoleBox.setText(String.join("\n", consoleLines));
+        }
+    }
+
+    private void moveAndReturn(int moveType, MenuChoice[] nextChoice, BasicWindow window) {
+        if (Main.movement(moveType)) {
+            GameOutput.println("Successful!");
+        } else {
+            GameOutput.println("Failure. You cannot move in that direction.");
+        }
+
+        nextChoice[0] = MenuChoice.NAVIGATION;
+        window.close();
+    }
+
+    private void craftCopperWire() {
         if (inventory.hasItem("Copper Deposit", 2)) {
-
             inventory.removeItems("Copper Deposit", 2);
             inventory.addItem("Copper Wire", 1);
-
             GameOutput.println("Crafted Copper Wire!");
         } else {
             GameOutput.println("Not enough Copper Deposit.");
         }
-    }else if (selectedIndex == 1) {
+    }
 
+    private void craftFuelCell() {
         if (inventory.hasItem("Hydrogen Gas", 5) && inventory.hasItem("Helium Gas", 1)) {
-
             inventory.removeItems("Hydrogen Gas", 5);
             inventory.removeItems("Helium Gas", 1);
             inventory.addItem("Fuel Cell", 1);
-
             GameOutput.println("Crafted Fuel Cell!");
         } else {
             GameOutput.println("Not enough materials.");
         }
-    }else if (selectedIndex == 2) {
-        if (inventory.hasItem("Uranium", 1)) {
+    }
 
+    private void craftIronMesh() {
+        if (inventory.hasItem("Iron ore", 2)) {
+            inventory.removeItems("Iron ore", 2);
+            inventory.addItem("Iron Mesh", 1);
+            GameOutput.println("Crafted Iron Mesh!");
+        } else {
+            GameOutput.println("Not enough Iron ore.");
+        }
+    }
+
+    private void craftAdvancedFuelCell() {
+        if (inventory.hasItem("Uranium", 1)) {
             inventory.removeItems("Uranium", 1);
             inventory.addItem("Advanced Fuel Cell", 1);
-
             GameOutput.println("Crafted Advanced Fuel Cell!");
         } else {
-            GameOutput.println("Not enough materials.");
+            GameOutput.println("Not enough Uranium.");
         }
-    }else if (selectedIndex == 3) {
-        if (inventory.hasItem("Uranium", 2) && inventory.hasItem("Ancient Artifact", 1)) {
+    }
 
+    private void craftAdvancedInfoGrabber() {
+        if (inventory.hasItem("Uranium", 2) && inventory.hasItem("Ancient Artifact", 1)) {
             inventory.removeItems("Uranium", 2);
             inventory.removeItems("Ancient Artifact", 1);
             inventory.addItem("Advanced Info-Grabber", 1);
-
             GameOutput.println("Crafted Advanced Info-Grabber!");
         } else {
             GameOutput.println("Not enough materials.");
         }
-    }else if (selectedIndex == 4) {
-        if (inventory.hasItem("Copper Wire", 5) && inventory.hasItem("Advanced Info-Grabber", 1)) {
+    }
 
+    private void craftScannerUpgrade() {
+        if (inventory.hasItem("Advanced Info-Grabber", 1) && inventory.hasItem("Copper Wire", 5)) {
+            inventory.removeItems("Advanced Info-Grabber", 1);
             inventory.removeItems("Copper Wire", 5);
-            inventory.addItem("Advanced Fuel Cell", 1);
-
-            GameOutput.println("Crafted Advanced Fuel Cell!");
+            playerShip.upgradeScan();
+            GameOutput.println("Scanner Upgrade installed!");
         } else {
             GameOutput.println("Not enough materials.");
         }
-    }else if (selectedIndex == 8) {
-        openinventoryAndCraftingMenu();
-        return false;
     }
-    return true;
+
+    private void craftEngineUpgrade() {
+        if (inventory.hasItem("Rare rocky Elements", 3)
+                && inventory.hasItem("Uranium", 2)
+                && inventory.hasItem("Iron ore", 8)
+                && inventory.hasItem("Copper Deposit", 3)
+                && inventory.hasItem("Copper Wire", 3)
+                && inventory.hasItem("Advanced Fuel Cell", 1)) {
+            inventory.removeItems("Rare rocky Elements", 3);
+            inventory.removeItems("Uranium", 2);
+            inventory.removeItems("Iron ore", 8);
+            inventory.removeItems("Copper Deposit", 3);
+            inventory.removeItems("Copper Wire", 3);
+            inventory.removeItems("Advanced Fuel Cell", 1);
+            playerShip.upgradeEngine();
+            GameOutput.println("Engine Upgrade installed!");
+        } else {
+            GameOutput.println("Not enough materials.");
+        }
+    }
+
+    private void craftCargoSpace() {
+        if (inventory.hasItem("Iron Mesh", 2) && inventory.hasItem("Alien Fossils", 3)) {
+            inventory.removeItems("Iron Mesh", 2);
+            inventory.removeItems("Alien Fossils", 3);
+            playerShip.upgradeCargo();
+            GameOutput.println("Cargo Space upgraded!");
+        } else {
+            GameOutput.println("Not enough materials.");
+        }
+    }
 }
-
-
-    private void drawAll(String[] options, int selectedIndex) throws IOException {
-        screen.clear();
-        
-        drawMenu(options, selectedIndex);
-        drawSeparator();
-        drawConsole();
-        
-        screen.refresh();
-    }
-
-    private void drawAll() {
-        try {
-            screen.clear();
-            drawMenu(null, -1);
-            drawSeparator();
-            drawConsole();
-            screen.refresh();
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    //Draws the menu
-    private void drawMenu(String[] options, int selectedIndex) throws IOException {
-        int width = screen.getTerminalSize().getColumns();
-        int height = screen.getTerminalSize().getRows();
- 
-        int separator = getSeparator(height);
- 
-        textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
-        textGraphics.setBackgroundColor(TextColor.ANSI.BLUE);
-        String header = "STELLAR TERMINAL";
-        String paddedHeader = header + " ".repeat(Math.max(0, width - header.length()));
-        textGraphics.putString(0, 1, paddedHeader);
-        
-        textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
- 
-        if(options != null){
-            int maxMenuHeight = separator - 3;
-            int spacing = Math.max(1, maxMenuHeight / options.length);
-            
-            for (int i = 0; i < options.length; i++) {
-                int row = 3 + (i * spacing);
-                if (row >= separator){
-                    break;
-                } 
- 
-                if (i == selectedIndex) {
-                    textGraphics.setBackgroundColor(TextColor.ANSI.WHITE);
-                    textGraphics.setForegroundColor(TextColor.ANSI.BLACK);
-                    String text = "[ " + (i + 1) + " ] " + options[i];
-                    textGraphics.putString(4, row, text);
-                } else {
-                    textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
-                    textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
-                    String text = "  " + (i + 1) + "   " + options[i];
-                    textGraphics.putString(4, row, text);
-                }
-            }
-        }
-    }
-
-
-    //draw the separator between the terminal and user
-    private void drawSeparator(){
-        int width = screen.getTerminalSize().getColumns();
-        int height = screen.getTerminalSize().getRows();
-        int y = getSeparator(height);
- 
-        textGraphics.setForegroundColor(TextColor.ANSI.BLUE);
-        textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
-        
-        for (int x = 0; x < width; x++) {
-            textGraphics.putString(x, y, "─");
-        }
-    }
-
-    // Make the console for program output
-    private void drawConsole(){
-        int width = screen.getTerminalSize().getColumns();
-        int height = screen.getTerminalSize().getRows();
- 
-        int separator = getSeparator(height);
-        int startY = separator + 1;
- 
-        int availableLines = height - startY;
- 
-        if(availableLines <= 0){
-            return;
-        }
- 
-        textGraphics.setForegroundColor(TextColor.ANSI.GREEN);
-        textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
-        
-        String[] lines = consoleText.split("\n");
-        int startIndex = Math.max(0, lines.length - availableLines);
- 
-        // Draw console line
-        for (int i = 0; i < availableLines && (startIndex + i) < lines.length; i++) {
-            String line = lines[startIndex + i];
- 
-            if (line.length() > width - 2) {
-                line = line.substring(0, width - 2);
-            }
- 
-            textGraphics.putString(1, startY + i, line);
-        }
-    }//end of drawConsole()
-
-    // separator bar height
-    private int getSeparator(int hight){
-        return (int) (hight * 0.70);
-    }// end of getSeparator
-
-    //handleSelection for main menu
-    private boolean handleSelection(int selectedIndex) {
-        if(selectedIndex ==  0){
-            GameOutput.println("Navigation system opened.");
-            openNavigationMenu();
-        }else if(selectedIndex == 1){
-            GameOutput.println("Ship system opened.");
-            openShipStatusMenu();
-        }else if(selectedIndex == 2) {
-            GameOutput.println("Inventory system opened.");
-            openinventoryAndCraftingMenu();
-        }else if (selectedIndex == 3) {
-            System.exit(0);
-            return false;
-        }
-        return true; 
-    }//end of handleSelection
-
-    private boolean handleShipMenuSelection(int selectedIndex) {
-
-        if (selectedIndex == 0) {
-            GameOutput.println("Status: " + Main.playerShip.getStatus());
-        } 
-        else if (selectedIndex == 1) {
-            GameOutput.println("Upgrade status: " + Main.playerShip.getUpgradeStatus());
-        }
-        else if (selectedIndex == 2) {
-            startMainMenu();
-        }
-
-        return true;
-    }//end of handleShipMenuSelection
-
-    private boolean handleinventoryAndCraftingMenuSelection(int selectedIndex) {
-
-        if (selectedIndex == 0) {
-            GameOutput.println("Inventory Opened");
-        } 
-        else if (selectedIndex == 1) {
-            GameOutput.println("Crafting system opened.");
-            openCraftingAndUpgradesMenu();
-        } 
-        else if (selectedIndex == 2) {
-            GameOutput.println("Returned");
-            startMainMenu();
-        }
-
-        return true;
-    }//end of handleShipMenuSelection
-
-    private boolean handleCraftingMenuSelection(int selectedIndex) {
-
-        if (selectedIndex == 0) {
-            GameOutput.println("Navigation system opened.");
-        } 
-        else if (selectedIndex == 1) {
-            GameOutput.println("Ship system opened.");
-            openCraftingAndUpgradesMenu();
-        } 
-        else if (selectedIndex == 2) {
-            GameOutput.println("Inventory system opened.");
-        } 
-        else if (selectedIndex == 3) {
-            startMainMenu();
-        }
-
-        return true;
-    }//end of handleShipMenuSelection
-}// end of class 
