@@ -12,7 +12,7 @@ public class CelestialBody extends Main{
 
     public String basicScan()
     {
-        return name + " is a " + mass + " ton body with a radius of " + radius + "km.";
+        return name + " is a " + mass + "Mj body with a radius of " + radius + "Rj.";
     }
 
     public String getName()

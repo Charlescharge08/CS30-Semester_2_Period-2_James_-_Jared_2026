@@ -9,7 +9,7 @@ public class Terminal_Oppener {
     public Screen openTerminal() {
         try {
             DefaultTerminalFactory factory = new DefaultTerminalFactory();
-            //factory.setInitialTerminalSize(new TerminalSize(250, 100));
+            factory.setInitialTerminalSize(new TerminalSize(160, 50));
             
             Terminal terminal = factory.createTerminalEmulator(); 
 

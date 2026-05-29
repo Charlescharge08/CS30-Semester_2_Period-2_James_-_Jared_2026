@@ -3,19 +3,24 @@ import java.util.*;
 public class Main {
     public static int[][][] map = new int[4][4][4];
 
-    public static ArrayList<ArrayList<Star>> universe = new ArrayList<>();
-    public static void main(String[] args) throws Exception {
-        Terminal_Oppener opener = new Terminal_Oppener();
-        Screen screen = opener.openTerminal();
-        Starship playerShip = new Starship("IDK what to name it yet");
-        Inventory inventory = new Inventory();
-        LanternaMenuEngine menu = new LanternaMenuEngine(screen, playerShip, inventory);
-        
-        GameConsole gameConsole = new GameConsole();
-        
-        GameOutput.initialize(gameConsole, menu);
+    public static int playerX;
+    public static int playerY;
+    public static int playerZ;
 
-        
+    public static Starship playerShip = new Starship("IDK what to name it yet");
+    public static Inventory inventory = new Inventory();
+    
+    public static Terminal_Oppener opener = new Terminal_Oppener();
+
+    public static ArrayList<ArrayList<Star>> universe = new ArrayList<>();
+
+    public static Screen screen = opener.openTerminal();
+    
+    public static GameConsole gameConsole = new GameConsole();
+
+    public static LanternaMenuEngine menu = new LanternaMenuEngine(screen, playerShip, inventory);
+    public static void main(String[] args) throws Exception {
+        GameOutput.initialize(gameConsole, menu);
         
         GameOutput.println("Game started!");
         GameOutput.println("Welcome to STELLAR TERMINAL");
@@ -38,15 +43,17 @@ public class Main {
                 double mass = getMass();
                 String type = getType(mass);
                 int planets = (int)(Math.random() * 8) + 1;
-                Star saveStar = new Star(mass, Math.pow(mass, Math.pow(mass, 0.8)), name, type, getColour(type), planets);
+                Star saveStar = new Star(mass, Math.pow(mass,0.8), name, type, getColour(type), planets);
                 for (int j = 0; j < planets; j ++)
                 {
                     double planetMass = Math.pow(10, (int)(-(Math.random()*6)) - 1);
                     String planetName = name + " " + (char)('A'+ i);
                     String planetType = getPlanetType(planetMass);
                     String planetAtmosphere = getAtmosphere(planetMass);
-                    Exoplanet planetSave = new Exoplanet(planetMass, Math.pow(planetMass, 0.8), planetName, planetType, getLife(planetType, planetAtmosphere), getMoons(planetMass), (int)(Math.random()*512), planetAtmosphere, saveStar);
+                    ArrayList<String> resources = new ArrayList<>(Resources.planetResources(planetType));
+                    Exoplanet planetSave = new Exoplanet(planetMass, Math.pow(planetMass, 0.8), planetName, planetType, getLife(planetType, planetAtmosphere), getMoons(planetMass), (int)(Math.random()*512), planetAtmosphere, saveStar, new ArrayList<>(resources));
                     orbitingPlanets.add(planetSave);
+                    resources.clear();
                 }
                 saveStar.createSystem(orbitingPlanets);
                 systemSave.add(saveStar);
@@ -70,6 +77,10 @@ public class Main {
                 }
             }
         }
+
+        playerX = 0;
+        playerY = 0;
+        playerZ = 0;
     }
     // end initialize
 
@@ -268,5 +279,117 @@ public class Main {
         }
     }
     // end getLife
+
+    public static String surroundings()
+    {
+        String surroundings = "";
+        int position = getPosition();
+        if (playerShip.getScanLevel())
+        {
+            for (int i = 0; i < 26; i ++)
+            {
+                surroundings += universe.get(position).get(i).scan();
+                surroundings += "\n";
+            }
+        }
+        else
+        {
+            for (int i = 0; i < 26; i ++)
+            {
+                surroundings += universe.get(position).get(i).basicScan();
+                surroundings += "\n";
+            }
+        }
+        
+        return surroundings;
+    }
+
+    public static int getPosition()
+    {
+        return (playerX + 4*playerY + 16*playerZ);
+    }
+
+    public static boolean movement(int moveType)
+    {
+        if (playerShip.getFuel() <= 100.0)
+        {
+            GameOutput.println("Not enough fuel.");
+            return false;
+        }
+        
+        if (moveType == 0)
+        {
+            if (playerX != 3)
+            {
+                playerX++;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else if (moveType == 1)
+        {
+            if (playerX != 0)
+            {
+                playerX--;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else if (moveType == 2)
+        {
+            if (playerY != 3)
+            {
+                playerY++;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else if (moveType == 3)
+        {
+            if (playerY != 0)
+            {
+                playerY--;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else if (moveType == 4)
+        {
+            if (playerZ != 3)
+            {
+                playerZ++;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else if (moveType == 5)
+        {
+            if (playerZ != 0)
+            {
+                playerZ--;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+
+        playerShip.useFuel(100);
+        return true;
+    }
 }
 // end Main

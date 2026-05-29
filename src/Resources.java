@@ -57,6 +57,7 @@ public class Resources {
         r.add("Iron ore");
         r.add("Water"); 
         r.add("Food");
+        r.add("Uranium");
 
         if (chance(50)){
              r.add("Copper Deposit");
