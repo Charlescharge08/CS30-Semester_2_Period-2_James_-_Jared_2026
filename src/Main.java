@@ -396,5 +396,28 @@ public class Main {
     {
         return universe.get(getPosition());
     }
+
+    public static Star choiceStar;
+    public static Exoplanet choicePlanet;
+
+    public static void setChoiceStar(Star input)
+    {
+        choiceStar = input;
+    }
+
+    public static Star getChoiceStar()
+    {
+        return choiceStar;
+    }
+
+    public static void setChoicePlanet(Exoplanet input)
+    {
+        choicePlanet = input;
+    }
+
+    public static Exoplanet getChoicePlanet()
+    {
+        return choicePlanet;
+    }
 }
 // end Main

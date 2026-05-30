@@ -126,7 +126,7 @@ public class Resources {
     
     }
 
-     private static boolean chance(int percent) {
+     public static boolean chance(int percent) {
         return rand.nextInt(100) < percent;
     }
 }

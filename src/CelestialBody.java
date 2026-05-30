@@ -5,8 +5,8 @@ public class CelestialBody extends Main{
 
     public CelestialBody(double mass, double radius, String name)
     {
-        this.mass = mass;
-        this.radius = radius;
+        this.mass = ((int)(mass*100)) / 100;
+        this.radius = ((int)(radius*100)) / 100;
         this.name = name;
     }
 

@@ -155,7 +155,7 @@ public class LanternaMenuEngine {
                 currentMenu = showCraftingMenu();
             } else if (currentMenu == MenuChoice.LISTSTARS) {
                 currentMenu = listStars();
-            } else if (currentMenu == MenuChoice.LISTSTARS) {
+            } else if (currentMenu == MenuChoice.LISTPLANETS) {
                 currentMenu = listPlanets();
             } else {
                 currentMenu = MenuChoice.EXIT;
@@ -221,7 +221,7 @@ public class LanternaMenuEngine {
         }));
         buttons.addComponent(new Button("Get current position", () -> GameOutput.println("You are in Sector " + Main.getPosition() + ".")));
         buttons.addComponent(new Button("Scan Surrounding Stars", () -> GameOutput.println(Main.surroundings())));
-        buttons.addComponent(new Button("Visit Star System", () -> {
+        buttons.addComponent(new Button("Visit Star System (WARNING: VISITING AND LEAVING STAR SYSTEMS COSTS FUEL)", () -> {
             GameOutput.println("Star Systems opened");
             nextChoice[0] = MenuChoice.LISTSTARS;
             window.close();
@@ -257,18 +257,54 @@ public class LanternaMenuEngine {
 
         ArrayList<Star> sector = new ArrayList<>(Main.getSector());
 
-        buttons.addComponent(new Button(sector.get(0).getName(), () -> GameOutput.println("You are in Sector " + Main.getPosition() + ".")));
-        buttons.addComponent(new Button(sector.get(1).getName(), () -> GameOutput.println("You are in Sector " + Main.getPosition() + ".")));
-        buttons.addComponent(new Button(sector.get(2).getName(), () -> GameOutput.println("You are in Sector " + Main.getPosition() + ".")));
-        buttons.addComponent(new Button(sector.get(3).getName(), () -> GameOutput.println("You are in Sector " + Main.getPosition() + ".")));
-        buttons.addComponent(new Button(sector.get(4).getName(), () -> GameOutput.println("You are in Sector " + Main.getPosition() + ".")));
-        buttons.addComponent(new Button(sector.get(5).getName(), () -> GameOutput.println("You are in Sector " + Main.getPosition() + ".")));
-        buttons.addComponent(new Button(sector.get(6).getName(), () -> GameOutput.println("You are in Sector " + Main.getPosition() + ".")));
-        buttons.addComponent(new Button("Back", () -> {
-            GameOutput.println("Returned");
-            nextChoice[0] = MenuChoice.MAIN;
+        buttons.addComponent(new Button(sector.get(0).getName(), () -> {
+            Main.playerShip.useFuel(20);
+            Main.setChoiceStar(sector.get(0));
+            nextChoice[0] = MenuChoice.LISTPLANETS;
             window.close();
         }));
+        buttons.addComponent(new Button(sector.get(1).getName(), () -> {
+            Main.playerShip.useFuel(20);
+            Main.setChoiceStar(sector.get(1));
+            nextChoice[0] = MenuChoice.LISTPLANETS;
+            window.close();
+        }));
+        buttons.addComponent(new Button(sector.get(2).getName(), () -> {
+            Main.playerShip.useFuel(20);
+            Main.setChoiceStar(sector.get(2));
+            nextChoice[0] = MenuChoice.LISTPLANETS;
+            window.close();
+        }));
+        buttons.addComponent(new Button(sector.get(3).getName(), () -> {
+            Main.playerShip.useFuel(20);
+            Main.setChoiceStar(sector.get(3));
+            nextChoice[0] = MenuChoice.LISTPLANETS;
+            window.close();
+        }));
+        buttons.addComponent(new Button(sector.get(4).getName(), () -> {
+            Main.playerShip.useFuel(20);
+            Main.setChoiceStar(sector.get(4));
+            nextChoice[0] = MenuChoice.LISTPLANETS;
+            window.close();
+        }));
+        buttons.addComponent(new Button(sector.get(5).getName(), () -> {
+            Main.playerShip.useFuel(20);
+            Main.setChoiceStar(sector.get(5));
+            nextChoice[0] = MenuChoice.LISTPLANETS;
+            window.close();
+        }));
+        buttons.addComponent(new Button(sector.get(6).getName(), () -> {
+            Main.playerShip.useFuel(20);
+            Main.setChoiceStar(sector.get(6));
+            nextChoice[0] = MenuChoice.LISTPLANETS;
+            window.close();
+        }));
+        buttons.addComponent(new Button("Back", () -> {
+            GameOutput.println("Returned");
+            nextChoice[0] = MenuChoice.NAVIGATION;
+            window.close();
+        }));
+
         root.addComponent(buttons);
 
         root.addComponent(new Label(""));
@@ -283,7 +319,7 @@ public class LanternaMenuEngine {
         return nextChoice[0];
     }
 
-    private MenuChoice listPlanets(Star choice) throws IOException {
+    private MenuChoice listPlanets() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.MAIN};
         BasicWindow window = new BasicWindow("Planets");
         Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
@@ -291,20 +327,20 @@ public class LanternaMenuEngine {
         root.addComponent(new Label("PLANETS"));
         root.addComponent(new Label(""));
 
+        Star choice = Main.getChoiceStar();
+
         Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
 
         ArrayList<Exoplanet> sector = new ArrayList<>(choice.getSystem());
 
-        buttons.addComponent(new Button(sector.get(0).getName(), () -> GameOutput.println("You are in Sector " + Main.getPosition() + ".")));
-        buttons.addComponent(new Button(sector.get(1).getName(), () -> GameOutput.println("You are in Sector " + Main.getPosition() + ".")));
-        buttons.addComponent(new Button(sector.get(2).getName(), () -> GameOutput.println("You are in Sector " + Main.getPosition() + ".")));
-        buttons.addComponent(new Button(sector.get(3).getName(), () -> GameOutput.println("You are in Sector " + Main.getPosition() + ".")));
-        buttons.addComponent(new Button(sector.get(4).getName(), () -> GameOutput.println("You are in Sector " + Main.getPosition() + ".")));
-        buttons.addComponent(new Button(sector.get(5).getName(), () -> GameOutput.println("You are in Sector " + Main.getPosition() + ".")));
-        buttons.addComponent(new Button(sector.get(6).getName(), () -> GameOutput.println("You are in Sector " + Main.getPosition() + ".")));
+        for (int n = 0; n < choice.getNumPlanets(); n ++)
+        {
+            int i = n;
+            buttons.addComponent(new Button(sector.get(n).getName(), () -> GameOutput.println(sector.get(i).scan())));
+        }
         buttons.addComponent(new Button("Back", () -> {
             GameOutput.println("Returned");
-            nextChoice[0] = MenuChoice.MAIN;
+            nextChoice[0] = MenuChoice.LISTSTARS;
             window.close();
         }));
         root.addComponent(buttons);
