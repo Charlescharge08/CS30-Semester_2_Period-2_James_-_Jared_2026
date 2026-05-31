@@ -7,7 +7,7 @@ public class Main {
     public static int playerY;
     public static int playerZ;
 
-    public static Starship playerShip = new Starship("IDK what to name it yet");
+    public static Starship playerShip = new Starship("Excellence");
     public static Inventory inventory = new Inventory();
     
     public static Terminal_Oppener opener = new Terminal_Oppener();
@@ -21,12 +21,9 @@ public class Main {
     public static LanternaMenuEngine menu = new LanternaMenuEngine(screen, playerShip, inventory);
     public static void main(String[] args) throws Exception {
         GameOutput.initialize(gameConsole, menu);
-        
-        GameOutput.println("Game started!");
-        GameOutput.println("Welcome to STELLAR TERMINAL");
         generateUniverse();
-        GameOutput.println("Universe generated with " + universe.size() + " sectors!");
-        
+        GameOutput.println("You are the final member of humanity after the explosion of the sun. \nYou have lived your whole life in space with your parents, \nlearning how to live off of the various planets and stars around the galaxy. \nNow, they have died, and left you alone with only their ship, the Excellence. \nYou must survive by yourself in the cold galaxy. Your goal is to find \na nice habitable planet somewhere in the galaxy, and settle down.\r\n");
+        GameOutput.println("Welcome to the Excellence. This is your lifeline. Choose wisely.");
         menu.startMainMenu();
         System.exit(0);
 

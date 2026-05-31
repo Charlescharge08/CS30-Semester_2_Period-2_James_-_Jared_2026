@@ -29,7 +29,12 @@ public class Starship {
     // did not have time to start on this and add to the string
     public String getStatus() {
 
-        return shipName + " fuel: " + fuel + "/" + maxFuel + ". Cargo Space: " + cargoSpace + ".";
+        "Fuel: " + fuel + "/" + maxFuel + ". Cargo Space: " + cargoSpace + ".";
+    }
+
+    public String getName()
+    {
+        return shipName;
     }
 
     // did not have time to start on this and add to the string

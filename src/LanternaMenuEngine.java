@@ -177,7 +177,7 @@ public class LanternaMenuEngine {
             nextChoice[0] = MenuChoice.NAVIGATION;
             window.close();
         }));
-        buttons.addComponent(new Button("View Ship Status and Upgrades", () -> {
+        buttons.addComponent(new Button("View " + Main.playerShip.getName() + " Status and Upgrades", () -> {
             GameOutput.println("Ship system opened.");
             nextChoice[0] = MenuChoice.SHIP;
             window.close();
@@ -393,14 +393,14 @@ public class LanternaMenuEngine {
 
     private MenuChoice showShipStatusMenu() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.MAIN};
-        BasicWindow window = new BasicWindow("Ship Status");
+        BasicWindow window = new BasicWindow(Main.playerShip.getName() + " Status");
         Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
 
-        root.addComponent(new Label("SHIP STATUS"));
+        root.addComponent(new Label(Main.playerShip.getName().toUpperCase() + "STATUS"));
         root.addComponent(new Label(""));
 
         Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
-        buttons.addComponent(new Button("Show Ship Status", () -> GameOutput.println(playerShip.getStatus())));
+        buttons.addComponent(new Button("Show " + Main.playerShip.getName() + " Status", () -> GameOutput.println(playerShip.getStatus())));
         buttons.addComponent(new Button("Show Installed Upgrades", () -> GameOutput.println(playerShip.getUpgradeStatus())));
         buttons.addComponent(new Button("Inventory and Crafting", () -> {
             GameOutput.println("Inventory system opened.");
