@@ -49,8 +49,9 @@ public class Main {
                     String planetType = getPlanetType(planetMass);
                     String planetAtmosphere = getAtmosphere(planetMass);
                     int planetTemperature = (int)(Math.random()*512);
-                    ArrayList<String> resources = new ArrayList<>(Resources.planetResources(planetType));
-                    Exoplanet planetSave = new Exoplanet(planetMass, Math.pow(planetMass, 0.8), planetName, planetType, getLife(planetType, planetAtmosphere, planetTemperature), getMoons(planetMass), planetTemperature, planetAtmosphere, saveStar, new ArrayList<>(resources));
+                    boolean planetLife = getLife(planetType, planetAtmosphere, planetTemperature);
+                    ArrayList<String> resources = new ArrayList<>(Resources.planetResources(planetType, planetLife));
+                    Exoplanet planetSave = new Exoplanet(planetMass, Math.pow(planetMass, 0.8), planetName, planetType, planetLife, getMoons(planetMass), planetTemperature, planetAtmosphere, saveStar, new ArrayList<>(resources));
                     orbitingPlanets.add(planetSave);
                     resources.clear();
                 }
