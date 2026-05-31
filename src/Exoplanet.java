@@ -21,7 +21,7 @@ public class Exoplanet extends CelestialBody{
     
     public String scan()
     {
-        return name + " is a " + type + " exoplanet with " + moons + " moons orbiting " + parent.getName() + ". It's surface temperature is " + temperature + " kelvin and it has a " + atmosphere + " atmosphere. Has life: " + hasLife + ".";
+        return name + " is a " + type + " exoplanet with " + moons + " moons orbiting " + parent.getName() + ". \nIt's surface temperature is " + temperature + " kelvin and it has a " + atmosphere + " atmosphere. \nHas life: " + hasLife + ".";
     }
 
     public ArrayList<String> getResources()

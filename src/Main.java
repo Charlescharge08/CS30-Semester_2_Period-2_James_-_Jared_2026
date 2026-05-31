@@ -48,8 +48,9 @@ public class Main {
                     String planetName = name + "-" + (char)('A' + j);
                     String planetType = getPlanetType(planetMass);
                     String planetAtmosphere = getAtmosphere(planetMass);
+                    int planetTemperature = (int)(Math.random()*512);
                     ArrayList<String> resources = new ArrayList<>(Resources.planetResources(planetType));
-                    Exoplanet planetSave = new Exoplanet(planetMass, Math.pow(planetMass, 0.8), planetName, planetType, getLife(planetType, planetAtmosphere), getMoons(planetMass), (int)(Math.random()*512), planetAtmosphere, saveStar, new ArrayList<>(resources));
+                    Exoplanet planetSave = new Exoplanet(planetMass, Math.pow(planetMass, 0.8), planetName, planetType, getLife(planetType, planetAtmosphere, planetTemperature), getMoons(planetMass), planetTemperature, planetAtmosphere, saveStar, new ArrayList<>(resources));
                     orbitingPlanets.add(planetSave);
                     resources.clear();
                 }
@@ -260,20 +261,15 @@ public class Main {
     }
     // end getAtmosphere
 
-    public static boolean getLife(String type, String atmopshere)
+    public static boolean getLife(String type, String atmosphere, int temperature)
     {
-        if (type.equals("Gas Giant") || type.equals("Ice Giant"))
+        if ((223 < temperature && temperature < 323) && atmosphere.equals("Medium") && type.equals("Rocky") || type.equals("Superrocky") || type.equals("Subrocky"))
         {
-            return Math.random() > 0.98;
-            // replace with James' function later
-        }
-        else if (type.equals("Superrocky") || type.equals("Rocky") && (atmopshere.equals("High") || atmopshere.equals("Medium")))
-        {
-            return Math.random() > 0.90;
+            return Resources.chance(20);
         }
         else
         {
-            return false;
+            return Resources.chance(1);
         }
     }
     // end getLife
