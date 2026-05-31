@@ -24,9 +24,10 @@ public class Main {
         generateUniverse();
         GameOutput.println("You are the final member of humanity after the explosion of the sun. \nYou have lived your whole life in space with your parents, \nlearning how to live off of the various planets and stars around the galaxy. \nNow, they have died, and left you alone with only their ship, the Excellence. \nYou must survive by yourself in the cold galaxy. Your goal is to find \na nice habitable planet somewhere in the galaxy, and settle down.\r\n");
         GameOutput.println("Welcome to the Excellence. This is your lifeline. Choose wisely.");
+        inventory.addItem("Advanced Info-Grabber", 1);
+        inventory.addItem("Copper Wire", 5);
         menu.startMainMenu();
         System.exit(0);
-
     }
 
     public static void generateUniverse(){
@@ -44,7 +45,7 @@ public class Main {
                 for (int j = 0; j < planets; j ++)
                 {
                     double planetMass = Math.pow(10, (int)(-(Math.random()*6)) - 1);
-                    String planetName = name + " " + (char)('A'+ i);
+                    String planetName = name + "-" + (char)('A' + j);
                     String planetType = getPlanetType(planetMass);
                     String planetAtmosphere = getAtmosphere(planetMass);
                     ArrayList<String> resources = new ArrayList<>(Resources.planetResources(planetType));
@@ -52,7 +53,8 @@ public class Main {
                     orbitingPlanets.add(planetSave);
                     resources.clear();
                 }
-                saveStar.createSystem(orbitingPlanets);
+                saveStar.createSystem(new ArrayList<>(orbitingPlanets));
+                orbitingPlanets.clear();
                 systemSave.add(saveStar);
             }
             universe.add(new ArrayList<>(systemSave));
@@ -148,8 +150,7 @@ public class Main {
             decimal = ((mass - 16700) / 83300) * 10;
         }
 
-        decimal = Math.round(decimal*10)/10;
-        return type + decimal;
+        return type + (decimal + "").substring(0, 3); // If possible, fix rounding
     }
     // end getType
 
@@ -399,6 +400,7 @@ public class Main {
 
     public static void setChoiceStar(Star input)
     {
+        choiceStar = null;
         choiceStar = input;
     }
 
@@ -409,6 +411,7 @@ public class Main {
 
     public static void setChoicePlanet(Exoplanet input)
     {
+        choicePlanet = null;
         choicePlanet = input;
     }
 

@@ -332,12 +332,66 @@ public class LanternaMenuEngine {
         Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
 
         ArrayList<Exoplanet> sector = new ArrayList<>(choice.getSystem());
+        buttons.addComponent(new Button(sector.get(0).getName(), () -> GameOutput.println(sector.get(0).scan())));
 
-        for (int n = 0; n < choice.getNumPlanets(); n ++)
+        int numPlanets = choice.getNumPlanets();
+
+        if (numPlanets > 1)
         {
-            int i = n;
-            buttons.addComponent(new Button(sector.get(n).getName(), () -> GameOutput.println(sector.get(i).scan())));
+            buttons.addComponent(new Button(sector.get(1).getName(), () -> GameOutput.println(sector.get(1).scan())));
         }
+
+        if (numPlanets > 2)
+        {
+            buttons.addComponent(new Button(sector.get(2).getName(), () -> GameOutput.println(sector.get(2).scan())));
+        }
+
+        if (numPlanets > 3)
+        {
+            buttons.addComponent(new Button(sector.get(3).getName(), () -> GameOutput.println(sector.get(3).scan())));
+        }
+
+        if (numPlanets > 4)
+        {
+            buttons.addComponent(new Button(sector.get(4).getName(), () -> GameOutput.println(sector.get(4).scan())));
+        }
+
+        if (numPlanets > 5)
+        {
+            buttons.addComponent(new Button(sector.get(5).getName(), () -> GameOutput.println(sector.get(5).scan())));
+        }
+
+        if (numPlanets > 6)
+        {
+            buttons.addComponent(new Button(sector.get(6).getName(), () -> GameOutput.println(sector.get(6).scan())));
+        }
+
+        if (numPlanets > 7)
+        {
+            buttons.addComponent(new Button(sector.get(7).getName(), () -> GameOutput.println(sector.get(7).scan())));
+        }
+
+        if (numPlanets > 8)
+        {
+            buttons.addComponent(new Button(sector.get(8).getName(), () -> GameOutput.println(sector.get(8).scan())));
+        }
+
+        buttons.addComponent(new Button("Scan planets", () -> {
+            for (int i = 0; i < choice.getNumPlanets(); i ++)
+            {
+                if (Main.playerShip.getScanLevel())
+                {
+                    GameOutput.println(choice.getSystem().get(i).scan());
+                }
+                else
+                {
+                    GameOutput.println(choice.getSystem().get(i).basicScan());
+                }
+            }
+            nextChoice[0] = MenuChoice.LISTPLANETS;
+            window.close();
+        }));
+
         buttons.addComponent(new Button("Back", () -> {
             GameOutput.println("Returned");
             nextChoice[0] = MenuChoice.LISTSTARS;
