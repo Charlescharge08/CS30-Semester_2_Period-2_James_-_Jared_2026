@@ -28,4 +28,9 @@ public class Exoplanet extends CelestialBody{
     {
         return resources;
     }
+
+    public String type()
+    {
+        return type;
+    }
 }
