@@ -295,7 +295,7 @@ public class LanternaMenuEngine {
 
         return nextChoice[0];
     }
-
+//
     private MenuChoice listStars() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.MAIN};
         BasicWindow window = new BasicWindow("Stars");
