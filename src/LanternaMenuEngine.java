@@ -547,6 +547,12 @@ public class LanternaMenuEngine {
         root.addComponent(new Label(""));
 
         Exoplanet choice = Main.getChoicePlanet();
+        
+        if(choice == null) {
+            GameOutput.println("No planet selected");
+            return MenuChoice.LISTPLANETS;
+        }
+
 
         GameOutput.println(choice.scan());
 
@@ -751,11 +757,18 @@ public class LanternaMenuEngine {
     }
 
     private void refreshConsoleBox() {
-        if (consoleBox != null) {
-            consoleBox.setText(String.join("\n", consoleLines));
-            int firstVisibleLine = Math.max(0, consoleLines.size() - consoleBox.getSize().getRows());
-            consoleBox.getRenderer().setViewTopLeft(new TerminalPosition(0, firstVisibleLine));
+        if (consoleBox == null) {
+            return;
         }
+
+        consoleBox.setText(String.join("\n", consoleLines));
+
+        if (consoleBox.getTheme() == null) {
+            return;
+        }
+
+        int firstVisibleLine = Math.max(0, consoleLines.size() - consoleBox.getSize().getRows());
+        consoleBox.getRenderer().setViewTopLeft(new TerminalPosition(0, firstVisibleLine));
     }
 
     private void moveAndReturn(int moveType, MenuChoice[] nextChoice, BasicWindow window) {
