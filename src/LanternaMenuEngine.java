@@ -295,7 +295,7 @@ public class LanternaMenuEngine {
 
         return nextChoice[0];
     }
-//
+
     private MenuChoice listStars() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.MAIN};
         BasicWindow window = new BasicWindow("Stars");
@@ -560,32 +560,10 @@ public class LanternaMenuEngine {
         // (If NOT Gas/Ice Giant) Exploration
         // "Repairs"
         // (If Gas/Ice Giant) Collect Gasses
+        // Scan for Resources (Dependant on upgrade)
         // (If NOT Gas/Ice Giant) Land - Generates a 2D array based on planet and allows for exploration on this plane
         // and more-(James)
         // "Visit Moons (JARED - If we have time)"
-
-        if (Main.playerShip.getScanLevel())
-        {
-            buttons.addComponent(new Button("Scan for resources", () -> {
-                for (String resource : resources)
-                {
-                    GameOutput.println(resource);
-                }
-            }));
-        }
-        else
-        {
-            buttons.addComponent(new Button("Scan for resources (Top two)", () -> {
-                for (int i = 0; i < resources.size(); i ++)
-                {
-                    if (i == 2)
-                    {
-                        break;
-                    }
-                    GameOutput.println(resources.get(i));
-                }
-            }));
-        }
         
         buttons.addComponent(new Button("Back", () -> {
             GameOutput.println("Returned");
