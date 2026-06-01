@@ -7,7 +7,7 @@ public class Main {
     public static int playerY;
     public static int playerZ;
 
-    public static Starship playerShip = new Starship("IDK what to name it yet");
+    public static Starship playerShip = new Starship("Excellence");
     public static Inventory inventory = new Inventory();
     
     public static Terminal_Oppener opener = new Terminal_Oppener();
@@ -21,15 +21,13 @@ public class Main {
     public static LanternaMenuEngine menu = new LanternaMenuEngine(screen, playerShip, inventory);
     public static void main(String[] args) throws Exception {
         GameOutput.initialize(gameConsole, menu);
-        
-        GameOutput.println("Game started!");
-        GameOutput.println("Welcome to STELLAR TERMINAL");
         generateUniverse();
-        GameOutput.println("Universe generated with " + universe.size() + " sectors!");
-        
+        GameOutput.println("You are the final member of humanity after the explosion of the sun. \nYou have lived your whole life in space with your parents, \nlearning how to live off of the various planets and stars around the galaxy. \nNow, they have died, and left you alone with only their ship, the Excellence. \nYou must survive by yourself in the cold galaxy. Your goal is to find \na nice habitable planet somewhere in the galaxy, and settle down.\r\n");
+        GameOutput.println("Welcome to the Excellence. This is your lifeline. Choose wisely.");
+        inventory.addItem("Advanced Info-Grabber", 1);
+        inventory.addItem("Copper Wire", 5);
         menu.startMainMenu();
         System.exit(0);
-
     }
 
     public static void generateUniverse(){
@@ -47,15 +45,18 @@ public class Main {
                 for (int j = 0; j < planets; j ++)
                 {
                     double planetMass = Math.pow(10, (int)(-(Math.random()*6)) - 1);
-                    String planetName = name + " " + (char)('A'+ i);
+                    String planetName = name + "-" + (char)('A' + j);
                     String planetType = getPlanetType(planetMass);
                     String planetAtmosphere = getAtmosphere(planetMass);
-                    ArrayList<String> resources = new ArrayList<>(Resources.planetResources(planetType));
-                    Exoplanet planetSave = new Exoplanet(planetMass, Math.pow(planetMass, 0.8), planetName, planetType, getLife(planetType, planetAtmosphere), getMoons(planetMass), (int)(Math.random()*512), planetAtmosphere, saveStar, new ArrayList<>(resources));
+                    int planetTemperature = (int)(Math.random()*512);
+                    boolean planetLife = getLife(planetType, planetAtmosphere, planetTemperature);
+                    ArrayList<String> resources = new ArrayList<>(Resources.planetResources(planetType, planetLife));
+                    Exoplanet planetSave = new Exoplanet(planetMass, Math.pow(planetMass, 0.8), planetName, planetType, planetLife, getMoons(planetMass), planetTemperature, planetAtmosphere, saveStar, new ArrayList<>(resources));
                     orbitingPlanets.add(planetSave);
                     resources.clear();
                 }
-                saveStar.createSystem(orbitingPlanets);
+                saveStar.createSystem(new ArrayList<>(orbitingPlanets));
+                orbitingPlanets.clear();
                 systemSave.add(saveStar);
             }
             universe.add(new ArrayList<>(systemSave));
@@ -151,8 +152,7 @@ public class Main {
             decimal = ((mass - 16700) / 83300) * 10;
         }
 
-        decimal = Math.round(decimal*10)/10;
-        return type + decimal;
+        return type + (decimal + "").substring(0, 3); // If possible, fix rounding
     }
     // end getType
 
@@ -262,20 +262,15 @@ public class Main {
     }
     // end getAtmosphere
 
-    public static boolean getLife(String type, String atmopshere)
+    public static boolean getLife(String type, String atmosphere, int temperature)
     {
-        if (type.equals("Gas Giant") || type.equals("Ice Giant"))
+        if ((223 < temperature && temperature < 323) && atmosphere.equals("Medium") && type.equals("Rocky") || type.equals("Superrocky") || type.equals("Subrocky"))
         {
-            return Math.random() > 0.98;
-            // replace with James' function later
-        }
-        else if (type.equals("Superrocky") || type.equals("Rocky") && (atmopshere.equals("High") || atmopshere.equals("Medium")))
-        {
-            return Math.random() > 0.90;
+            return Resources.chance(20);
         }
         else
         {
-            return false;
+            return Resources.chance(1);
         }
     }
     // end getLife
@@ -390,6 +385,39 @@ public class Main {
 
         playerShip.useFuel(100);
         return true;
+    }
+
+    public static ArrayList<Star> getSector()
+    {
+        return universe.get(getPosition());
+    }
+
+    public static Star choiceStar;
+    public static Exoplanet choicePlanet;
+
+    public static void setChoiceStar(Star input)
+    {
+        if (choiceStar != input)
+        {
+            choicePlanet = null;
+        }
+
+        choiceStar = input;
+    }
+
+    public static Star getChoiceStar()
+    {
+        return choiceStar;
+    }
+
+    public static void setChoicePlanet(Exoplanet input)
+    {
+        choicePlanet = input;
+    }
+
+    public static Exoplanet getChoicePlanet()
+    {
+        return choicePlanet;
     }
 }
 // end Main

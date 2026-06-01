@@ -3,23 +3,31 @@ import java.util.*;
 public class Resources {
     private static Random rand = new Random();
 
-    public static final String[] RESOURCES = {"Iron ore", "Copper Deposit", "Gold", "Water", "Uranium", "Food", "Alien Fossils", "Ancient Artifact", "Helium Gas", "Hydrogen Gas", "Rare rocky Elements"};
+    public static final String[] RESOURCES = {"Iron ore", "Copper Deposit", "Gold", "Water", "Uranium", "Food", "Alien Fossils", "Ancient Artifact", "Helium Gas", "Hydrogen Gas", "Rare rocky Elements", "Weird Alien Carcass"};
     
-    public static List<String> planetResources(String Type){
+    public static List<String> planetResources(String Type, boolean hasLife){
 
+        List<String> returnValues = null;
+        
         switch (Type.toLowerCase()){
             case "superrocky":
-                return superrocky();
+                returnValues = superrocky();
             case "rocky":
-                return rocky();
+                returnValues = rocky();
             case "subrocky":
-                return subrocky();
+                returnValues = subrocky();
             case "gas giant":
-                return gasGiant();
+                returnValues = gasGiant();
             case "ice giant":
-                return iceGiant();
+                returnValues = iceGiant();
         }
-        return null;
+
+        if (hasLife)
+        {
+            returnValues.add("Weird Alien Carcass");
+        }
+        
+        return returnValues;
 
     }
 
@@ -126,7 +134,7 @@ public class Resources {
     
     }
 
-     private static boolean chance(int percent) {
+     public static boolean chance(int percent) {
         return rand.nextInt(100) < percent;
     }
 }
