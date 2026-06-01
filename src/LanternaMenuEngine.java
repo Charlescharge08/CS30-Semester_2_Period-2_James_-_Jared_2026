@@ -295,7 +295,7 @@ public class LanternaMenuEngine {
 
         return nextChoice[0];
     }
-
+//
     private MenuChoice listStars() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.MAIN};
         BasicWindow window = new BasicWindow("Stars");
@@ -309,44 +309,58 @@ public class LanternaMenuEngine {
         ArrayList<Star> sector = new ArrayList<>(Main.getSector());
 
         buttons.addComponent(new Button(sector.get(0).getName(), () -> {
-            Main.playerShip.useFuel(20);
-            Main.setChoiceStar(sector.get(0));
+            if (Main.getChoiceStar() != sector.get(0)) {
+                Main.playerShip.useFuel(20);
+                Main.setChoiceStar(sector.get(0));
+            }
             nextChoice[0] = MenuChoice.LISTPLANETS;
             window.close();
         }));
         buttons.addComponent(new Button(sector.get(1).getName(), () -> {
-            Main.playerShip.useFuel(20);
-            Main.setChoiceStar(sector.get(1));
+            if (Main.getChoiceStar() != sector.get(1)) {
+                Main.playerShip.useFuel(20);
+                Main.setChoiceStar(sector.get(1));
+            }
             nextChoice[0] = MenuChoice.LISTPLANETS;
             window.close();
         }));
         buttons.addComponent(new Button(sector.get(2).getName(), () -> {
-            Main.playerShip.useFuel(20);
-            Main.setChoiceStar(sector.get(2));
+            if (Main.getChoiceStar() != sector.get(2)) {
+                Main.playerShip.useFuel(20);
+                Main.setChoiceStar(sector.get(2));
+            }
             nextChoice[0] = MenuChoice.LISTPLANETS;
             window.close();
         }));
         buttons.addComponent(new Button(sector.get(3).getName(), () -> {
-            Main.playerShip.useFuel(20);
-            Main.setChoiceStar(sector.get(3));
+            if (Main.getChoiceStar() != sector.get(3)) {
+                Main.playerShip.useFuel(20);
+                Main.setChoiceStar(sector.get(3));
+            }
             nextChoice[0] = MenuChoice.LISTPLANETS;
             window.close();
         }));
         buttons.addComponent(new Button(sector.get(4).getName(), () -> {
-            Main.playerShip.useFuel(20);
-            Main.setChoiceStar(sector.get(4));
+            if (Main.getChoiceStar() != sector.get(4)) {
+                Main.playerShip.useFuel(20);
+                Main.setChoiceStar(sector.get(4));
+            }
             nextChoice[0] = MenuChoice.LISTPLANETS;
             window.close();
         }));
         buttons.addComponent(new Button(sector.get(5).getName(), () -> {
-            Main.playerShip.useFuel(20);
-            Main.setChoiceStar(sector.get(5));
+            if (Main.getChoiceStar() != sector.get(5)) {
+                Main.playerShip.useFuel(20);
+                Main.setChoiceStar(sector.get(5));
+            }
             nextChoice[0] = MenuChoice.LISTPLANETS;
             window.close();
         }));
         buttons.addComponent(new Button(sector.get(6).getName(), () -> {
-            Main.playerShip.useFuel(20);
-            Main.setChoiceStar(sector.get(6));
+            if (Main.getChoiceStar() != sector.get(6)) {
+                Main.playerShip.useFuel(20);
+                Main.setChoiceStar(sector.get(6));
+            }
             nextChoice[0] = MenuChoice.LISTPLANETS;
             window.close();
         }));
@@ -384,8 +398,10 @@ public class LanternaMenuEngine {
 
         ArrayList<Exoplanet> sector = new ArrayList<>(choice.getSystem());
         buttons.addComponent(new Button(sector.get(0).getName(), () -> {
-            Main.setChoicePlanet(sector.get(0));
-            Main.playerShip.useFuel(5);
+            if (Main.getChoicePlanet() != sector.get(0)) {
+                Main.setChoicePlanet(sector.get(0));
+                Main.playerShip.useFuel(5);
+            }
             nextChoice[0] = MenuChoice.PLANETOPTIONS;
             window.close();
         }));
@@ -395,8 +411,10 @@ public class LanternaMenuEngine {
         if (numPlanets > 1)
         {
             buttons.addComponent(new Button(sector.get(1).getName(), () -> {
-                Main.setChoicePlanet(sector.get(1));
-                Main.playerShip.useFuel(5);
+                if (Main.getChoicePlanet() != sector.get(1)) {
+                    Main.setChoicePlanet(sector.get(1));
+                    Main.playerShip.useFuel(5);
+                }
                 nextChoice[0] = MenuChoice.PLANETOPTIONS;
                 window.close();
             }));
@@ -405,8 +423,10 @@ public class LanternaMenuEngine {
         if (numPlanets > 2)
         {
             buttons.addComponent(new Button(sector.get(2).getName(), () -> {
-                Main.setChoicePlanet(sector.get(2));
-                Main.playerShip.useFuel(5);
+                if (Main.getChoicePlanet() != sector.get(2)) {
+                    Main.setChoicePlanet(sector.get(2));
+                    Main.playerShip.useFuel(5);
+                }
                 nextChoice[0] = MenuChoice.PLANETOPTIONS;
                 window.close();
             }));
@@ -415,8 +435,10 @@ public class LanternaMenuEngine {
         if (numPlanets > 3)
         {
             buttons.addComponent(new Button(sector.get(3).getName(), () -> {
-                Main.setChoicePlanet(sector.get(3));
-                Main.playerShip.useFuel(5);
+                if (Main.getChoicePlanet() != sector.get(3)) {
+                    Main.setChoicePlanet(sector.get(3));
+                    Main.playerShip.useFuel(5);
+                }
                 nextChoice[0] = MenuChoice.PLANETOPTIONS;
                 window.close();
             }));
@@ -425,8 +447,10 @@ public class LanternaMenuEngine {
         if (numPlanets > 4)
         {
             buttons.addComponent(new Button(sector.get(4).getName(), () -> {
-                Main.setChoicePlanet(sector.get(4));
-                Main.playerShip.useFuel(5);
+                if (Main.getChoicePlanet() != sector.get(4)) {
+                    Main.setChoicePlanet(sector.get(4));
+                    Main.playerShip.useFuel(5);
+                }
                 nextChoice[0] = MenuChoice.PLANETOPTIONS;
                 window.close();
             }));
@@ -435,8 +459,10 @@ public class LanternaMenuEngine {
         if (numPlanets > 5)
         {
             buttons.addComponent(new Button(sector.get(5).getName(), () -> {
-                Main.setChoicePlanet(sector.get(5));
-                Main.playerShip.useFuel(5);
+                if (Main.getChoicePlanet() != sector.get(5)) {
+                    Main.setChoicePlanet(sector.get(5));
+                    Main.playerShip.useFuel(5);
+                }
                 nextChoice[0] = MenuChoice.PLANETOPTIONS;
                 window.close();
             }));
@@ -445,8 +471,10 @@ public class LanternaMenuEngine {
         if (numPlanets > 6)
         {
             buttons.addComponent(new Button(sector.get(6).getName(), () -> {
-                Main.setChoicePlanet(sector.get(6));
-                Main.playerShip.useFuel(5);
+                if (Main.getChoicePlanet() != sector.get(6)) {
+                    Main.setChoicePlanet(sector.get(6));
+                    Main.playerShip.useFuel(5);
+                }
                 nextChoice[0] = MenuChoice.PLANETOPTIONS;
                 window.close();
             }));
@@ -455,8 +483,10 @@ public class LanternaMenuEngine {
         if (numPlanets > 7)
         {
             buttons.addComponent(new Button(sector.get(7).getName(), () -> {
-                Main.setChoicePlanet(sector.get(7));
-                Main.playerShip.useFuel(5);
+                if (Main.getChoicePlanet() != sector.get(7)) {
+                    Main.setChoicePlanet(sector.get(7));
+                    Main.playerShip.useFuel(5);
+                }
                 nextChoice[0] = MenuChoice.PLANETOPTIONS;
                 window.close();
             }));
@@ -465,8 +495,10 @@ public class LanternaMenuEngine {
         if (numPlanets > 8)
         {
             buttons.addComponent(new Button(sector.get(8).getName(), () -> {
-                Main.setChoicePlanet(sector.get(8));
-                Main.playerShip.useFuel(5);
+                if (Main.getChoicePlanet() != sector.get(8)) {
+                    Main.setChoicePlanet(sector.get(8));
+                    Main.playerShip.useFuel(5);
+                }
                 nextChoice[0] = MenuChoice.PLANETOPTIONS;
                 window.close();
             }));
