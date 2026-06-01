@@ -16,7 +16,7 @@ public class Exoplanet extends CelestialBody{
         this.temperature = temperature;
         this.atmosphere = atmosphere;
         this.parent = parent;
-        this.resources = resources;
+        this.resources = new ArrayList<String>(resources);
     }
     
     public String scan()

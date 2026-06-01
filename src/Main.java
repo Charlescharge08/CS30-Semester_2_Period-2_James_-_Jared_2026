@@ -417,5 +417,25 @@ public class Main {
     {
         return choicePlanet;
     }
+
+    public static int playerLandX;
+    public static int playerLandY;
+    public static String[][] land;
+
+    public static void landing(String type)
+    {
+        if (type.equals("Superrocky"))
+        {
+            land = new String[3][3];
+            playerLandX = 0;
+            playerLandY = 0;
+        }
+        else
+        {
+            land = new String[2][2];
+            playerLandX = 0;
+            playerLandY = 0;
+        }
+    }
 }
 // end Main

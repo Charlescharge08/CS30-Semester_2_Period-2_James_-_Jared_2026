@@ -565,10 +565,17 @@ public class LanternaMenuEngine {
         // (If NOT Gas/Ice Giant) Exploration
         // "Repairs"
         // (If Gas/Ice Giant) Collect Gasses
-        // Scan for Resources (Dependant on upgrade)
         // (If NOT Gas/Ice Giant) Land - Generates a 2D array based on planet and allows for exploration on this plane
         // and more-(James)
         // "Visit Moons (JARED - If we have time)"
+
+        if (!isGasOrIceGiant)
+        {
+            buttons.addComponent(new Button("Land", () -> {
+                nextChoice[0] = MenuChoice.LANDINGMOVEMENT;
+                Main.landing(choice.type());
+            }));
+        }
         
 
         if (Main.playerShip.getScanLevel())
