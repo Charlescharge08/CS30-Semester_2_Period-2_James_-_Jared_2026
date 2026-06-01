@@ -6,6 +6,7 @@ import com.googlecode.lanterna.gui2.LinearLayout;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.TextBox;
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
@@ -691,6 +692,8 @@ public class LanternaMenuEngine {
     private void refreshConsoleBox() {
         if (consoleBox != null) {
             consoleBox.setText(String.join("\n", consoleLines));
+            int firstVisibleLine = Math.max(0, consoleLines.size() - consoleBox.getSize().getRows());
+            consoleBox.getRenderer().setViewTopLeft(new TerminalPosition(0, firstVisibleLine));
         }
     }
 
