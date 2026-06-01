@@ -525,6 +525,7 @@ public class LanternaMenuEngine {
         // Scan for Resources (Dependant on upgrade)
         // (If NOT Gas/Ice Giant) Land - Generates a 2D array based on planet and allows for exploration on this plane
         // and more-(James)
+        // "Visit Moons (JARED - If we have time)"
         
         buttons.addComponent(new Button("Back", () -> {
             GameOutput.println("Returned");
