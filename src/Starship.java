@@ -9,6 +9,7 @@ public class Starship {
     private int engineLevel;
     private int cargoLevel;
     private boolean scanUpgrade;
+    private boolean miningUpgrade;
 
      public Starship(String name) {
 
@@ -25,6 +26,7 @@ public class Starship {
         engineLevel = 1;
         cargoLevel = 1;
         scanUpgrade = false;
+        miningUpgrade = false;
     }
     // did not have time to start on this and add to the string
     public String getStatus() {
@@ -35,6 +37,11 @@ public class Starship {
     public String getName()
     {
         return shipName;
+    }
+
+    public void upgradeMining()
+    {
+        miningUpgrade = true;
     }
 
     // did not have time to start on this and add to the string

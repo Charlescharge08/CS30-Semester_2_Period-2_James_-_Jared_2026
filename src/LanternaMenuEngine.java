@@ -516,6 +516,15 @@ public class LanternaMenuEngine {
         Exoplanet choice = Main.getChoicePlanet();
 
         Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        // "Print landing image"
+        // (If NOT Gas/Ice Giant) Mine
+        // (If NOT Gas/Ice Giant) Exploration
+        // "Repairs"
+        // (If Gas/Ice Giant) Collect Gasses
+        // Scan for Resources (Dependant on upgrade)
+        // (If NOT Gas/Ice Giant) Land - Generates a 2D array based on planet and allows for exploration on this plane
+        // and more-(James)
         
         buttons.addComponent(new Button("Back", () -> {
             GameOutput.println("Returned");
