@@ -24,8 +24,6 @@ public class Main {
         generateUniverse();
         GameOutput.println("You are the final member of humanity after the explosion of the sun. \nYou have lived your whole life in space with your parents, \nlearning how to live off of the various planets and stars around the galaxy. \nNow, they have died, and left you alone with only their ship, the Excellence. \nYou must survive by yourself in the cold galaxy. Your goal is to find \na nice habitable planet somewhere in the galaxy, and settle down.\r\n");
         GameOutput.println("Welcome to the Excellence. This is your lifeline. Choose wisely.");
-        inventory.addItem("Advanced Info-Grabber", 1);
-        inventory.addItem("Copper Wire", 5);
         menu.startMainMenu();
         System.exit(0);
     }

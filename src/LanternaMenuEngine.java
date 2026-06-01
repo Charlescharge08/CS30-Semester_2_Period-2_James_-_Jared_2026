@@ -548,7 +548,10 @@ public class LanternaMenuEngine {
 
         Exoplanet choice = Main.getChoicePlanet();
 
-        GameOutput.println(choice.scan());
+        if(choice == null){
+            GameOutput.println("No plannet selcted");
+            return MenuChoice.LISTPLANETS;
+        }
 
         boolean isGasOrIceGiant = (choice.type().equals("Gas Giant") || choice.type().equals("Ice Giant"));
         ArrayList<String> resources = choice.getResources();
@@ -565,6 +568,31 @@ public class LanternaMenuEngine {
         // and more-(James)
         // "Visit Moons (JARED - If we have time)"
         
+
+        if (Main.playerShip.getScanLevel())
+            {
+                buttons.addComponent(new Button("Scan for resources", () -> {
+                    for (String resource : resources)
+                    {
+                        GameOutput.println(resource);
+                    }
+                }));
+            }
+            else
+            {
+                buttons.addComponent(new Button("Scan for resources (Top two)", () -> {
+                    for (int i = 0; i < resources.size(); i ++)
+                    {
+                        if (i == 2)
+                        {
+                            break;
+                        }
+                        GameOutput.println(resources.get(i));
+                    }
+                }));
+            }
+    
+
         buttons.addComponent(new Button("Back", () -> {
             GameOutput.println("Returned");
             nextChoice[0] = MenuChoice.LISTPLANETS;
@@ -727,11 +755,24 @@ public class LanternaMenuEngine {
     }
 
     private void refreshConsoleBox() {
-        if (consoleBox != null) {
-            consoleBox.setText(String.join("\n", consoleLines));
-            int firstVisibleLine = Math.max(0, consoleLines.size() - consoleBox.getSize().getRows());
-            consoleBox.getRenderer().setViewTopLeft(new TerminalPosition(0, firstVisibleLine));
+        if(consoleBox == null){
+            return;
         }
+
+        consoleBox.setText(String.join("\n", consoleLines));
+
+        if(consoleBox.getTheme() == null){
+            return;
+        }
+
+        int firstVisibleLine = Math.max(0, consoleLines.size() - consoleBox.getSize().getRows());
+        consoleBox.getRenderer().setViewTopLeft(new TerminalPosition(0, firstVisibleLine));
+        
+        //if (consoleBox != null) {
+        //    consoleBox.setText(String.join("\n", consoleLines));
+        //    int firstVisibleLine = Math.max(0, consoleLines.size() - consoleBox.getSize().getRows());
+        //    consoleBox.getRenderer().setViewTopLeft(new TerminalPosition(0, firstVisibleLine));
+        //}
     }
 
     private void moveAndReturn(int moveType, MenuChoice[] nextChoice, BasicWindow window) {
