@@ -548,6 +548,11 @@ public class LanternaMenuEngine {
 
         Exoplanet choice = Main.getChoicePlanet();
 
+        GameOutput.println(choice.scan());
+
+        boolean isGasOrIceGiant = (choice.type().equals("Gas Giant") || choice.type().equals("Ice Giant"));
+        ArrayList<String> resources = choice.getResources();
+
         Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
 
         // "Print landing image"
