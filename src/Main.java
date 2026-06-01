@@ -397,7 +397,11 @@ public class Main {
 
     public static void setChoiceStar(Star input)
     {
-        choiceStar = null;
+        if (choiceStar != input)
+        {
+            choicePlanet = null;
+        }
+
         choiceStar = input;
     }
 
@@ -408,7 +412,6 @@ public class Main {
 
     public static void setChoicePlanet(Exoplanet input)
     {
-        choicePlanet = null;
         choicePlanet = input;
     }
 
