@@ -21,6 +21,7 @@ public class LanternaMenuEngine {
         CRAFTING,
         LISTSTARS,
         LISTPLANETS,
+        PLANETOPTIONS,
         EXIT
     }
 
@@ -129,6 +130,15 @@ public class LanternaMenuEngine {
         }
     }
 
+    public void openPlanetOptions()
+    {
+        try {
+            runMenu(MenuChoice.PLANETOPTIONS);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void openCraftingAndUpgradesMenu() {
         try {
             runMenu(MenuChoice.CRAFTING);
@@ -157,6 +167,8 @@ public class LanternaMenuEngine {
                 currentMenu = listStars();
             } else if (currentMenu == MenuChoice.LISTPLANETS) {
                 currentMenu = listPlanets();
+            } else if (currentMenu == MenuChoice.PLANETOPTIONS) {
+                currentMenu = planetOptions();
             } else {
                 currentMenu = MenuChoice.EXIT;
             }
@@ -221,7 +233,7 @@ public class LanternaMenuEngine {
         }));
         buttons.addComponent(new Button("Get current position", () -> GameOutput.println("You are in Sector " + Main.getPosition() + ".")));
         buttons.addComponent(new Button("Scan Surrounding Stars", () -> GameOutput.println(Main.surroundings())));
-        buttons.addComponent(new Button("Visit Star System (WARNING: VISITING AND LEAVING STAR SYSTEMS COSTS FUEL)", () -> {
+        buttons.addComponent(new Button("Visit Star System (WARNING: VISITING AND LEAVING STAR SYSTEMS/PLANETS COSTS FUEL)", () -> {
             GameOutput.println("Star Systems opened");
             nextChoice[0] = MenuChoice.LISTSTARS;
             window.close();
@@ -332,48 +344,93 @@ public class LanternaMenuEngine {
         Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
 
         ArrayList<Exoplanet> sector = new ArrayList<>(choice.getSystem());
-        buttons.addComponent(new Button(sector.get(0).getName(), () -> GameOutput.println(sector.get(0).scan())));
+        buttons.addComponent(new Button(sector.get(0).getName(), () -> {
+            Main.setChoicePlanet(sector.get(0));
+            Main.playerShip.useFuel(5);
+            nextChoice[0] = MenuChoice.PLANETOPTIONS;
+            window.close();
+        }));
 
         int numPlanets = choice.getNumPlanets();
 
         if (numPlanets > 1)
         {
-            buttons.addComponent(new Button(sector.get(1).getName(), () -> GameOutput.println(sector.get(1).scan())));
+            buttons.addComponent(new Button(sector.get(1).getName(), () -> {
+                Main.setChoicePlanet(sector.get(1));
+                Main.playerShip.useFuel(5);
+                nextChoice[0] = MenuChoice.PLANETOPTIONS;
+                window.close();
+            }));
         }
 
         if (numPlanets > 2)
         {
-            buttons.addComponent(new Button(sector.get(2).getName(), () -> GameOutput.println(sector.get(2).scan())));
+            buttons.addComponent(new Button(sector.get(2).getName(), () -> {
+                Main.setChoicePlanet(sector.get(2));
+                Main.playerShip.useFuel(5);
+                nextChoice[0] = MenuChoice.PLANETOPTIONS;
+                window.close();
+            }));
         }
 
         if (numPlanets > 3)
         {
-            buttons.addComponent(new Button(sector.get(3).getName(), () -> GameOutput.println(sector.get(3).scan())));
+            buttons.addComponent(new Button(sector.get(3).getName(), () -> {
+                Main.setChoicePlanet(sector.get(3));
+                Main.playerShip.useFuel(5);
+                nextChoice[0] = MenuChoice.PLANETOPTIONS;
+                window.close();
+            }));
         }
 
         if (numPlanets > 4)
         {
-            buttons.addComponent(new Button(sector.get(4).getName(), () -> GameOutput.println(sector.get(4).scan())));
+            buttons.addComponent(new Button(sector.get(4).getName(), () -> {
+                Main.setChoicePlanet(sector.get(4));
+                Main.playerShip.useFuel(5);
+                nextChoice[0] = MenuChoice.PLANETOPTIONS;
+                window.close();
+            }));
         }
 
         if (numPlanets > 5)
         {
-            buttons.addComponent(new Button(sector.get(5).getName(), () -> GameOutput.println(sector.get(5).scan())));
+            buttons.addComponent(new Button(sector.get(5).getName(), () -> {
+                Main.setChoicePlanet(sector.get(5));
+                Main.playerShip.useFuel(5);
+                nextChoice[0] = MenuChoice.PLANETOPTIONS;
+                window.close();
+            }));
         }
 
         if (numPlanets > 6)
         {
-            buttons.addComponent(new Button(sector.get(6).getName(), () -> GameOutput.println(sector.get(6).scan())));
+            buttons.addComponent(new Button(sector.get(6).getName(), () -> {
+                Main.setChoicePlanet(sector.get(6));
+                Main.playerShip.useFuel(5);
+                nextChoice[0] = MenuChoice.PLANETOPTIONS;
+                window.close();
+            }));
         }
 
         if (numPlanets > 7)
         {
-            buttons.addComponent(new Button(sector.get(7).getName(), () -> GameOutput.println(sector.get(7).scan())));
+            buttons.addComponent(new Button(sector.get(7).getName(), () -> {
+                Main.setChoicePlanet(sector.get(7));
+                Main.playerShip.useFuel(5);
+                nextChoice[0] = MenuChoice.PLANETOPTIONS;
+                window.close();
+            }));
         }
 
         if (numPlanets > 8)
         {
-            buttons.addComponent(new Button(sector.get(8).getName(), () -> GameOutput.println(sector.get(8).scan())));
+            buttons.addComponent(new Button(sector.get(8).getName(), () -> {
+                Main.setChoicePlanet(sector.get(8));
+                Main.playerShip.useFuel(5);
+                nextChoice[0] = MenuChoice.PLANETOPTIONS;
+                window.close();
+            }));
         }
 
         buttons.addComponent(new Button("Scan planets", () -> {
@@ -395,6 +452,36 @@ public class LanternaMenuEngine {
         buttons.addComponent(new Button("Back", () -> {
             GameOutput.println("Returned");
             nextChoice[0] = MenuChoice.LISTSTARS;
+            window.close();
+        }));
+        root.addComponent(buttons);
+
+        root.addComponent(new Label(""));
+        root.addComponent(new Label("Console"));
+        consoleBox = createConsoleBox();
+        root.addComponent(consoleBox);
+        refreshConsoleBox();
+
+        window.setComponent(root);
+        gui.addWindowAndWait(window);
+        return nextChoice[0];
+    }
+
+    private MenuChoice planetOptions() throws IOException {
+        final MenuChoice[] nextChoice = {MenuChoice.MAIN};
+        BasicWindow window = new BasicWindow("Options");
+        Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        root.addComponent(new Label("OPTIONS"));
+        root.addComponent(new Label(""));
+
+        Exoplanet choice = Main.getChoicePlanet();
+
+        Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
+        
+        buttons.addComponent(new Button("Back", () -> {
+            GameOutput.println("Returned");
+            nextChoice[0] = MenuChoice.LISTPLANETS;
             window.close();
         }));
         root.addComponent(buttons);

@@ -67,15 +67,13 @@ public class Starship {
     }
 
     public void useFuel(int amount) {
-
-        fuel -= amount / engineLevel;
-
         if (Resources.chance(50 - (engineLevel*10)))
         {
-            fuel -= amount / engineLevel;
+            amount *= 2;
             GameOutput.println("Your engine sputtered. Fuel loss doubles.");
         }
-        
+
+        fuel -= amount / engineLevel;
 
         if(fuel < 0) {
             fuel = 0;
