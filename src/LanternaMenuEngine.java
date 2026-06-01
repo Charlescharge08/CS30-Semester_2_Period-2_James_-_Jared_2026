@@ -549,12 +549,14 @@ public class LanternaMenuEngine {
         Exoplanet choice = Main.getChoicePlanet();
 
         if(choice == null){
-            GameOutput.println("No plannet selcted");
+            GameOutput.println("No plnnet selected");
             return MenuChoice.LISTPLANETS;
         }
 
         boolean isGasOrIceGiant = (choice.type().equals("Gas Giant") || choice.type().equals("Ice Giant"));
         ArrayList<String> resources = choice.getResources();
+
+        GameOutput.println(choice.scan());
 
         Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
 
