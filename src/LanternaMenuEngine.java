@@ -580,6 +580,8 @@ public class LanternaMenuEngine {
             return MenuChoice.LISTPLANETS;
         }
 
+        boolean isGasOrIceGiant = choice.type().equals("Gas Giant") || choice.type().equals("Ice Giant");
+
         ArrayList<String> resources = choice.getResources();
 
         GameOutput.println("You are now orbiting around:\n" + choice.scan());
@@ -594,6 +596,15 @@ public class LanternaMenuEngine {
         // (If NOT Gas/Ice Giant) Land - Generates a 2D array based on planet and allows for exploration on this plane
         // and more-(James)
         // "Visit Moons (JARED - If we have time)"
+
+        if (!isGasOrIceGiant)
+        {
+            buttons.addComponent(new Button("Land", () -> {
+                Main.landing(choice.type(), choice);
+                nextChoice[0] = MenuChoice.LANDINGMOVEMENT;
+                window.close();
+            }));
+        }
 
         if (Main.getChoicePlanetScanned())
         {
