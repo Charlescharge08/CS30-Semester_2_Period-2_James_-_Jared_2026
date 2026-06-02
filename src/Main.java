@@ -396,12 +396,14 @@ public class Main {
 
     public static Star choiceStar;
     public static Exoplanet choicePlanet;
+    private static boolean choicePlanetScanned;
 
     public static void setChoiceStar(Star input)
     {
         if (choiceStar != input)
         {
             choicePlanet = null;
+            choicePlanetScanned = false;
         }
 
         choiceStar = input;
@@ -416,6 +418,11 @@ public class Main {
 
     public static void setChoicePlanet(Exoplanet input)
     {
+        if (choicePlanet != input)
+        {
+            choicePlanetScanned = false;
+        }
+
         choicePlanet = input;
     }
     // end setChoicePlanet
@@ -423,6 +430,16 @@ public class Main {
     public static Exoplanet getChoicePlanet()
     {
         return choicePlanet;
+    }
+
+    public static void setChoicePlanetScanned(boolean scanned)
+    {
+        choicePlanetScanned = scanned;
+    }
+
+    public static boolean getChoicePlanetScanned()
+    {
+        return choicePlanetScanned;
     }
     // end getChoicePlanet
 

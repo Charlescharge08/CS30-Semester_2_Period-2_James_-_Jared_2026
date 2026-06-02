@@ -57,18 +57,48 @@ public class Inventory {
     public String getInventorySummary() {
         StringBuilder summary = new StringBuilder("Inventory:");
 
-        if (items.isEmpty()) {
+        ArrayList<String> itemNames = new ArrayList<>();
+        for (String item : items.keySet()) {
+            if (items.get(item) > 0) {
+                itemNames.add(item);
+            }
+        }
+
+        if (itemNames.isEmpty()) {
             summary.append("\n(empty)");
             return summary.toString();
         }
 
-        ArrayList<String> amount = new ArrayList<>(items.keySet());
+        insertionSortAlphabetical(itemNames);
 
-        for (int i = 0; i < amount.size(); i++) {
-            String item = amount.get(i);
+        for (int i = 0; i < itemNames.size(); i++) {
+            String item = itemNames.get(i);
             summary.append("\n").append(item).append(" = ").append(items.get(item));
         }
 
         return summary.toString();
+    }
+
+    private void insertionSortAlphabetical(ArrayList<String> itemNames) {
+        for (int i = 1; i < itemNames.size(); i++) {
+            String current = itemNames.get(i);
+            int j = i - 1;
+
+            while (j >= 0 && compareAlphabetical(itemNames.get(j), current) > 0) {
+                itemNames.set(j + 1, itemNames.get(j));
+                j--;
+            }
+
+            itemNames.set(j + 1, current);
+        }
+    }
+
+    private int compareAlphabetical(String left, String right) {
+        int compareIgnoreCase = left.compareToIgnoreCase(right);
+        if (compareIgnoreCase != 0) {
+            return compareIgnoreCase;
+        }
+
+        return left.compareTo(right);
     }
 }
