@@ -591,31 +591,30 @@ public class LanternaMenuEngine {
         }
         
 
-        if (Main.playerShip.getScanLevel())
-            {
-                buttons.addComponent(new Button("Scan for resources", () -> {
-                    for (String resource : resources)
+        if (Main.playerShip.getScanLevel() && resources.size() > 1)
+        {
+            buttons.addComponent(new Button("Scan for resources", () -> {
+                for (String resource : resources)
+                {
+                    GameOutput.println(resource);
+                }
+                window.close();
+            }));
+        }
+        else if (resources.size() > 1)
+        {
+            buttons.addComponent(new Button("Scan for resources (Top two)", () -> {
+                for (int i = 0; i < resources.size(); i ++)
+                {
+                    if (i == 2)
                     {
-                        GameOutput.println(resource);
+                        break;
                     }
-                    window.close();
-                }));
-            }
-            else
-            {
-                buttons.addComponent(new Button("Scan for resources (Top two)", () -> {
-                    for (int i = 0; i < resources.size(); i ++)
-                    {
-                        if (i == 2)
-                        {
-                            break;
-                        }
-                        GameOutput.println(resources.get(i));
-                    }
-                    window.close();
-                }));
-            }
-    
+                    GameOutput.println(resources.get(i));
+                }
+                window.close();
+            }));
+        }
 
         buttons.addComponent(new Button("Exit orbit", () -> {
             GameOutput.println("Left orbit around " + choice.getName());
@@ -677,7 +676,7 @@ public class LanternaMenuEngine {
 
         buttons.addComponent(new Button("Re-Enter Orbit", () -> {
             GameOutput.println("Left Planet's Surface");
-            nextChoice[0] = MenuChoice.LISTPLANETS;
+            nextChoice[0] = MenuChoice.PLANETOPTIONS;
             window.close();
         }));
         root.addComponent(buttons);

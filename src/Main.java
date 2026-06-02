@@ -506,7 +506,7 @@ public class Main {
         else if (status == 2)
         {
             playerLandY ++;
-            if (playerLandY > land.length)
+            if (playerLandY == land.length)
             {
                 playerLandY = 0;
             }
@@ -516,13 +516,13 @@ public class Main {
             playerLandY --;
             if (playerLandY < 0)
             {
-                playerLandY = land.length;
+                playerLandY = land.length - 1;
             }
         }
 
         if (!land[playerLandX][playerLandY].equals("-"))
         {
-            int amount = (int)(Math.random()*2);
+            int amount = (int)(Math.random()*2) + 1;
 
             inventory.addItem(land[playerLandX][playerLandY], amount);
 
