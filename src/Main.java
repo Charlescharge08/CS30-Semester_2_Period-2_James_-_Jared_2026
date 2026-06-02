@@ -296,11 +296,13 @@ public class Main {
         
         return surroundings;
     }
+    // end surroundings
 
     public static int getPosition()
     {
         return (playerX + 4*playerY + 16*playerZ);
     }
+    // end getPosition
 
     public static boolean movement(int moveType)
     {
@@ -384,11 +386,13 @@ public class Main {
         playerShip.useFuel(100);
         return true;
     }
+    // end movement
 
     public static ArrayList<Star> getSector()
     {
         return universe.get(getPosition());
     }
+    // end getSector
 
     public static Star choiceStar;
     public static Exoplanet choicePlanet;
@@ -402,40 +406,137 @@ public class Main {
 
         choiceStar = input;
     }
+    // end setChoiceStar
 
     public static Star getChoiceStar()
     {
         return choiceStar;
     }
+    // end getChoiceStar
 
     public static void setChoicePlanet(Exoplanet input)
     {
         choicePlanet = input;
     }
+    // end setChoicePlanet
 
     public static Exoplanet getChoicePlanet()
     {
         return choicePlanet;
     }
+    // end getChoicePlanet
 
     public static int playerLandX;
     public static int playerLandY;
     public static String[][] land;
 
-    public static void landing(String type)
+    public static void landing(String type, Exoplanet input)
     {
         if (type.equals("Superrocky"))
         {
-            land = new String[3][3];
-            playerLandX = 0;
-            playerLandY = 0;
+            land = new String[5][5];
+            
+        }
+        else if (type.equals("Rocky"))
+        {
+            land = new String[4][4];
         }
         else
         {
-            land = new String[2][2];
-            playerLandX = 0;
-            playerLandY = 0;
+            land = new String[3][3];
+        }
+        ArrayList<String> resources = new ArrayList<String>(input.getResources());
+
+        for (int i = 0; i < land.length; i ++)
+        {
+            for (int n = 0; n < land.length; n ++)
+            {
+                if (Resources.chance(25) && !resources.isEmpty())
+                {
+                    land[i][n] = resources.get(0);
+                    resources.remove(0);
+                }
+                else
+                {
+                    land[i][n] = "-";
+                }
+            }
+        }
+        playerLandX = 0;
+        playerLandY = 0;
+
+        input.modifyResources(new ArrayList<String>(resources));
+    }
+    // end landing
+
+    public static void landingMovement(int status)
+    {
+        if (status == 0)
+        {
+            playerLandX ++;
+            if (playerLandX == land.length)
+            {
+                playerLandX = 0;
+            }
+        }
+        else if (status == 1)
+        {
+            playerLandX --;
+            if (playerLandX < 0)
+            {
+                playerLandX = land.length - 1;
+            }
+        }
+        else if (status == 0)
+        {
+            playerLandX ++;
+            if (playerLandX == land.length)
+            {
+                playerLandX = 0;
+            }
+        }
+        else if (status == 1)
+        {
+            playerLandX --;
+            if (playerLandX < 0)
+            {
+                playerLandX = land.length;
+            }
+        }
+        else if (status == 2)
+        {
+            playerLandY ++;
+            if (playerLandY > land.length)
+            {
+                playerLandY = 0;
+            }
+        }
+        else if (status == 3)
+        {
+            playerLandY --;
+            if (playerLandY < 0)
+            {
+                playerLandY = land.length;
+            }
+        }
+
+        if (!land[playerLandX][playerLandY].equals("-"))
+        {
+            int amount = (int)(Math.random()*2);
+
+            inventory.addItem(land[playerLandX][playerLandY], amount);
+
+            GameOutput.println("You found " + amount + " units of " + land[playerLandX][playerLandY] + "!");
+
+            land[playerLandX][playerLandY] = "-";
         }
     }
+    // end landingMovement
+
+    public static String getLandingPosition()
+    {
+        return "Your position:" + playerLandX + ", " + playerLandY;
+    }
+    // end getLandingPosition
 }
 // end Main

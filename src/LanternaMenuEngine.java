@@ -27,6 +27,7 @@ public class LanternaMenuEngine {
         LISTSTARS,
         LISTPLANETS,
         PLANETOPTIONS,
+        LANDINGMOVEMENT,
         EXIT
     }
 
@@ -160,6 +161,15 @@ public class LanternaMenuEngine {
         }
     }
 
+    public void openLandingMovement()
+    {
+        try {
+            runMenu(MenuChoice.LANDINGMOVEMENT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void openCraftingAndUpgradesMenu() {
         try {
             runMenu(MenuChoice.CRAFTING);
@@ -207,6 +217,8 @@ public class LanternaMenuEngine {
                 currentMenu = listPlanets();
             } else if (currentMenu == MenuChoice.PLANETOPTIONS) {
                 currentMenu = planetOptions();
+            } else if (currentMenu == MenuChoice.LANDINGMOVEMENT) {
+                currentMenu = landingMovement();
             } else {
                 currentMenu = MenuChoice.EXIT;
             }
@@ -520,8 +532,8 @@ public class LanternaMenuEngine {
             window.close();
         }));
 
-        buttons.addComponent(new Button("Back", () -> {
-            GameOutput.println("Returned");
+        buttons.addComponent(new Button("Leave this system", () -> {
+            GameOutput.println("Left System. You are now in interstellar space");
             nextChoice[0] = MenuChoice.LISTSTARS;
             window.close();
         }));
@@ -556,7 +568,7 @@ public class LanternaMenuEngine {
         boolean isGasOrIceGiant = (choice.type().equals("Gas Giant") || choice.type().equals("Ice Giant"));
         ArrayList<String> resources = choice.getResources();
 
-        GameOutput.println(choice.scan());
+        GameOutput.println("You are now orbiting around:\n" + choice.scan());
 
         Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
 
@@ -573,7 +585,8 @@ public class LanternaMenuEngine {
         {
             buttons.addComponent(new Button("Land", () -> {
                 nextChoice[0] = MenuChoice.LANDINGMOVEMENT;
-                Main.landing(choice.type());
+                Main.landing(choice.type(), choice);
+                window.close();
             }));
         }
         
@@ -585,6 +598,7 @@ public class LanternaMenuEngine {
                     {
                         GameOutput.println(resource);
                     }
+                    window.close();
                 }));
             }
             else
@@ -598,12 +612,71 @@ public class LanternaMenuEngine {
                         }
                         GameOutput.println(resources.get(i));
                     }
+                    window.close();
                 }));
             }
     
 
-        buttons.addComponent(new Button("Back", () -> {
-            GameOutput.println("Returned");
+        buttons.addComponent(new Button("Exit orbit", () -> {
+            GameOutput.println("Left orbit around " + choice.getName());
+            nextChoice[0] = MenuChoice.LISTPLANETS;
+            window.close();
+        }));
+        root.addComponent(buttons);
+
+        root.addComponent(new Label(""));
+        root.addComponent(new Label("Console"));
+        consoleBox = createConsoleBox();
+        root.addComponent(consoleBox);
+        refreshConsoleBox();
+
+        window.setComponent(root);
+        gui.addWindowAndWait(window);
+
+        return nextChoice[0];
+    }
+
+    private MenuChoice landingMovement() throws IOException {
+        final MenuChoice[] nextChoice = {MenuChoice.MAIN};
+        BasicWindow window = new BasicWindow("Landed");
+        Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        root.addComponent(new Label("LANDED"));
+        root.addComponent(new Label(""));
+
+        Exoplanet choice = Main.getChoicePlanet();
+
+        if(choice == null){
+            GameOutput.println("No planet selected");
+            return MenuChoice.LISTPLANETS;
+        }
+        GameOutput.println(Main.getLandingPosition());
+
+        Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        buttons.addComponent(new Button("Move Forward", () -> {
+            nextChoice[0] = MenuChoice.LANDINGMOVEMENT;
+            Main.landingMovement(0);
+            window.close();
+        }));
+        buttons.addComponent(new Button("Move Backward", () -> {
+            nextChoice[0] = MenuChoice.LANDINGMOVEMENT;
+            Main.landingMovement(1);
+            window.close();
+        }));
+        buttons.addComponent(new Button("Move Right", () -> {
+            nextChoice[0] = MenuChoice.LANDINGMOVEMENT;
+            Main.landingMovement(2);
+            window.close();
+        }));
+        buttons.addComponent(new Button("Move Left", () -> {
+            nextChoice[0] = MenuChoice.LANDINGMOVEMENT;
+            Main.landingMovement(3);
+            window.close();
+        }));
+
+        buttons.addComponent(new Button("Re-Enter Orbit", () -> {
+            GameOutput.println("Left Planet's Surface");
             nextChoice[0] = MenuChoice.LISTPLANETS;
             window.close();
         }));

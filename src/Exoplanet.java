@@ -33,4 +33,9 @@ public class Exoplanet extends CelestialBody{
     {
         return type;
     }
+
+    public void modifyResources(ArrayList<String> input)
+    {
+        resources = new ArrayList<String>(input);
+    }
 }
