@@ -27,6 +27,7 @@ public class LanternaMenuEngine {
         LISTSTARS,
         LISTPLANETS,
         PLANETOPTIONS,
+        MINING,
         EXIT
     }
 
@@ -207,6 +208,8 @@ public class LanternaMenuEngine {
                 currentMenu = listPlanets();
             } else if (currentMenu == MenuChoice.PLANETOPTIONS) {
                 currentMenu = planetOptions();
+            } else if (currentMenu == MenuChoice.MINING) {
+                currentMenu = mineResources();
             } else {
                 currentMenu = MenuChoice.EXIT;
             }
@@ -235,6 +238,18 @@ public class LanternaMenuEngine {
         buttons.addComponent(new Button("Inventory and Crafting", () -> {
             GameOutput.println("Inventory system opened.");
             nextChoice[0] = MenuChoice.INVENTORY;
+            window.close();
+        }));
+        buttons.addComponent(new Button("Current Planet and mining", () -> {
+            if (Main.getChoicePlanet() == null) {
+                GameOutput.println("Choose a planet first.");
+                return;
+            }
+
+            String starName = (Main.getChoiceStar() == null) ? "Unknown Star" : Main.getChoiceStar().getName();
+            GameOutput.println("Current planet: " + Main.getChoicePlanet().getName() + " | Star system: " + starName);
+
+            nextChoice[0] = MenuChoice.PLANETOPTIONS;
             window.close();
         }));
         buttons.addComponent(new Button("Dev Console (F12)", this::openDevConsole));
@@ -504,22 +519,6 @@ public class LanternaMenuEngine {
             }));
         }
 
-        buttons.addComponent(new Button("Scan planets", () -> {
-            for (int i = 0; i < choice.getNumPlanets(); i ++)
-            {
-                if (Main.playerShip.getScanLevel())
-                {
-                    GameOutput.println(choice.getSystem().get(i).scan());
-                }
-                else
-                {
-                    GameOutput.println(choice.getSystem().get(i).basicScan());
-                }
-            }
-            nextChoice[0] = MenuChoice.LISTPLANETS;
-            window.close();
-        }));
-
         buttons.addComponent(new Button("Back", () -> {
             GameOutput.println("Returned");
             nextChoice[0] = MenuChoice.LISTSTARS;
@@ -553,10 +552,6 @@ public class LanternaMenuEngine {
             return MenuChoice.LISTPLANETS;
         }
 
-
-        GameOutput.println(choice.scan());
-
-        boolean isGasOrIceGiant = (choice.type().equals("Gas Giant") || choice.type().equals("Ice Giant"));
         ArrayList<String> resources = choice.getResources();
 
         Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
@@ -571,10 +566,18 @@ public class LanternaMenuEngine {
         // and more-(James)
         // "Visit Moons (JARED - If we have time)"
 
+        if (Main.getChoicePlanetScanned())
+        {
+            buttons.addComponent(new Button("Mine resources", () -> {
+                nextChoice[0] = MenuChoice.MINING;
+                window.close();
+            }));
+        }
 
         if (Main.playerShip.getScanLevel())
         {
             buttons.addComponent(new Button("Scan for resources", () -> {
+                Main.setChoicePlanetScanned(true);
                 for (String resource : resources)
                 {
                     GameOutput.println(resource);
@@ -584,6 +587,7 @@ public class LanternaMenuEngine {
         else
         {
             buttons.addComponent(new Button("Scan for resources (Top two)", () -> {
+                Main.setChoicePlanetScanned(true);
                 for (int i = 0; i < resources.size(); i ++)
                 {
                     if (i == 2)
@@ -598,6 +602,80 @@ public class LanternaMenuEngine {
         buttons.addComponent(new Button("Back", () -> {
             GameOutput.println("Returned");
             nextChoice[0] = MenuChoice.LISTPLANETS;
+            window.close();
+        }));
+        root.addComponent(buttons);
+
+        root.addComponent(new Label(""));
+        root.addComponent(new Label("Console"));
+        consoleBox = createConsoleBox();
+        root.addComponent(consoleBox);
+        refreshConsoleBox();
+
+        window.setComponent(root);
+        gui.addWindowAndWait(window);
+
+        return nextChoice[0];
+    }
+
+    private MenuChoice mineResources() throws IOException {
+        final MenuChoice[] nextChoice = {MenuChoice.PLANETOPTIONS};
+        Exoplanet choice = Main.getChoicePlanet();
+
+        if (choice == null) {
+            GameOutput.println("No planet selected");
+            return MenuChoice.LISTPLANETS;
+        }
+
+        if (!Main.getChoicePlanetScanned()) {
+            GameOutput.println("Scan for resources before mining.");
+            return MenuChoice.PLANETOPTIONS;
+        }
+
+        ArrayList<String> resources = choice.getResources();
+        ArrayList<String> uniqueResources = new ArrayList<>();
+
+        for (String resource : resources) {
+            if (!uniqueResources.contains(resource)) {
+                uniqueResources.add(resource);
+            }
+        }
+
+        if (uniqueResources.isEmpty()) {
+            GameOutput.println("No resources left to mine on this planet.");
+            return MenuChoice.PLANETOPTIONS;
+        }
+
+        BasicWindow window = new BasicWindow("Mining");
+        Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        root.addComponent(new Label("MINE RESOURCES"));
+        root.addComponent(new Label(""));
+
+        Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        for (String resource : uniqueResources) {
+            buttons.addComponent(new Button(resource, () -> {
+                if (!resources.contains(resource)) {
+                    GameOutput.println(resource + " has already been mined.");
+                    nextChoice[0] = MenuChoice.PLANETOPTIONS;
+                    window.close();
+                    return;
+                }
+
+                while (resources.remove(resource)) {
+                    // Remove every copy so the same resource cannot be mined forever.
+                }
+
+                inventory.addItem(resource, 1);
+                GameOutput.println("Mined 1 " + resource + ".");
+                nextChoice[0] = MenuChoice.PLANETOPTIONS;
+                window.close();
+            }));
+        }
+
+        buttons.addComponent(new Button("Back", () -> {
+            nextChoice[0] = MenuChoice.PLANETOPTIONS;
             window.close();
         }));
         root.addComponent(buttons);
