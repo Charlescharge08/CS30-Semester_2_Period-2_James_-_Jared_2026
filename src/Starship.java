@@ -1,3 +1,5 @@
+import com.googlecode.lanterna.gui2.AbstractWindow;
+
 public class Starship {
     private String shipName;
 
@@ -9,7 +11,6 @@ public class Starship {
     private int engineLevel;
     private int cargoLevel;
     private boolean scanUpgrade;
-    private boolean miningUpgrade;
 
      public Starship(String name) {
 
@@ -26,7 +27,6 @@ public class Starship {
         engineLevel = 1;
         cargoLevel = 1;
         scanUpgrade = false;
-        miningUpgrade = false;
     }
     // did not have time to start on this and add to the string
     public String getStatus() {
@@ -37,11 +37,6 @@ public class Starship {
     public String getName()
     {
         return shipName;
-    }
-
-    public void upgradeMining()
-    {
-        miningUpgrade = true;
     }
 
     // did not have time to start on this and add to the string
@@ -83,8 +78,13 @@ public class Starship {
         amount /= engineLevel;
 
         fuel -= amount;
-        if(fuel < 0) {
+        if(fuel <= 0) {
             fuel = 0;
+            try {
+                Main.menu.close();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         
         GameOutput.println("Fuel used: " + amount + ". Remaining: " + fuel + "/" + maxFuel + ".");

@@ -760,12 +760,6 @@ public class Main {
 
     public static boolean movement(int moveType)
     {
-        if (playerShip.getFuel() <= 100.0)
-        {
-            GameOutput.println("Not enough fuel.");
-            return false;
-        }
-        
         if (moveType == 0)
         {
             if (playerX != 3)

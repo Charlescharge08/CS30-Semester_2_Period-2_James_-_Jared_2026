@@ -7,6 +7,7 @@ import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.TextBox;
 import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
@@ -241,6 +242,7 @@ public class LanternaMenuEngine {
             GameOutput.println("Navigation system opened.");
             nextChoice[0] = MenuChoice.NAVIGATION;
             window.close();
+
         }));
         buttons.addComponent(new Button("View " + Main.playerShip.getName() + " Status and Upgrades", () -> {
             GameOutput.println("Ship system opened.");
@@ -1125,5 +1127,20 @@ public class LanternaMenuEngine {
         }
 
         return text.toString();
+    }
+
+    public void close() throws InterruptedException
+    {
+        // BasicWindow gameOverWindow = new BasicWindow("Game Over");
+        // Panel gameOverPanel = new Panel();
+
+        // gameOverPanel.addComponent(new Label("You lost! Game over!"));
+
+        MessageDialog.showMessageDialog(gui, "Notification", "You ran out of fuel! Game Over!");
+
+        // gameOverWindow.setComponent(gameOverPanel);
+
+        // gui.addWindow(gameOverWindow);
+        System.exit(0);
     }
 }
