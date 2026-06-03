@@ -767,7 +767,9 @@ public class LanternaMenuEngine {
                     // Remove every copy so the same resource cannot be mined forever.
                 }
 
-                inventory.addItem(resource, 1);
+                int amount = (int)(Math.random()*5) + 1;
+
+                inventory.addItem(resource, amount);
                 GameOutput.println("Mined 1 " + resource + ".");
                 nextChoice[0] = MenuChoice.PLANETOPTIONS;
                 window.close();

@@ -3,7 +3,7 @@ import java.util.*;
 public class Resources {
     private static Random rand = new Random();
 
-    public static final String[] RESOURCES = {"Iron ore", "Copper Deposit", "Gold", "Water", "Uranium", "Food", "Alien Fossils", "Ancient Artifact", "Helium Gas", "Hydrogen Gas", "Rare rocky Elements", "Weird Alien Carcass"};
+    public static final String[] RESOURCES = {"Iron ore", "Copper Deposit", "Gold", "Water", "Uranium", "Alien Fossils", "Ancient Artifact", "Helium Gas", "Hydrogen Gas", "Rare rocky Elements", "Weird Alien Carcass"};
     
     public static List<String> planetResources(String Type, boolean hasLife){
 
@@ -34,12 +34,12 @@ public class Resources {
     private static List<String> superrocky(){
         List<String> r = new ArrayList<>();
 
-        r.add("Iron ore"); 
-        r.add("Water");
+        r.add("Iron ore");
+        r.add("Copper Deposit");
 
 
         if (chance(70)){
-             r.add("Copper Deposit");
+            r.add("Water");
         }
         if (chance(60)){
              r.add("Gold");
@@ -63,12 +63,11 @@ public class Resources {
     private static List<String> rocky(){
         List<String> r = new ArrayList<>();
         r.add("Iron ore");
-        r.add("Water");
-        r.add("Food");
+        r.add("Copper Deposit");
         r.add("Uranium");
 
         if (chance(50)){
-             r.add("Copper Deposit");
+            r.add("Water");
         }
         if (chance(35)){
              r.add("Gold");
@@ -90,12 +89,13 @@ public class Resources {
     private static List<String> subrocky(){
         List<String> r = new ArrayList<>();
         r.add("Iron ore"); 
+        r.add("Copper Deposit");
 
         if (chance(70)){
              r.add("Water");
         }
-        if (chance(60)){
-             r.add("Copper Deposit");
+        if (chance(20)){
+             r.add("Uranium");
         }
 
         return r;
