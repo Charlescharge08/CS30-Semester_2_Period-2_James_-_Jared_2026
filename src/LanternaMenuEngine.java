@@ -1131,16 +1131,7 @@ public class LanternaMenuEngine {
 
     public void close() throws InterruptedException
     {
-        // BasicWindow gameOverWindow = new BasicWindow("Game Over");
-        // Panel gameOverPanel = new Panel();
-
-        // gameOverPanel.addComponent(new Label("You lost! Game over!"));
-
         MessageDialog.showMessageDialog(gui, "Notification", "You ran out of fuel! Game Over!");
-
-        // gameOverWindow.setComponent(gameOverPanel);
-
-        // gui.addWindow(gameOverWindow);
         System.exit(0);
     }
 }
