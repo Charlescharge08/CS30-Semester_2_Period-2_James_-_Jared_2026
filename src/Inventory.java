@@ -10,14 +10,39 @@ public class Inventory {
     }
     
     public void addItem(String item, int amount){
+        int cargoSpace = Main.playerShip.getCargoSpace();
+        int usedSpace = getTotalItems();
+        int openSpace = cargoSpace - usedSpace;
+
+        if (openSpace <= 0) {
+            System.out.print("Your cargo hold is full.");
+            return;
+        }
+
+        int amountToAdd = Math.min(amount, openSpace);
+
         //If item already exsists
         if (items.containsKey(item)){
             int curentAmount = items.get(item);
-            items.put(item, curentAmount + amount);
+            items.put(item, curentAmount + amountToAdd);
         }else{
             //add new item to inventory
-            items.put(item, amount);
+            items.put(item, amountToAdd);
         }
+
+        if (amountToAdd < amount) {
+            System.out.print("Your cargo hold is full.");
+        }
+    }
+
+    private int getTotalItems() {
+        int total = 0;
+
+        for (int amount : items.values()) {
+            total += amount;
+        }
+
+        return total;
     }
     
    //Remove items

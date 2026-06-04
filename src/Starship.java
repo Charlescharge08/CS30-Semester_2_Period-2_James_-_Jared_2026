@@ -20,7 +20,7 @@ public class Starship {
         maxFuel = 500.0;
         fuel = 500.0;
 
-        cargoSpace = 50;
+        cargoSpace = 30;
 
         // Starting upgrades
         engineLevel = 1;
@@ -70,7 +70,7 @@ public class Starship {
 
     public void upgradeCargo() {
         cargoLevel++;
-        cargoSpace += 25;
+        cargoSpace = 50;
     }
 
     public void useFuel(int amount) {

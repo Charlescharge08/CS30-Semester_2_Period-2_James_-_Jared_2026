@@ -3,7 +3,7 @@ import java.util.*;
 public class Resources {
     private static Random rand = new Random();
 
-    public static final String[] RESOURCES = {"Iron ore", "Copper Deposit", "Gold", "Water", "Uranium", "Food", "Alien Fossils", "Ancient Artifact", "Helium Gas", "Hydrogen Gas", "Rare rocky Elements", "Weird Alien Carcass"};
+    public static final String[] RESOURCES = {"Iron ore", "Copper", "Gold", "Water", "Uranium", "Food", "Alien Fossils", "Ancient Artifact", "Helium Gas", "Hydrogen Gas", "Rare rocky Elements", "Weird Alien Carcass"};
     
     public static List<String> planetResources(String Type, boolean hasLife){
 
@@ -39,7 +39,7 @@ public class Resources {
 
 
         if (chance(70)){
-             r.add("Copper Deposit");
+             r.add("Copper");
         }
         if (chance(60)){
              r.add("Gold");
@@ -68,7 +68,7 @@ public class Resources {
         r.add("Uranium");
 
         if (chance(50)){
-             r.add("Copper Deposit");
+             r.add("Copper");
         }
         if (chance(35)){
              r.add("Gold");
@@ -95,7 +95,7 @@ public class Resources {
              r.add("Water");
         }
         if (chance(60)){
-             r.add("Copper Deposit");
+             r.add("Copper");
         }
 
         return r;
