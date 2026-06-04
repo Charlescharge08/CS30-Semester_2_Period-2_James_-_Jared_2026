@@ -3,35 +3,56 @@ import java.util.*;
 public class Resources {
     private static Random rand = new Random();
 
-    public static final String[] RESOURCES = {"Iron ore", "Copper Deposit", "Gold", "Water", "Uranium", "Food", "Alien Fossils", "Ancient Artifact", "Helium Gas", "Hydrogen Gas", "Rare rocky Elements"};
+    public static final String[] RESOURCES = {"Iron ore", "Copper", "Gold", "Water", "Uranium", "Food", "Alien Fossils", "Ancient Artifact", "Helium Gas", "Hydrogen Gas", "Rare rocky Elements", "Weird Alien Carcass"};
     
-    public static List<String> planetResources(String Type){
+    /**
+     * Generate a list of possible resources for a planet type.
+     * Type planet type string
+     * whether the planet has life
+     * return list of resource 
+     */
+    public static List<String> planetResources(String Type, boolean hasLife){
 
+        List<String> returnValues = null;
+        
         switch (Type.toLowerCase()){
             case "superrocky":
-                return superrocky();
+                returnValues = superrocky();
+                break;
             case "rocky":
-                return rocky();
+                returnValues = rocky();
+                break;
             case "subrocky":
-                return subrocky();
+                returnValues = subrocky();
+                break;
             case "gas giant":
-                return gasGiant();
+                returnValues = gasGiant();
+                break;
             case "ice giant":
-                return iceGiant();
+                returnValues = iceGiant();
+                break;
+            default:
+                returnValues = new ArrayList<>();
         }
-        return null;
+
+        if (hasLife)
+        {
+            returnValues.add("Weird Alien Carcass");
+        }
+        
+        return returnValues;
 
     }
 
     private static List<String> superrocky(){
         List<String> r = new ArrayList<>();
 
-        r.add("Iron ore"); 
-        r.add("Water");
+        r.add("Iron ore");
+        r.add("Copper");
 
 
         if (chance(70)){
-             r.add("Copper Deposit");
+             r.add("Copper");
         }
         if (chance(60)){
              r.add("Gold");
@@ -55,11 +76,11 @@ public class Resources {
     private static List<String> rocky(){
         List<String> r = new ArrayList<>();
         r.add("Iron ore");
-        r.add("Water"); 
-        r.add("Food");
+        r.add("Copper");
+        r.add("Uranium");
 
         if (chance(50)){
-             r.add("Copper Deposit");
+             r.add("Copper");
         }
         if (chance(35)){
              r.add("Gold");
@@ -79,20 +100,20 @@ public class Resources {
     }
 
     private static List<String> subrocky(){
-                List<String> r = new ArrayList<>();
+        List<String> r = new ArrayList<>();
         r.add("Iron ore"); 
+        r.add("Copper");
 
         if (chance(70)){
              r.add("Water");
         }
         if (chance(60)){
-             r.add("Copper Deposit");
+             r.add("Copper");
         }
 
         return r;
     
     }
-
     private static List<String> gasGiant(){
                 List<String> r = new ArrayList<>();
         r.add("Hydrogen Gas");
@@ -109,7 +130,6 @@ public class Resources {
     private static List<String> iceGiant(){
                 List<String> r = new ArrayList<>();
         r.add("Water");
-        r.add("Water");
 
         if (chance(70)){
              r.add("Helium Gas");
@@ -125,7 +145,7 @@ public class Resources {
     
     }
 
-     private static boolean chance(int percent) {
+     public static boolean chance(int percent) {
         return rand.nextInt(100) < percent;
     }
 }

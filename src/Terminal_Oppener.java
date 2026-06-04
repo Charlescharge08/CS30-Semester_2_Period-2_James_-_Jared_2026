@@ -1,3 +1,4 @@
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
@@ -5,22 +6,24 @@ import com.googlecode.lanterna.terminal.Terminal;
 
 public class Terminal_Oppener {
     
-    public void openTerminal() {
+    public Screen openTerminal() {
         try {
             DefaultTerminalFactory factory = new DefaultTerminalFactory();
+            factory.setInitialTerminalSize(new TerminalSize(160, 50));
+            
             Terminal terminal = factory.createTerminalEmulator(); 
 
             Screen screen = new TerminalScreen(terminal);
             screen.startScreen();
             screen.setCursorPosition(null); 
 
-            // Pointing directly to your updated class name
-            LanternaMenuEngine ui = new LanternaMenuEngine(screen);
-            ui.startMainMenu();
+            // return the started screen to the caller for UI building
+            return screen;
 
         } catch (Exception e) {
             System.out.println("Error opening the terminal window!");
             e.printStackTrace();
         }
+        return null;
     }
 }

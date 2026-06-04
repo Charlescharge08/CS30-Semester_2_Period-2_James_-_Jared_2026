@@ -1,98 +1,1225 @@
-import com.googlecode.lanterna.TextColor;
-import com.googlecode.lanterna.graphics.TextGraphics;
+import com.googlecode.lanterna.gui2.BasicWindow;
+import com.googlecode.lanterna.gui2.Button;
+import com.googlecode.lanterna.gui2.Direction;
+import com.googlecode.lanterna.gui2.Label;
+import com.googlecode.lanterna.gui2.LinearLayout;
+import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
+import com.googlecode.lanterna.gui2.Panel;
+import com.googlecode.lanterna.gui2.TextBox;
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
+import com.googlecode.lanterna.gui2.dialogs.TextInputDialog;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Locale;
 
-public class LanternaMenuEngine { 
-    private Screen screen;
-    private TextGraphics textGraphics;
-
-    public LanternaMenuEngine(Screen screen) {
-        this.screen = screen;
-        this.textGraphics = screen.newTextGraphics();
+public class LanternaMenuEngine {
+    private enum MenuChoice {
+        MAIN,
+        NAVIGATION,
+        MOVEMENT,
+        SHIP,
+        INVENTORY,
+        CRAFTING,
+        LISTSTARS,
+        LISTPLANETS,
+        PLANETOPTIONS,
+        MINING,
+        LANDINGMOVEMENT,
+        EXIT
     }
+    // end MenuChoice
 
-    public void startMainMenu() {
-        try {
-            String[] options = {
-                "Scan Local System",
-                "View Ship Status",
-                "Open Galaxy Map",
-                "Exit Console"
-            };
-            int selectedIndex = 0;
-            boolean keepRunning = true;
+    private final ArrayList<String> consoleLines = new ArrayList<>();
+    private final Screen screen;
+    private final Starship playerShip;
+    private final Inventory inventory;
+    private final MultiWindowTextGUI gui;
+    private TextBox consoleBox;
+    private final String[] craftingRecipes = {
+        "Copper Wire (Copper x2)",
+        "Fuel Cell (Hydrogen Gas x5, Helium Gas x1)",
+        "Iron Mesh (Iron ore x2)",
+        "Advanced Fuel Cell (Uranium x1)",
+        "Advanced Info-Grabber (Uranium x2, Ancient Artifact x1)",
+        "Scanner Upgrade (Advanced Info-Grabber x1, Copper x5)",
+        "Engine Upgrade (Rare rocky Elements x3, Uranium x2, Iron ore x8, Copper x3, Gold x3, Helium Gas x1)",
+        "Cargo Space (Iron ore x4, Alien Fossils x3)"
+    };
 
-            while (keepRunning) {
-                drawMenu("STELLAR TERMINAL", options, selectedIndex);
+    private class DevWindow extends BasicWindow {
+        DevWindow(String title) {
+            super(title);
+        }
 
-                KeyStroke keyStroke = screen.readInput();
-                KeyType keyType = keyStroke.getKeyType();
-
-                if(keyType == KeyType.ArrowUp) {
-                    selectedIndex--;
-                    if (selectedIndex < 0) {
-                        selectedIndex = options.length - 1;
-                    }
-                }else if(keyType == KeyType.ArrowDown) {
-                    selectedIndex++;
-                    if (selectedIndex >= options.length) {
-                        selectedIndex = 0;
-                    }
-                }else if(keyType == KeyType.Enter) {
-                    keepRunning = handleSelection(selectedIndex);
-                }else if(keyType == KeyType.Character) {
-                    char c = keyStroke.getCharacter();
-                    if (Character.isDigit(c)) {
-                        int numPressed = Character.getNumericValue(c);
-                        if (numPressed >= 1 && numPressed <= options.length) {
-                            selectedIndex = numPressed - 1; 
-                            keepRunning = handleSelection(selectedIndex);
-                        }
-                    }
-                }
+        @Override
+        public boolean handleInput(KeyStroke keyStroke) {
+            if (keyStroke != null && keyStroke.getKeyType() == KeyType.F12) {
+                openDevConsole();
+                return true;
             }
 
-            screen.stopScreen();
+            return super.handleInput(keyStroke);
+        }
+    }
 
-        }catch(IOException e) {
+    /**
+     * Create the menu engine for lanterna UI.
+     * screen terminal screen
+     * playerShip reference to the player's ship
+     * inventory player's inventory
+     */
+    public LanternaMenuEngine(Screen screen, Starship playerShip, Inventory inventory) {
+        this.screen = screen;
+        this.playerShip = playerShip;
+        this.inventory = inventory;
+        this.gui = new MultiWindowTextGUI(screen);
+    }
+    // end LanternaMenuEngine
+
+    // Update the console with the new text and refresh the console box
+    public void updateConsole(String text) {
+        if (text == null) {
+            text = "";
+        }
+
+        consoleLines.clear();
+        consoleLines.addAll(Arrays.asList(text.split("\\n", -1)));
+
+        if (consoleLines.size() > 200) {
+            consoleLines.subList(0, consoleLines.size() - 200).clear();
+        }
+
+        refreshConsoleBox();
+    }
+    // end updateConsole
+
+    // Start the main menu loop
+    public void startMainMenu() {
+        try {
+            runMenu(MenuChoice.MAIN);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                screen.stopScreen();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    // end startMainMenu
+
+    // Open the ship status UI
+    public void openShipStatusMenu() {
+        try {
+            runMenu(MenuChoice.SHIP);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
+    // end openShipStatusMenu
 
-    private void drawMenu(String title, String[] options, int selectedIndex) throws IOException {
-        textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
-        textGraphics.fill(' '); 
+    // Open the navigation UI.
+    public void openNavigationMenu() {
+        try {
+            runMenu(MenuChoice.NAVIGATION);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    // end openNavigationMenu
 
+    // Open movement UI 
+    public void openMovementMenu() {
+        try {
+            runMenu(MenuChoice.MOVEMENT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    // end openMovementMenu
 
-        textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
-        textGraphics.setBackgroundColor(TextColor.ANSI.BLUE);
-        textGraphics.putString(1, 1, title );
+    // Open the inventory UI.
+    public void openInventoryMenu() {
+        try {
+            runMenu(MenuChoice.INVENTORY);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    // end openInventoryMenu
 
+    // Open the list of nearby stars.
+    public void openListStars() {
+        try {
+            runMenu(MenuChoice.LISTSTARS);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    // end openlistStars
 
-        for (int i = 0; i < options.length; i++) {
-            int row = 4 + (i * 2); 
+    // Open the list of planets for the currently selected star.
+    public void openListPlanets() {
+        try {
+            runMenu(MenuChoice.LISTPLANETS);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    // end openListPlanets
 
-            if (i == selectedIndex) {
-                textGraphics.setBackgroundColor(TextColor.ANSI.WHITE);
-                textGraphics.setForegroundColor(TextColor.ANSI.BLACK);
-                textGraphics.putString(4, row, "[ " + (i + 1) + " ] " + options[i] + " ");
+    // Open planet options for the selected planet 
+    public void openPlanetOptions()
+    {
+        try {
+            runMenu(MenuChoice.PLANETOPTIONS);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    // end openPlanetOptions
+
+    // surface movement UI for a planet.
+    public void openLandingMovement()
+    {
+        try {
+            runMenu(MenuChoice.LANDINGMOVEMENT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    // end openLandingMovement
+
+    // Open crafting and upgrades UI.
+    public void openCraftingAndUpgradesMenu() {
+        try {
+            runMenu(MenuChoice.CRAFTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    // end openCraftingAndUpgradesMenu
+
+    // Show a textbox for developer commands.
+    public void openDevConsole() {
+        String command = TextInputDialog.showDialog(
+                gui,
+                "Dev Console",
+                "Commands: add resource <name> <amount>, add upgrade <scan|engine|cargo>, refuel, help",
+                "");
+
+        if (command == null) {
+            return;
+        }
+
+        String result = runDevCommand(command.trim());
+        if (!result.isEmpty()) {
+            GameOutput.println(result);
+        }
+    }
+    // end openDevConsole
+
+    // loop that runs menu screens until exit.
+    private void runMenu(MenuChoice startingMenu) throws IOException {
+        MenuChoice currentMenu = startingMenu;
+
+        while (currentMenu != MenuChoice.EXIT) {
+            if (currentMenu == MenuChoice.MAIN) {
+                currentMenu = showMainMenu();
+            } else if (currentMenu == MenuChoice.NAVIGATION) {
+                currentMenu = showNavigationMenu();
+            } else if (currentMenu == MenuChoice.MOVEMENT) {
+                currentMenu = showMovementMenu();
+            } else if (currentMenu == MenuChoice.SHIP) {
+                currentMenu = showShipStatusMenu();
+            } else if (currentMenu == MenuChoice.INVENTORY) {
+                currentMenu = showInventoryMenu();
+            } else if (currentMenu == MenuChoice.CRAFTING) {
+                currentMenu = showCraftingMenu();
+            } else if (currentMenu == MenuChoice.LISTSTARS) {
+                currentMenu = listStars();
+            } else if (currentMenu == MenuChoice.LISTPLANETS) {
+                currentMenu = listPlanets();
+            } else if (currentMenu == MenuChoice.PLANETOPTIONS) {
+                currentMenu = planetOptions();
+            } else if (currentMenu == MenuChoice.LANDINGMOVEMENT) {
+                currentMenu = landingMovement();
+            } else if (currentMenu == MenuChoice.MINING) {
+                currentMenu = mineResources();
             } else {
-                textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
-                textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
-                textGraphics.putString(4, row, "  " + (i + 1) + "   " + options[i] + " ");
+                currentMenu = MenuChoice.EXIT;
+            }
+        }
+    }
+    // end runMenu
+
+    //Shows the main menu screen
+    private MenuChoice showMainMenu() throws IOException {
+        final MenuChoice[] nextChoice = {MenuChoice.EXIT};
+        BasicWindow window = new DevWindow("Stellar Terminal");
+        Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        root.addComponent(new Label("STELLAR TERMINAL"));
+        root.addComponent(new Label(""));
+
+        Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
+        buttons.addComponent(new Button("Navigation", () -> {
+            GameOutput.println("Navigation system opened.");
+            nextChoice[0] = MenuChoice.NAVIGATION;
+            window.close();
+
+        }));
+        buttons.addComponent(new Button("View " + Main.playerShip.getName() + " Status and Upgrades", () -> {
+            GameOutput.println("Ship system opened.");
+            nextChoice[0] = MenuChoice.SHIP;
+            window.close();
+        }));
+        buttons.addComponent(new Button("Inventory and Crafting", () -> {
+            GameOutput.println("Inventory system opened.");
+            nextChoice[0] = MenuChoice.INVENTORY;
+            window.close();
+        }));
+        buttons.addComponent(new Button("Current Planet and mining", () -> {
+            if (Main.getChoicePlanet() == null) {
+                GameOutput.println("Choose a planet first.");
+                return;
+            }
+
+            String starName = (Main.getChoiceStar() == null) ? "Unknown Star" : Main.getChoiceStar().getName();
+            GameOutput.println("Current planet: " + Main.getChoicePlanet().getName() + " | Star system: " + starName);
+
+            nextChoice[0] = MenuChoice.PLANETOPTIONS;
+            window.close();
+        }));
+        buttons.addComponent(new Button("Dev Console (F12)", this::openDevConsole));
+        buttons.addComponent(new Button("Exit Game", () -> {
+            nextChoice[0] = MenuChoice.EXIT;
+            window.close();
+        }));
+        root.addComponent(buttons);
+
+        root.addComponent(new Label(""));
+        root.addComponent(new Label("Console"));
+        consoleBox = createConsoleBox();
+        root.addComponent(consoleBox);
+        refreshConsoleBox();
+
+        window.setComponent(root);
+        gui.addWindowAndWait(window);
+
+        return nextChoice[0];
+    }
+    // end showMainMenu
+
+    //shows the navigation menu screen.
+    private MenuChoice showNavigationMenu() throws IOException {
+        final MenuChoice[] nextChoice = {MenuChoice.MAIN};
+        BasicWindow window = new DevWindow("Navigation");
+        Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        root.addComponent(new Label("NAVIGATION"));
+        root.addComponent(new Label(""));
+
+        Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
+        buttons.addComponent(new Button("Move", () -> {
+            GameOutput.println("Movement System opened");
+            nextChoice[0] = MenuChoice.MOVEMENT;
+            window.close();
+        }));
+        buttons.addComponent(new Button("Get current position", () -> GameOutput.println("You are in Sector " + Main.getPosition() + ".")));
+        buttons.addComponent(new Button("Scan Surrounding Stars", () -> GameOutput.println(Main.surroundings())));
+        buttons.addComponent(new Button("Visit Star System (WARNING: VISITING AND LEAVING STAR SYSTEMS/PLANETS COSTS FUEL)", () -> {
+            GameOutput.println("Star Systems opened");
+            nextChoice[0] = MenuChoice.LISTSTARS;
+            window.close();
+        }));
+        buttons.addComponent(new Button("Back", () -> {
+            GameOutput.println("Returned");
+            nextChoice[0] = MenuChoice.MAIN;
+            window.close();
+        }));
+        root.addComponent(buttons);
+
+        root.addComponent(new Label(""));
+        root.addComponent(new Label("Console"));
+        consoleBox = createConsoleBox();
+        root.addComponent(consoleBox);
+        refreshConsoleBox();
+
+        window.setComponent(root);
+        gui.addWindowAndWait(window);
+
+        return nextChoice[0];
+    }
+    // end showNavigationMenu
+
+    // Show a list of stars in the current sector.
+    private MenuChoice listStars() throws IOException {
+        final MenuChoice[] nextChoice = {MenuChoice.MAIN};
+        BasicWindow window = new BasicWindow("Stars");
+        Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        root.addComponent(new Label("STARS"));
+        root.addComponent(new Label(""));
+
+        Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        ArrayList<Star> sector = new ArrayList<>(Main.getSector());
+
+        buttons.addComponent(new Button(sector.get(0).getName(), () -> {
+            if (Main.getChoiceStar() != sector.get(0)) {
+                Main.playerShip.useFuel(20);
+                Main.setChoiceStar(sector.get(0));
+            }
+            nextChoice[0] = MenuChoice.LISTPLANETS;
+            window.close();
+        }));
+        buttons.addComponent(new Button(sector.get(1).getName(), () -> {
+            if (Main.getChoiceStar() != sector.get(1)) {
+                Main.playerShip.useFuel(20);
+                Main.setChoiceStar(sector.get(1));
+            }
+            nextChoice[0] = MenuChoice.LISTPLANETS;
+            window.close();
+        }));
+        buttons.addComponent(new Button(sector.get(2).getName(), () -> {
+            if (Main.getChoiceStar() != sector.get(2)) {
+                Main.playerShip.useFuel(20);
+                Main.setChoiceStar(sector.get(2));
+            }
+            nextChoice[0] = MenuChoice.LISTPLANETS;
+            window.close();
+        }));
+        buttons.addComponent(new Button(sector.get(3).getName(), () -> {
+            if (Main.getChoiceStar() != sector.get(3)) {
+                Main.playerShip.useFuel(20);
+                Main.setChoiceStar(sector.get(3));
+            }
+            nextChoice[0] = MenuChoice.LISTPLANETS;
+            window.close();
+        }));
+        buttons.addComponent(new Button(sector.get(4).getName(), () -> {
+            if (Main.getChoiceStar() != sector.get(4)) {
+                Main.playerShip.useFuel(20);
+                Main.setChoiceStar(sector.get(4));
+            }
+            nextChoice[0] = MenuChoice.LISTPLANETS;
+            window.close();
+        }));
+        buttons.addComponent(new Button(sector.get(5).getName(), () -> {
+            if (Main.getChoiceStar() != sector.get(5)) {
+                Main.playerShip.useFuel(20);
+                Main.setChoiceStar(sector.get(5));
+            }
+            nextChoice[0] = MenuChoice.LISTPLANETS;
+            window.close();
+        }));
+        buttons.addComponent(new Button(sector.get(6).getName(), () -> {
+            if (Main.getChoiceStar() != sector.get(6)) {
+                Main.playerShip.useFuel(20);
+                Main.setChoiceStar(sector.get(6));
+            }
+            nextChoice[0] = MenuChoice.LISTPLANETS;
+            window.close();
+        }));
+        buttons.addComponent(new Button("Back", () -> {
+            GameOutput.println("Returned");
+            nextChoice[0] = MenuChoice.NAVIGATION;
+            window.close();
+        }));
+
+        root.addComponent(buttons);
+
+        root.addComponent(new Label(""));
+        root.addComponent(new Label("Console"));
+        consoleBox = createConsoleBox();
+        root.addComponent(consoleBox);
+        refreshConsoleBox();
+
+        window.setComponent(root);
+        gui.addWindowAndWait(window);
+
+        return nextChoice[0];
+    }
+    // end listStars
+
+    // Show planets in the chosen star.
+    private MenuChoice listPlanets() throws IOException {
+        final MenuChoice[] nextChoice = {MenuChoice.MAIN};
+        BasicWindow window = new BasicWindow("Planets");
+        Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        root.addComponent(new Label("PLANETS"));
+        root.addComponent(new Label(""));
+
+        Star choice = Main.getChoiceStar();
+
+        Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        ArrayList<Exoplanet> sector = new ArrayList<>(choice.getSystem());
+        buttons.addComponent(new Button(sector.get(0).getName(), () -> {
+            if (Main.getChoicePlanet() != sector.get(0)) {
+                Main.setChoicePlanet(sector.get(0));
+                Main.playerShip.useFuel(5);
+            }
+            nextChoice[0] = MenuChoice.PLANETOPTIONS;
+            window.close();
+        }));
+
+        int numPlanets = choice.getNumPlanets();
+
+        if (numPlanets > 1)
+        {
+            buttons.addComponent(new Button(sector.get(1).getName(), () -> {
+                if (Main.getChoicePlanet() != sector.get(1)) {
+                    Main.setChoicePlanet(sector.get(1));
+                    Main.playerShip.useFuel(5);
+                }
+                nextChoice[0] = MenuChoice.PLANETOPTIONS;
+                window.close();
+            }));
+        }
+
+        if (numPlanets > 2)
+        {
+            buttons.addComponent(new Button(sector.get(2).getName(), () -> {
+                if (Main.getChoicePlanet() != sector.get(2)) {
+                    Main.setChoicePlanet(sector.get(2));
+                    Main.playerShip.useFuel(5);
+                }
+                nextChoice[0] = MenuChoice.PLANETOPTIONS;
+                window.close();
+            }));
+        }
+
+        if (numPlanets > 3)
+        {
+            buttons.addComponent(new Button(sector.get(3).getName(), () -> {
+                if (Main.getChoicePlanet() != sector.get(3)) {
+                    Main.setChoicePlanet(sector.get(3));
+                    Main.playerShip.useFuel(5);
+                }
+                nextChoice[0] = MenuChoice.PLANETOPTIONS;
+                window.close();
+            }));
+        }
+
+        if (numPlanets > 4)
+        {
+            buttons.addComponent(new Button(sector.get(4).getName(), () -> {
+                if (Main.getChoicePlanet() != sector.get(4)) {
+                    Main.setChoicePlanet(sector.get(4));
+                    Main.playerShip.useFuel(5);
+                }
+                nextChoice[0] = MenuChoice.PLANETOPTIONS;
+                window.close();
+            }));
+        }
+
+        if (numPlanets > 5)
+        {
+            buttons.addComponent(new Button(sector.get(5).getName(), () -> {
+                if (Main.getChoicePlanet() != sector.get(5)) {
+                    Main.setChoicePlanet(sector.get(5));
+                    Main.playerShip.useFuel(5);
+                }
+                nextChoice[0] = MenuChoice.PLANETOPTIONS;
+                window.close();
+            }));
+        }
+
+        if (numPlanets > 6)
+        {
+            buttons.addComponent(new Button(sector.get(6).getName(), () -> {
+                if (Main.getChoicePlanet() != sector.get(6)) {
+                    Main.setChoicePlanet(sector.get(6));
+                    Main.playerShip.useFuel(5);
+                }
+                nextChoice[0] = MenuChoice.PLANETOPTIONS;
+                window.close();
+            }));
+        }
+
+        if (numPlanets > 7)
+        {
+            buttons.addComponent(new Button(sector.get(7).getName(), () -> {
+                if (Main.getChoicePlanet() != sector.get(7)) {
+                    Main.setChoicePlanet(sector.get(7));
+                    Main.playerShip.useFuel(5);
+                }
+                nextChoice[0] = MenuChoice.PLANETOPTIONS;
+                window.close();
+            }));
+        }
+
+        if (numPlanets > 8)
+        {
+            buttons.addComponent(new Button(sector.get(8).getName(), () -> {
+                if (Main.getChoicePlanet() != sector.get(8)) {
+                    Main.setChoicePlanet(sector.get(8));
+                    Main.playerShip.useFuel(5);
+                }
+                nextChoice[0] = MenuChoice.PLANETOPTIONS;
+                window.close();
+            }));
+        }
+
+        buttons.addComponent(new Button("Scan planets", () -> {
+            for (int i = 0; i < choice.getNumPlanets(); i ++)
+            {
+                if (Main.playerShip.getScanLevel())
+                {
+                    GameOutput.println(choice.getSystem().get(i).scan());
+                }
+                else
+                {
+                    GameOutput.println(choice.getSystem().get(i).basicScan());
+                }
+            }
+            nextChoice[0] = MenuChoice.LISTPLANETS;
+            window.close();
+        }));
+
+        buttons.addComponent(new Button("Leave this system", () -> {
+            GameOutput.println("Left System. You are now in interstellar space");
+            nextChoice[0] = MenuChoice.LISTSTARS;
+            window.close();
+        }));
+        root.addComponent(buttons);
+
+        root.addComponent(new Label(""));
+        root.addComponent(new Label("Console"));
+        consoleBox = createConsoleBox();
+        root.addComponent(consoleBox);
+        refreshConsoleBox();
+
+        window.setComponent(root);
+        gui.addWindowAndWait(window);
+        return nextChoice[0];
+    }
+    // end listPlanets
+
+    // Show  available chsosies for the selected planet.
+    private MenuChoice planetOptions() throws IOException {
+        final MenuChoice[] nextChoice = {MenuChoice.MAIN};
+        BasicWindow window = new BasicWindow("Options");
+        Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        root.addComponent(new Label("OPTIONS"));
+        root.addComponent(new Label(""));
+
+        Exoplanet choice = Main.getChoicePlanet();
+        
+        if(choice == null) {
+            GameOutput.println("No planet selected");
+            return MenuChoice.LISTPLANETS;
+        }
+
+        boolean isGasOrIceGiant = choice.type().equals("Gas Giant") || choice.type().equals("Ice Giant");
+
+        ArrayList<String> resources = choice.getResources();
+
+        GameOutput.println("You are now orbiting around:\n" + choice.scan());
+
+        Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        // "Print landing image"
+        // (If NOT Gas/Ice Giant) Mine
+        // (If NOT Gas/Ice Giant) Exploration
+        // "Repairs"
+        // (If Gas/Ice Giant) Collect Gasses
+        // (If NOT Gas/Ice Giant) Land - Generates a 2D array based on planet and allows for exploration on this plane
+        // and more-(James)
+        // "Visit Moons (JARED - If we have time)"
+
+        if (!isGasOrIceGiant)
+        {
+            buttons.addComponent(new Button("Land", () -> {
+                Main.landing(choice.type(), choice);
+                nextChoice[0] = MenuChoice.LANDINGMOVEMENT;
+                window.close();
+            }));
+        }
+
+        buttons.addComponent(new Button("Mine resources", () -> {
+            if (!Main.getChoicePlanetScanned()) {
+                GameOutput.println("Scan for resources before mining.");
+                return;
+            }
+
+            nextChoice[0] = MenuChoice.MINING;
+            window.close();
+        }));
+
+
+        if (Main.playerShip.getScanLevel())
+        {
+            buttons.addComponent(new Button("Scan for resources", () -> {
+                Main.setChoicePlanetScanned(true);
+                for (String resource : resources)
+                {
+                    GameOutput.println(resource);
+                }
+            }));
+        }
+        else
+        {
+            buttons.addComponent(new Button("Scan for resources (Top two)", () -> {
+                Main.setChoicePlanetScanned(true);
+                for (int i = 0; i < resources.size(); i ++)
+                {
+                    if (i == 2)
+                    {
+                        break;
+                    }
+                    GameOutput.println(resources.get(i));
+                }
+            }));
+        }
+        
+        buttons.addComponent(new Button("Back", () -> {
+            GameOutput.println("Returned");
+            nextChoice[0] = MenuChoice.LISTPLANETS;
+            window.close();
+        }));
+        root.addComponent(buttons);
+
+        root.addComponent(new Label(""));
+        root.addComponent(new Label("Console"));
+        consoleBox = createConsoleBox();
+        root.addComponent(consoleBox);
+        refreshConsoleBox();
+
+        window.setComponent(root);
+        gui.addWindowAndWait(window);
+
+        return nextChoice[0];
+    }
+    // end planetOptions
+
+    // UI for moving around on a planet surface after landing.
+    private MenuChoice landingMovement() throws IOException {
+        final MenuChoice[] nextChoice = {MenuChoice.MAIN};
+        BasicWindow window = new BasicWindow("Landed");
+        Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        root.addComponent(new Label("LANDED"));
+        root.addComponent(new Label(""));
+
+        Exoplanet choice = Main.getChoicePlanet();
+
+        if(choice == null){
+            GameOutput.println("No planet selected");
+            return MenuChoice.LISTPLANETS;
+        }
+        GameOutput.println(Main.getLandingPosition());
+
+        Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        buttons.addComponent(new Button("Move Forward", () -> {
+            nextChoice[0] = MenuChoice.LANDINGMOVEMENT;
+            Main.landingMovement(0);
+            window.close();
+        }));
+        buttons.addComponent(new Button("Move Backward", () -> {
+            nextChoice[0] = MenuChoice.LANDINGMOVEMENT;
+            Main.landingMovement(1);
+            window.close();
+        }));
+        buttons.addComponent(new Button("Move Right", () -> {
+            nextChoice[0] = MenuChoice.LANDINGMOVEMENT;
+            Main.landingMovement(2);
+            window.close();
+        }));
+        buttons.addComponent(new Button("Move Left", () -> {
+            nextChoice[0] = MenuChoice.LANDINGMOVEMENT;
+            Main.landingMovement(3);
+            window.close();
+        }));
+
+        buttons.addComponent(new Button("Re-Enter Orbit", () -> {
+            GameOutput.println("Left Planet's Surface");
+            nextChoice[0] = MenuChoice.PLANETOPTIONS;
+            window.close();
+        }));
+        root.addComponent(buttons);
+
+        root.addComponent(new Label(""));
+        root.addComponent(new Label("Console"));
+        consoleBox = createConsoleBox();
+        root.addComponent(consoleBox);
+        refreshConsoleBox();
+
+        window.setComponent(root);
+        gui.addWindowAndWait(window);
+
+        return nextChoice[0];
+    }
+    // end landingMovement
+
+    // Present a list of mineable resources.
+    private MenuChoice mineResources() throws IOException {
+        final MenuChoice[] nextChoice = {MenuChoice.PLANETOPTIONS};
+        Exoplanet choice = Main.getChoicePlanet();
+
+        if (choice == null) {
+            GameOutput.println("No planet selected");
+            return MenuChoice.LISTPLANETS;
+        }
+
+        if (!Main.getChoicePlanetScanned()) {
+            GameOutput.println("Scan for resources before mining.");
+            return MenuChoice.PLANETOPTIONS;
+        }
+
+        ArrayList<String> resources = choice.getResources();
+        ArrayList<String> uniqueResources = new ArrayList<>();
+
+        for (String resource : resources) {
+            if (!uniqueResources.contains(resource)) {
+                uniqueResources.add(resource);
             }
         }
 
-        screen.refresh();
-    }
-
-    private boolean handleSelection(int selectedIndex) {
-        if (selectedIndex == 3) {
-            return false;
+        if (uniqueResources.isEmpty()) {
+            GameOutput.println("No resources left to mine on this planet.");
+            return MenuChoice.PLANETOPTIONS;
         }
-        return true; 
+
+        BasicWindow window = new BasicWindow("Mining");
+        Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        root.addComponent(new Label("MINE RESOURCES"));
+        root.addComponent(new Label(""));
+
+        Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        for (String resource : uniqueResources) {
+            buttons.addComponent(new Button(resource, () -> {
+                if (!resources.contains(resource)) {
+                    GameOutput.println(resource + " has already been mined.");
+                    nextChoice[0] = MenuChoice.PLANETOPTIONS;
+                    window.close();
+                    return;
+                }
+
+                while (resources.remove(resource)) {
+                    // Remove every copy so the same resource cannot be mined forever.
+                }
+
+                int amount = (int)(Math.random()*5) + 1;
+
+                inventory.addItem(resource, amount);
+                GameOutput.println("Mined 1 " + resource + ".");
+                nextChoice[0] = MenuChoice.PLANETOPTIONS;
+                window.close();
+            }));
+        }
+
+        buttons.addComponent(new Button("Back", () -> {
+            nextChoice[0] = MenuChoice.PLANETOPTIONS;
+            window.close();
+        }));
+        root.addComponent(buttons);
+
+        root.addComponent(new Label(""));
+        root.addComponent(new Label("Console"));
+        consoleBox = createConsoleBox();
+        root.addComponent(consoleBox);
+        refreshConsoleBox();
+
+        window.setComponent(root);
+        gui.addWindowAndWait(window);
+
+        return nextChoice[0];
     }
+    // end mineResources
+
+    // Show the movement control menu
+    private MenuChoice showMovementMenu() throws IOException {
+        final MenuChoice[] nextChoice = {MenuChoice.NAVIGATION};
+        BasicWindow window = new DevWindow("Movement");
+        Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        root.addComponent(new Label("MOVEMENT"));
+        root.addComponent(new Label(""));
+
+        Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
+        buttons.addComponent(new Button("Move Forward (x)", () -> moveAndReturn(0, nextChoice, window)));
+        buttons.addComponent(new Button("Move Backward (x)", () -> moveAndReturn(1, nextChoice, window)));
+        buttons.addComponent(new Button("Move Up (y)", () -> moveAndReturn(2, nextChoice, window)));
+        buttons.addComponent(new Button("Move Down (y)", () -> moveAndReturn(3, nextChoice, window)));
+        buttons.addComponent(new Button("Move Right (z)", () -> moveAndReturn(4, nextChoice, window)));
+        buttons.addComponent(new Button("Move Left (z)", () -> moveAndReturn(5, nextChoice, window)));
+        buttons.addComponent(new Button("Back", () -> {
+            GameOutput.println("Returned");
+            nextChoice[0] = MenuChoice.NAVIGATION;
+            window.close();
+        }));
+        root.addComponent(buttons);
+
+        root.addComponent(new Label(""));
+        root.addComponent(new Label("Console"));
+        consoleBox = createConsoleBox();
+        root.addComponent(consoleBox);
+        refreshConsoleBox();
+
+        window.setComponent(root);
+        gui.addWindowAndWait(window);
+
+        return nextChoice[0];
+    }
+    // end showMovementMenu
+
+    // Show ship and upgrades menu
+    private MenuChoice showShipStatusMenu() throws IOException {
+        final MenuChoice[] nextChoice = {MenuChoice.MAIN};
+        BasicWindow window = new DevWindow(Main.playerShip.getName() + " Status");
+        Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        root.addComponent(new Label(Main.playerShip.getName().toUpperCase() + "STATUS"));
+        root.addComponent(new Label(""));
+
+        Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
+        buttons.addComponent(new Button("Show " + Main.playerShip.getName() + " Status", () -> GameOutput.println(playerShip.getStatus())));
+        buttons.addComponent(new Button("Show Installed Upgrades", () -> GameOutput.println(playerShip.getUpgradeStatus())));
+        buttons.addComponent(new Button("Inventory and Crafting", () -> {
+            GameOutput.println("Inventory system opened.");
+            nextChoice[0] = MenuChoice.INVENTORY;
+            window.close();
+        }));
+        buttons.addComponent(new Button("Back", () -> {
+            nextChoice[0] = MenuChoice.MAIN;
+            window.close();
+        }));
+        root.addComponent(buttons);
+
+        root.addComponent(new Label(""));
+        root.addComponent(new Label("Console"));
+        consoleBox = createConsoleBox();
+        root.addComponent(consoleBox);
+        refreshConsoleBox();
+
+        window.setComponent(root);
+        gui.addWindowAndWait(window);
+
+        return nextChoice[0];
+    }
+    // end showShipStatusMenu
+
+    // Show inventory
+    private MenuChoice showInventoryMenu() throws IOException {
+        final MenuChoice[] nextChoice = {MenuChoice.MAIN};
+        BasicWindow window = new DevWindow("Inventory and Crafting");
+        Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        root.addComponent(new Label("INVENTORY AND CRAFTING"));
+        root.addComponent(new Label(""));
+
+        Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
+        buttons.addComponent(new Button("View Inventory", () -> GameOutput.println(inventory.getInventorySummary())));
+        buttons.addComponent(new Button("Open Crafting", () -> {
+            GameOutput.println("Crafting system opened.");
+            nextChoice[0] = MenuChoice.CRAFTING;
+            window.close();
+        }));
+        buttons.addComponent(new Button("Back", () -> {
+            nextChoice[0] = MenuChoice.MAIN;
+            window.close();
+        }));
+        root.addComponent(buttons);
+
+        root.addComponent(new Label(""));
+        root.addComponent(new Label("Console"));
+        consoleBox = createConsoleBox();
+        root.addComponent(consoleBox);
+        refreshConsoleBox();
+
+        window.setComponent(root);
+        gui.addWindowAndWait(window);
+
+        return nextChoice[0];
+    }
+    // end showInventoryMenu
+
+    // Show available crafting 
+    private MenuChoice showCraftingMenu() throws IOException {
+        final MenuChoice[] nextChoice = {MenuChoice.INVENTORY};
+        BasicWindow window = new DevWindow("Crafting");
+        Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        root.addComponent(new Label("CRAFTING"));
+        root.addComponent(new Label(""));
+
+        Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
+        buttons.addComponent(new Button(craftingRecipes[0], () -> craftCopperWire()));
+        buttons.addComponent(new Button(craftingRecipes[1], () -> craftFuelCell()));
+        buttons.addComponent(new Button(craftingRecipes[2], () -> craftIronMesh()));
+        buttons.addComponent(new Button(craftingRecipes[3], () -> craftAdvancedFuelCell()));
+        buttons.addComponent(new Button(craftingRecipes[4], () -> craftAdvancedInfoGrabber()));
+        buttons.addComponent(new Button(craftingRecipes[5], () -> craftScannerUpgrade()));
+        buttons.addComponent(new Button(craftingRecipes[6], () -> craftEngineUpgrade()));
+        buttons.addComponent(new Button(craftingRecipes[7], () -> craftCargoSpace()));
+        buttons.addComponent(new Button("Back", () -> {
+            nextChoice[0] = MenuChoice.INVENTORY;
+            window.close();
+        }));
+        root.addComponent(buttons);
+
+        root.addComponent(new Label(""));
+        root.addComponent(new Label("Console"));
+        consoleBox = createConsoleBox();
+        root.addComponent(consoleBox);
+        refreshConsoleBox();
+
+        window.setComponent(root);
+        gui.addWindowAndWait(window);
+
+        return nextChoice[0];
+    }
+    // end showCraftingMenu
+
+    // Create a TextBox used as for the game console
+    private TextBox createConsoleBox() {
+        TextBox box = new TextBox(new com.googlecode.lanterna.TerminalSize(80, 12), TextBox.Style.MULTI_LINE);
+        box.setReadOnly(true);
+        return box;
+    }
+    // end createConsoleBox
+
+    // Refresh console box contents and scroll to bottom.
+    private void refreshConsoleBox() {
+        if (consoleBox == null) {
+            return;
+        }
+
+        consoleBox.setText(String.join("\n", consoleLines));
+
+        if (consoleBox.getTheme() == null) {
+            return;
+        }
+
+        int firstVisibleLine = Math.max(0, consoleLines.size() - consoleBox.getSize().getRows());
+        consoleBox.getRenderer().setViewTopLeft(new TerminalPosition(0, firstVisibleLine));
+    }
+    // end refreshConsoleBox
+
+    // Do a movement and returns.
+    private void moveAndReturn(int moveType, MenuChoice[] nextChoice, BasicWindow window) {
+        if (Main.movement(moveType)) {
+            GameOutput.println("Successful!");
+        } else {
+            GameOutput.println("Failure. You cannot move in that direction.");
+        }
+
+        nextChoice[0] = MenuChoice.NAVIGATION;
+        window.close();
+    }
+    // end moveAndReturn
+
+    // Craft a Copper Wire.
+    private void craftCopperWire() {
+        if (inventory.hasItem("Copper", 2)) {
+            inventory.removeItems("Copper", 2);
+            inventory.addItem("Copper Wire", 1);
+            GameOutput.println("Crafted Copper Wire!");
+        } else {
+            GameOutput.println("Not enough Copper.");
+        }
+    }
+    // end craftCopperWire
+
+    // Craft a Fuel Cell 
+    private void craftFuelCell() {
+        if (inventory.hasItem("Hydrogen Gas", 5) && inventory.hasItem("Helium Gas", 1)) {
+            inventory.removeItems("Hydrogen Gas", 5);
+            inventory.removeItems("Helium Gas", 1);
+            Main.playerShip.refuel(100);
+            GameOutput.println("Crafted Fuel Cell! Fuel increased by 100!");
+            Main.playerShip.getStatus();
+        } else {
+            GameOutput.println("Not enough materials.");
+        }
+    }
+    // end craftFuelCell
+
+    // Craft Iron Mesh
+    private void craftIronMesh() {
+        if (inventory.hasItem("Iron ore", 2)) {
+            inventory.removeItems("Iron ore", 2);
+            inventory.addItem("Iron Mesh", 1);
+            GameOutput.println("Crafted Iron Mesh!");
+        } else {
+            GameOutput.println("Not enough Iron ore.");
+        }
+    }
+    // end craftIronMesh
+
+    // Craft an Advanced Fuel Cell
+    private void craftAdvancedFuelCell() {
+        if (inventory.hasItem("Uranium", 1)) {
+            inventory.removeItems("Uranium", 1);
+            inventory.addItem("Advanced Fuel Cell", 1);
+            GameOutput.println("Crafted Advanced Fuel Cell!");
+        } else {
+            GameOutput.println("Not enough Uranium.");
+        }
+    }
+    // end craftAdvancedFuelCell
+
+    // Craft an Advanced Info-Grabber 
+    private void craftAdvancedInfoGrabber() {
+        if (inventory.hasItem("Uranium", 2) && inventory.hasItem("Ancient Artifact", 1)) {
+            inventory.removeItems("Uranium", 2);
+            inventory.removeItems("Ancient Artifact", 1);
+            inventory.addItem("Advanced Info-Grabber", 1);
+            GameOutput.println("Crafted Advanced Info-Grabber!");
+        } else {
+            GameOutput.println("Not enough materials.");
+        }
+    }
+    // end craftAdvancedInfoGrabber
+
+    // Install the scanner upgrade 
+    private void craftScannerUpgrade() {
+        if (inventory.hasItem("Advanced Info-Grabber", 1) && inventory.hasItem("Copper", 5)) {
+            inventory.removeItems("Advanced Info-Grabber", 1);
+            inventory.removeItems("Copper", 5);
+            playerShip.upgradeScan();
+            GameOutput.println("Scanner Upgrade installed!");
+        } else {
+            GameOutput.println("Not enough materials.");
+        }
+    }
+    // end craftScannerUpgrade
+
+    // Install the engine upgrade.
+    private void craftEngineUpgrade() {
+        if (inventory.hasItem("Rare rocky Elements", 3)
+                && inventory.hasItem("Uranium", 2)
+                && inventory.hasItem("Iron ore", 8)
+                && inventory.hasItem("Copper", 3)
+                && inventory.hasItem("Gold", 3)
+                && inventory.hasItem("Helium Gas", 1)) {
+            inventory.removeItems("Rare rocky Elements", 3);
+            inventory.removeItems("Uranium", 2);
+            inventory.removeItems("Iron ore", 8);
+            inventory.removeItems("Copper", 3);
+            inventory.removeItems("Gold", 3);
+            inventory.removeItems("Helium Gas", 1);
+            playerShip.upgradeEngine();
+            GameOutput.println("Engine Upgrade installed!");
+        } else {
+            GameOutput.println("Not enough materials.");
+        }
+    }
+    // end craftEngineUpgrade
+
+     // Increase cargo capacity if enough materials are available.     
+    private void craftCargoSpace() {
+        if (inventory.hasItem("Iron ore", 4) && inventory.hasItem("Alien Fossils", 3)) {
+            inventory.removeItems("Iron ore", 4);
+            inventory.removeItems("Alien Fossils", 3);
+            playerShip.upgradeCargo();
+            GameOutput.println("Cargo Space upgraded!");
+        } else {
+            GameOutput.println("Not enough materials.");
+        }
+    }
+    // end craftCargoSpace
+
+    /**
+     * execute a inputed developer commands.
+     * return result message to show
+     */
+    private String runDevCommand(String rawCommand) {
+        if (rawCommand.isEmpty()) {
+            return "No command entered.";
+        }
+
+        String[] parts = rawCommand.split("\\s+");
+        String action = parts[0].toLowerCase(Locale.ROOT);
+
+        if (action.equals("help")) {
+            return "Commands: add resource <name> <amount>, add upgrade <scan,engine,cargo>, refuel";
+        }
+
+        if (action.equals("refuel")) {
+            playerShip.refuel();
+            return "Ship refueled.";
+        }
+
+        if (!action.equals("add") || parts.length < 3) {
+            return "Unknown command.";
+        }
+
+        String subject = parts[1].toLowerCase(Locale.ROOT);
+
+        if (subject.equals("upgrade")) {
+            String upgradeType = parts[2].toLowerCase(Locale.ROOT);
+
+            if (upgradeType.equals("scan")) {
+                playerShip.upgradeScan();
+                return "Scan upgrade enabled.";
+            }
+            if (upgradeType.equals("engine")) {
+                playerShip.upgradeEngine();
+                return "Engine upgraded.";
+            }
+            if (upgradeType.equals("cargo")) {
+                playerShip.upgradeCargo();
+                return "Cargo upgraded.";
+            }
+
+            return "Unknown upgrade type.";
+        }
+
+        if (subject.equals("resource") || subject.equals("item")) {
+            if (parts.length < 4) {
+                return "Usage: add resource <name> <amount>";
+            }
+
+            int amount;
+            try {
+                amount = Integer.parseInt(parts[parts.length - 1]);
+            } catch (NumberFormatException e) {
+                return "Last value must be a number.";
+            }
+
+            String name = joinWords(parts, 2, parts.length - 1);
+            inventory.addItem(name, amount);
+            return amount + " x " + name + " added.";
+        }
+
+        return "Unknown command.";
+    }
+    // end runDevCommand
+
+     // Join an array of words into a single string 
+    private String joinWords(String[] parts, int start, int end) {
+        StringBuilder text = new StringBuilder();
+
+        for (int i = start; i < end; i++) {
+            if (i > start) {
+                text.append(' ');
+            }
+            text.append(parts[i]);
+        }
+
+        return text.toString();
+    }
+    // end joinWords
+
+    public void close() throws InterruptedException
+    {
+        MessageDialog.showMessageDialog(gui, "Notification", "You ran out of fuel! Game Over!");
+        System.exit(0);
+    }
+    // end close
 }

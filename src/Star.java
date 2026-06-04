@@ -25,7 +25,7 @@ public class Star extends CelestialBody{
     
     public void createSystem(ArrayList<Exoplanet> input)
     {
-        for (int i = 0; i < planets; i ++)
+        for (int i = 0; i < input.size(); i ++)
         {
             this.system.add(input.get(i));
         }
