@@ -35,7 +35,7 @@ public class Inventory {
         }
 
         if (amountToAdd < amount) {
-            System.out.print("Your cargo hold is full.");
+            GameOutput.println("Your cargo hold is full.");
         }
     }
 
