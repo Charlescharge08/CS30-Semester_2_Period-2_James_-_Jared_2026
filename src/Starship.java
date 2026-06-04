@@ -1,5 +1,3 @@
-import com.googlecode.lanterna.gui2.AbstractWindow;
-
 public class Starship {
     private String shipName;
 
@@ -92,6 +90,15 @@ public class Starship {
 
     public void refuel() {
         fuel = maxFuel;
+    }
+
+    public void refuel(int amount)
+    {
+        fuel += amount;
+        if (fuel > maxFuel)
+        {
+            fuel = amount;
+        }
     }
 
     public boolean getScanLevel()

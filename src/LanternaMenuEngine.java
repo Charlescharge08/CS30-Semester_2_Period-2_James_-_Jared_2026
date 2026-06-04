@@ -32,6 +32,7 @@ public class LanternaMenuEngine {
         LANDINGMOVEMENT,
         EXIT
     }
+    // end MenuChoice
 
     private final ArrayList<String> consoleLines = new ArrayList<>();
     private final Screen screen;
@@ -72,6 +73,7 @@ public class LanternaMenuEngine {
         this.inventory = inventory;
         this.gui = new MultiWindowTextGUI(screen);
     }
+    // end LanternaMenuEngine
 
     public void updateConsole(String text) {
         if (text == null) {
@@ -87,6 +89,7 @@ public class LanternaMenuEngine {
 
         refreshConsoleBox();
     }
+    // end updateConsole
 
     public void startMainMenu() {
         try {
@@ -101,6 +104,7 @@ public class LanternaMenuEngine {
             }
         }
     }
+    // end startMainMenu
 
     public void openShipStatusMenu() {
         try {
@@ -109,6 +113,7 @@ public class LanternaMenuEngine {
             e.printStackTrace();
         }
     }
+    // end openShipStatusMenu
 
     public void openNavigationMenu() {
         try {
@@ -117,6 +122,7 @@ public class LanternaMenuEngine {
             e.printStackTrace();
         }
     }
+    // end openNavigationMenu
 
     public void openMovementMenu() {
         try {
@@ -125,6 +131,7 @@ public class LanternaMenuEngine {
             e.printStackTrace();
         }
     }
+    // end openMovementMenu
 
     public void openInventoryMenu() {
         try {
@@ -133,10 +140,7 @@ public class LanternaMenuEngine {
             e.printStackTrace();
         }
     }
-
-    public void openinventoryAndCraftingMenu() {
-        openInventoryMenu();
-    }
+    // end openInventoryMenu
 
     public void openListStars() {
         try {
@@ -145,6 +149,7 @@ public class LanternaMenuEngine {
             e.printStackTrace();
         }
     }
+    // end openlistStars
 
     public void openListPlanets() {
         try {
@@ -153,6 +158,7 @@ public class LanternaMenuEngine {
             e.printStackTrace();
         }
     }
+    // end openListPlanets
 
     public void openPlanetOptions()
     {
@@ -162,6 +168,7 @@ public class LanternaMenuEngine {
             e.printStackTrace();
         }
     }
+    // end openPlanetOptions
 
     public void openLandingMovement()
     {
@@ -171,6 +178,7 @@ public class LanternaMenuEngine {
             e.printStackTrace();
         }
     }
+    // end openLandingMovement
 
     public void openCraftingAndUpgradesMenu() {
         try {
@@ -179,6 +187,7 @@ public class LanternaMenuEngine {
             e.printStackTrace();
         }
     }
+    // end openCraftingAndUpgradesMenu
 
     public void openDevConsole() {
         String command = TextInputDialog.showDialog(
@@ -196,6 +205,7 @@ public class LanternaMenuEngine {
             GameOutput.println(result);
         }
     }
+    // end openDevConsole
 
     private void runMenu(MenuChoice startingMenu) throws IOException {
         MenuChoice currentMenu = startingMenu;
@@ -228,6 +238,7 @@ public class LanternaMenuEngine {
             }
         }
     }
+    // end runMenu
 
     private MenuChoice showMainMenu() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.EXIT};
@@ -284,6 +295,7 @@ public class LanternaMenuEngine {
 
         return nextChoice[0];
     }
+    // end showMainMenu
 
     private MenuChoice showNavigationMenu() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.MAIN};
@@ -324,6 +336,7 @@ public class LanternaMenuEngine {
 
         return nextChoice[0];
     }
+    // end showNavigationMenu
 
     private MenuChoice listStars() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.MAIN};
@@ -412,6 +425,7 @@ public class LanternaMenuEngine {
 
         return nextChoice[0];
     }
+    // end listStars
 
     private MenuChoice listPlanets() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.MAIN};
@@ -566,6 +580,7 @@ public class LanternaMenuEngine {
         gui.addWindowAndWait(window);
         return nextChoice[0];
     }
+    // end listPlanets
 
     private MenuChoice planetOptions() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.MAIN};
@@ -659,6 +674,7 @@ public class LanternaMenuEngine {
 
         return nextChoice[0];
     }
+    // end planetOptions
 
     private MenuChoice landingMovement() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.MAIN};
@@ -717,6 +733,7 @@ public class LanternaMenuEngine {
 
         return nextChoice[0];
     }
+    // end landingMovement
 
     private MenuChoice mineResources() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.PLANETOPTIONS};
@@ -793,6 +810,7 @@ public class LanternaMenuEngine {
 
         return nextChoice[0];
     }
+    // end mineResources
 
     private MenuChoice showMovementMenu() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.NAVIGATION};
@@ -827,6 +845,7 @@ public class LanternaMenuEngine {
 
         return nextChoice[0];
     }
+    // end showMovementMenu
 
     private MenuChoice showShipStatusMenu() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.MAIN};
@@ -861,6 +880,7 @@ public class LanternaMenuEngine {
 
         return nextChoice[0];
     }
+    // end showShipStatusMenu
 
     private MenuChoice showInventoryMenu() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.MAIN};
@@ -894,6 +914,7 @@ public class LanternaMenuEngine {
 
         return nextChoice[0];
     }
+    // end showInventoryMenu
 
     private MenuChoice showCraftingMenu() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.INVENTORY};
@@ -929,12 +950,14 @@ public class LanternaMenuEngine {
 
         return nextChoice[0];
     }
+    // end showCraftingMenu
 
     private TextBox createConsoleBox() {
         TextBox box = new TextBox(new com.googlecode.lanterna.TerminalSize(80, 12), TextBox.Style.MULTI_LINE);
         box.setReadOnly(true);
         return box;
     }
+    // end createConsoleBox
 
     private void refreshConsoleBox() {
         if (consoleBox == null) {
@@ -950,6 +973,7 @@ public class LanternaMenuEngine {
         int firstVisibleLine = Math.max(0, consoleLines.size() - consoleBox.getSize().getRows());
         consoleBox.getRenderer().setViewTopLeft(new TerminalPosition(0, firstVisibleLine));
     }
+    // end refreshConsoleBox
 
     private void moveAndReturn(int moveType, MenuChoice[] nextChoice, BasicWindow window) {
         if (Main.movement(moveType)) {
@@ -961,6 +985,7 @@ public class LanternaMenuEngine {
         nextChoice[0] = MenuChoice.NAVIGATION;
         window.close();
     }
+    // end moveAndReturn
 
     private void craftCopperWire() {
         if (inventory.hasItem("Copper Deposit", 2)) {
@@ -971,17 +996,20 @@ public class LanternaMenuEngine {
             GameOutput.println("Not enough Copper Deposit.");
         }
     }
+    // end craftCopperWire
 
     private void craftFuelCell() {
         if (inventory.hasItem("Hydrogen Gas", 5) && inventory.hasItem("Helium Gas", 1)) {
             inventory.removeItems("Hydrogen Gas", 5);
             inventory.removeItems("Helium Gas", 1);
-            inventory.addItem("Fuel Cell", 1);
-            GameOutput.println("Crafted Fuel Cell!");
+            Main.playerShip.refuel(100);
+            GameOutput.println("Crafted Fuel Cell! Fuel increased by 100!");
+            Main.playerShip.getStatus();
         } else {
             GameOutput.println("Not enough materials.");
         }
     }
+    // end craftFuelCell
 
     private void craftIronMesh() {
         if (inventory.hasItem("Iron ore", 2)) {
@@ -992,6 +1020,7 @@ public class LanternaMenuEngine {
             GameOutput.println("Not enough Iron ore.");
         }
     }
+    // end craftIronMesh
 
     private void craftAdvancedFuelCell() {
         if (inventory.hasItem("Uranium", 1)) {
@@ -1002,6 +1031,7 @@ public class LanternaMenuEngine {
             GameOutput.println("Not enough Uranium.");
         }
     }
+    // end craftAdvancedFuelCell
 
     private void craftAdvancedInfoGrabber() {
         if (inventory.hasItem("Uranium", 2) && inventory.hasItem("Ancient Artifact", 1)) {
@@ -1013,6 +1043,7 @@ public class LanternaMenuEngine {
             GameOutput.println("Not enough materials.");
         }
     }
+    // end craftAdvancedInfoGrabber
 
     private void craftScannerUpgrade() {
         if (inventory.hasItem("Advanced Info-Grabber", 1) && inventory.hasItem("Copper Wire", 5)) {
@@ -1024,6 +1055,7 @@ public class LanternaMenuEngine {
             GameOutput.println("Not enough materials.");
         }
     }
+    // end craftScannerUpgrade
 
     private void craftEngineUpgrade() {
         if (inventory.hasItem("Rare rocky Elements", 3)
@@ -1044,6 +1076,7 @@ public class LanternaMenuEngine {
             GameOutput.println("Not enough materials.");
         }
     }
+    // end craftEngineUpgrade
 
     private void craftCargoSpace() {
         if (inventory.hasItem("Iron Mesh", 2) && inventory.hasItem("Alien Fossils", 3)) {
@@ -1055,6 +1088,7 @@ public class LanternaMenuEngine {
             GameOutput.println("Not enough materials.");
         }
     }
+    // end craftCargoSpace
 
     private String runDevCommand(String rawCommand) {
         if (rawCommand.isEmpty()) {
@@ -1117,6 +1151,7 @@ public class LanternaMenuEngine {
 
         return "Unknown command.";
     }
+    // end runDevCommand
 
     private String joinWords(String[] parts, int start, int end) {
         StringBuilder text = new StringBuilder();
@@ -1130,10 +1165,12 @@ public class LanternaMenuEngine {
 
         return text.toString();
     }
+    // end joinWords
 
     public void close() throws InterruptedException
     {
         MessageDialog.showMessageDialog(gui, "Notification", "You ran out of fuel! Game Over!");
         System.exit(0);
     }
+    // end close
 }
