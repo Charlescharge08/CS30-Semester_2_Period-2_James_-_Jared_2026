@@ -63,7 +63,7 @@ public class Resources {
     private static List<String> rocky(){
         List<String> r = new ArrayList<>();
         r.add("Iron ore");
-        r.add("Water"); 
+        r.add("Water");
         r.add("Food");
         r.add("Uranium");
 
@@ -88,7 +88,7 @@ public class Resources {
     }
 
     private static List<String> subrocky(){
-                List<String> r = new ArrayList<>();
+        List<String> r = new ArrayList<>();
         r.add("Iron ore"); 
 
         if (chance(70)){
@@ -117,7 +117,6 @@ public class Resources {
 
     private static List<String> iceGiant(){
                 List<String> r = new ArrayList<>();
-        r.add("Water");
         r.add("Water");
 
         if (chance(70)){

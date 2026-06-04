@@ -80,8 +80,9 @@ public class Starship {
             GameOutput.println("Your engine sputtered. Fuel loss doubles.");
         }
 
-        fuel -= amount / engineLevel;
+        amount /= engineLevel;
 
+        fuel -= amount;
         if(fuel < 0) {
             fuel = 0;
         }

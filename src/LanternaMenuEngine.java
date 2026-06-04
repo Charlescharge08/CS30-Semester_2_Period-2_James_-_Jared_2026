@@ -28,6 +28,7 @@ public class LanternaMenuEngine {
         LISTPLANETS,
         PLANETOPTIONS,
         MINING,
+        LANDINGMOVEMENT,
         EXIT
     }
 
@@ -161,6 +162,15 @@ public class LanternaMenuEngine {
         }
     }
 
+    public void openLandingMovement()
+    {
+        try {
+            runMenu(MenuChoice.LANDINGMOVEMENT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void openCraftingAndUpgradesMenu() {
         try {
             runMenu(MenuChoice.CRAFTING);
@@ -208,6 +218,8 @@ public class LanternaMenuEngine {
                 currentMenu = listPlanets();
             } else if (currentMenu == MenuChoice.PLANETOPTIONS) {
                 currentMenu = planetOptions();
+            } else if (currentMenu == MenuChoice.LANDINGMOVEMENT) {
+                currentMenu = landingMovement();
             } else if (currentMenu == MenuChoice.MINING) {
                 currentMenu = mineResources();
             } else {
@@ -519,8 +531,24 @@ public class LanternaMenuEngine {
             }));
         }
 
-        buttons.addComponent(new Button("Back", () -> {
-            GameOutput.println("Returned");
+        buttons.addComponent(new Button("Scan planets", () -> {
+            for (int i = 0; i < choice.getNumPlanets(); i ++)
+            {
+                if (Main.playerShip.getScanLevel())
+                {
+                    GameOutput.println(choice.getSystem().get(i).scan());
+                }
+                else
+                {
+                    GameOutput.println(choice.getSystem().get(i).basicScan());
+                }
+            }
+            nextChoice[0] = MenuChoice.LISTPLANETS;
+            window.close();
+        }));
+
+        buttons.addComponent(new Button("Leave this system", () -> {
+            GameOutput.println("Left System. You are now in interstellar space");
             nextChoice[0] = MenuChoice.LISTSTARS;
             window.close();
         }));
@@ -552,7 +580,11 @@ public class LanternaMenuEngine {
             return MenuChoice.LISTPLANETS;
         }
 
+        boolean isGasOrIceGiant = choice.type().equals("Gas Giant") || choice.type().equals("Ice Giant");
+
         ArrayList<String> resources = choice.getResources();
+
+        GameOutput.println("You are now orbiting around:\n" + choice.scan());
 
         Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
 
@@ -561,12 +593,29 @@ public class LanternaMenuEngine {
         // (If NOT Gas/Ice Giant) Exploration
         // "Repairs"
         // (If Gas/Ice Giant) Collect Gasses
-        // Scan for Resources (Dependant on upgrade)
         // (If NOT Gas/Ice Giant) Land - Generates a 2D array based on planet and allows for exploration on this plane
         // and more-(James)
         // "Visit Moons (JARED - If we have time)"
 
-        buttons.addComponent(new Button("Mine resources", () -> {
+        if (!isGasOrIceGiant)
+        {
+            buttons.addComponent(new Button("Land", () -> {
+                Main.landing(choice.type(), choice);
+                nextChoice[0] = MenuChoice.LANDINGMOVEMENT;
+                window.close();
+            }));
+        }
+
+        if (!isGasOrIceGiant)
+        {
+            buttons.addComponent(new Button("Land", () -> {
+                Main.landing(choice.type(), choice);
+                nextChoice[0] = MenuChoice.LANDINGMOVEMENT;
+                window.close();
+            }));
+        }
+
+               buttons.addComponent(new Button("Mine resources", () -> {
             if (!Main.getChoicePlanetScanned()) {
                 GameOutput.println("Scan for resources before mining.");
                 return;
@@ -575,6 +624,7 @@ public class LanternaMenuEngine {
             nextChoice[0] = MenuChoice.MINING;
             window.close();
         }));
+
 
         if (Main.playerShip.getScanLevel())
         {
@@ -604,6 +654,64 @@ public class LanternaMenuEngine {
         buttons.addComponent(new Button("Back", () -> {
             GameOutput.println("Returned");
             nextChoice[0] = MenuChoice.LISTPLANETS;
+            window.close();
+        }));
+        root.addComponent(buttons);
+
+        root.addComponent(new Label(""));
+        root.addComponent(new Label("Console"));
+        consoleBox = createConsoleBox();
+        root.addComponent(consoleBox);
+        refreshConsoleBox();
+
+        window.setComponent(root);
+        gui.addWindowAndWait(window);
+
+        return nextChoice[0];
+    }
+
+    private MenuChoice landingMovement() throws IOException {
+        final MenuChoice[] nextChoice = {MenuChoice.MAIN};
+        BasicWindow window = new BasicWindow("Landed");
+        Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        root.addComponent(new Label("LANDED"));
+        root.addComponent(new Label(""));
+
+        Exoplanet choice = Main.getChoicePlanet();
+
+        if(choice == null){
+            GameOutput.println("No planet selected");
+            return MenuChoice.LISTPLANETS;
+        }
+        GameOutput.println(Main.getLandingPosition());
+
+        Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
+
+        buttons.addComponent(new Button("Move Forward", () -> {
+            nextChoice[0] = MenuChoice.LANDINGMOVEMENT;
+            Main.landingMovement(0);
+            window.close();
+        }));
+        buttons.addComponent(new Button("Move Backward", () -> {
+            nextChoice[0] = MenuChoice.LANDINGMOVEMENT;
+            Main.landingMovement(1);
+            window.close();
+        }));
+        buttons.addComponent(new Button("Move Right", () -> {
+            nextChoice[0] = MenuChoice.LANDINGMOVEMENT;
+            Main.landingMovement(2);
+            window.close();
+        }));
+        buttons.addComponent(new Button("Move Left", () -> {
+            nextChoice[0] = MenuChoice.LANDINGMOVEMENT;
+            Main.landingMovement(3);
+            window.close();
+        }));
+
+        buttons.addComponent(new Button("Re-Enter Orbit", () -> {
+            GameOutput.println("Left Planet's Surface");
+            nextChoice[0] = MenuChoice.PLANETOPTIONS;
             window.close();
         }));
         root.addComponent(buttons);

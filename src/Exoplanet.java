@@ -16,12 +16,12 @@ public class Exoplanet extends CelestialBody{
         this.temperature = temperature;
         this.atmosphere = atmosphere;
         this.parent = parent;
-        this.resources = resources;
+        this.resources = new ArrayList<String>(resources);
     }
     
     public String scan()
     {
-        return name + " is a " + type + " exoplanet with " + moons + " moons orbiting " + parent.getName() + ". \nIt's surface temperature is " + temperature + " kelvin and it has a " + atmosphere + " atmosphere. \nHas life: " + hasLife + ".";
+        return name + " is a " + type + " exoplanet with " + moons + " moons orbiting " + parent.getName() + ".\nIt's surface temperature is " + temperature + " kelvin, \nand it has a " + atmosphere + " atmosphere.\nHas life: " + hasLife + ".";
     }
 
     public ArrayList<String> getResources()
@@ -32,5 +32,10 @@ public class Exoplanet extends CelestialBody{
     public String type()
     {
         return type;
+    }
+
+    public void modifyResources(ArrayList<String> input)
+    {
+        resources = new ArrayList<String>(input);
     }
 }
