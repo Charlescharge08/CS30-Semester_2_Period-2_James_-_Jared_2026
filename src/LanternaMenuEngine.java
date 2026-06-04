@@ -46,7 +46,7 @@ public class LanternaMenuEngine {
         "Iron Mesh (Iron ore x2)",
         "Advanced Fuel Cell (Uranium x1)",
         "Advanced Info-Grabber (Uranium x2, Ancient Artifact x1)",
-        "Scanner Upgrade (Ancient Artifact x1, Copper x5)",
+        "Scanner Upgrade (Advanced Info-Grabber x1, Copper x5)",
         "Engine Upgrade (Rare rocky Elements x3, Uranium x2, Iron ore x8, Copper x3, Gold x3, Helium Gas x1)",
         "Cargo Space (Iron ore x4, Alien Fossils x3)"
     };
@@ -1088,8 +1088,8 @@ public class LanternaMenuEngine {
 
     // Install the scanner upgrade 
     private void craftScannerUpgrade() {
-        if (inventory.hasItem("Ancient Artifact", 1) && inventory.hasItem("Copper", 5)) {
-            inventory.removeItems("Ancient Artifact", 1);
+        if (inventory.hasItem("Advanced Info-Grabber", 1) && inventory.hasItem("Copper", 5)) {
+            inventory.removeItems("Advanced Info-Grabber", 1);
             inventory.removeItems("Copper", 5);
             playerShip.upgradeScan();
             GameOutput.println("Scanner Upgrade installed!");
