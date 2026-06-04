@@ -3,8 +3,14 @@ import java.util.*;
 public class Resources {
     private static Random rand = new Random();
 
-    public static final String[] RESOURCES = {"Iron ore", "Copper Deposit", "Gold", "Water", "Uranium", "Alien Fossils", "Ancient Artifact", "Helium Gas", "Hydrogen Gas", "Rare rocky Elements", "Weird Alien Carcass"};
+    public static final String[] RESOURCES = {"Iron ore", "Copper", "Gold", "Water", "Uranium", "Food", "Alien Fossils", "Ancient Artifact", "Helium Gas", "Hydrogen Gas", "Rare rocky Elements", "Weird Alien Carcass"};
     
+    /**
+     * Generate a list of possible resources for a planet type.
+     * Type planet type string
+     * whether the planet has life
+     * return list of resource 
+     */
     public static List<String> planetResources(String Type, boolean hasLife){
 
         List<String> returnValues = null;
@@ -12,14 +18,21 @@ public class Resources {
         switch (Type.toLowerCase()){
             case "superrocky":
                 returnValues = superrocky();
+                break;
             case "rocky":
                 returnValues = rocky();
+                break;
             case "subrocky":
                 returnValues = subrocky();
+                break;
             case "gas giant":
                 returnValues = gasGiant();
+                break;
             case "ice giant":
                 returnValues = iceGiant();
+                break;
+            default:
+                returnValues = new ArrayList<>();
         }
 
         if (hasLife)
@@ -39,7 +52,7 @@ public class Resources {
 
 
         if (chance(70)){
-            r.add("Water");
+             r.add("Copper");
         }
         if (chance(60)){
              r.add("Gold");
@@ -67,7 +80,7 @@ public class Resources {
         r.add("Uranium");
 
         if (chance(50)){
-            r.add("Water");
+             r.add("Copper");
         }
         if (chance(35)){
              r.add("Gold");
@@ -94,14 +107,13 @@ public class Resources {
         if (chance(70)){
              r.add("Water");
         }
-        if (chance(20)){
-             r.add("Uranium");
+        if (chance(60)){
+             r.add("Copper");
         }
 
         return r;
     
     }
-
     private static List<String> gasGiant(){
                 List<String> r = new ArrayList<>();
         r.add("Hydrogen Gas");

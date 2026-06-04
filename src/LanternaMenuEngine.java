@@ -41,14 +41,14 @@ public class LanternaMenuEngine {
     private final MultiWindowTextGUI gui;
     private TextBox consoleBox;
     private final String[] craftingRecipes = {
-        "Copper Wire (Copper Deposit x2)",
+        "Copper Wire (Copper x2)",
         "Fuel Cell (Hydrogen Gas x5, Helium Gas x1)",
         "Iron Mesh (Iron ore x2)",
         "Advanced Fuel Cell (Uranium x1)",
         "Advanced Info-Grabber (Uranium x2, Ancient Artifact x1)",
-        "Scanner Upgrade (Advanced Info-Grabber x1, Copper Wire x5)",
-        "Engine Upgrade (Rare rocky Elements x3, Uranium x2, Iron ore x8, Copper Deposit x3, Copper Wire x3, Advanced Fuel Cell x1)",
-        "Cargo Space (Iron Mesh x2, Alien Fossils x3)"
+        "Scanner Upgrade (Ancient Artifact x1, Copper x5)",
+        "Engine Upgrade (Rare rocky Elements x3, Uranium x2, Iron ore x8, Copper x3, Gold x3, Helium Gas x1)",
+        "Cargo Space (Iron ore x4, Alien Fossils x3)"
     };
 
     private class DevWindow extends BasicWindow {
@@ -67,6 +67,12 @@ public class LanternaMenuEngine {
         }
     }
 
+    /**
+     * Create the menu engine for lanterna UI.
+     * screen terminal screen
+     * playerShip reference to the player's ship
+     * inventory player's inventory
+     */
     public LanternaMenuEngine(Screen screen, Starship playerShip, Inventory inventory) {
         this.screen = screen;
         this.playerShip = playerShip;
@@ -75,6 +81,7 @@ public class LanternaMenuEngine {
     }
     // end LanternaMenuEngine
 
+    // Update the console with the new text and refresh the console box
     public void updateConsole(String text) {
         if (text == null) {
             text = "";
@@ -91,6 +98,7 @@ public class LanternaMenuEngine {
     }
     // end updateConsole
 
+    // Start the main menu loop
     public void startMainMenu() {
         try {
             runMenu(MenuChoice.MAIN);
@@ -106,6 +114,7 @@ public class LanternaMenuEngine {
     }
     // end startMainMenu
 
+    // Open the ship status UI
     public void openShipStatusMenu() {
         try {
             runMenu(MenuChoice.SHIP);
@@ -115,6 +124,7 @@ public class LanternaMenuEngine {
     }
     // end openShipStatusMenu
 
+    // Open the navigation UI.
     public void openNavigationMenu() {
         try {
             runMenu(MenuChoice.NAVIGATION);
@@ -124,6 +134,7 @@ public class LanternaMenuEngine {
     }
     // end openNavigationMenu
 
+    // Open movement UI 
     public void openMovementMenu() {
         try {
             runMenu(MenuChoice.MOVEMENT);
@@ -133,6 +144,7 @@ public class LanternaMenuEngine {
     }
     // end openMovementMenu
 
+    // Open the inventory UI.
     public void openInventoryMenu() {
         try {
             runMenu(MenuChoice.INVENTORY);
@@ -142,6 +154,7 @@ public class LanternaMenuEngine {
     }
     // end openInventoryMenu
 
+    // Open the list of nearby stars.
     public void openListStars() {
         try {
             runMenu(MenuChoice.LISTSTARS);
@@ -151,6 +164,7 @@ public class LanternaMenuEngine {
     }
     // end openlistStars
 
+    // Open the list of planets for the currently selected star.
     public void openListPlanets() {
         try {
             runMenu(MenuChoice.LISTPLANETS);
@@ -160,6 +174,7 @@ public class LanternaMenuEngine {
     }
     // end openListPlanets
 
+    // Open planet options for the selected planet 
     public void openPlanetOptions()
     {
         try {
@@ -170,6 +185,7 @@ public class LanternaMenuEngine {
     }
     // end openPlanetOptions
 
+    // surface movement UI for a planet.
     public void openLandingMovement()
     {
         try {
@@ -180,6 +196,7 @@ public class LanternaMenuEngine {
     }
     // end openLandingMovement
 
+    // Open crafting and upgrades UI.
     public void openCraftingAndUpgradesMenu() {
         try {
             runMenu(MenuChoice.CRAFTING);
@@ -189,6 +206,7 @@ public class LanternaMenuEngine {
     }
     // end openCraftingAndUpgradesMenu
 
+    // Show a textbox for developer commands.
     public void openDevConsole() {
         String command = TextInputDialog.showDialog(
                 gui,
@@ -207,6 +225,7 @@ public class LanternaMenuEngine {
     }
     // end openDevConsole
 
+    // loop that runs menu screens until exit.
     private void runMenu(MenuChoice startingMenu) throws IOException {
         MenuChoice currentMenu = startingMenu;
 
@@ -240,6 +259,7 @@ public class LanternaMenuEngine {
     }
     // end runMenu
 
+    //Shows the main menu screen
     private MenuChoice showMainMenu() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.EXIT};
         BasicWindow window = new DevWindow("Stellar Terminal");
@@ -297,6 +317,7 @@ public class LanternaMenuEngine {
     }
     // end showMainMenu
 
+    //shows the navigation menu screen.
     private MenuChoice showNavigationMenu() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.MAIN};
         BasicWindow window = new DevWindow("Navigation");
@@ -338,6 +359,7 @@ public class LanternaMenuEngine {
     }
     // end showNavigationMenu
 
+    // Show a list of stars in the current sector.
     private MenuChoice listStars() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.MAIN};
         BasicWindow window = new BasicWindow("Stars");
@@ -427,6 +449,7 @@ public class LanternaMenuEngine {
     }
     // end listStars
 
+    // Show planets in the chosen star.
     private MenuChoice listPlanets() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.MAIN};
         BasicWindow window = new BasicWindow("Planets");
@@ -582,6 +605,7 @@ public class LanternaMenuEngine {
     }
     // end listPlanets
 
+    // Show  available chsosies for the selected planet.
     private MenuChoice planetOptions() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.MAIN};
         BasicWindow window = new BasicWindow("Options");
@@ -623,13 +647,25 @@ public class LanternaMenuEngine {
             }));
         }
 
-        if (Main.getChoicePlanetScanned())
+        if (!isGasOrIceGiant)
         {
-            buttons.addComponent(new Button("Mine resources", () -> {
-                nextChoice[0] = MenuChoice.MINING;
+            buttons.addComponent(new Button("Land", () -> {
+                Main.landing(choice.type(), choice);
+                nextChoice[0] = MenuChoice.LANDINGMOVEMENT;
                 window.close();
             }));
         }
+
+               buttons.addComponent(new Button("Mine resources", () -> {
+            if (!Main.getChoicePlanetScanned()) {
+                GameOutput.println("Scan for resources before mining.");
+                return;
+            }
+
+            nextChoice[0] = MenuChoice.MINING;
+            window.close();
+        }));
+
 
         if (Main.playerShip.getScanLevel())
         {
@@ -676,6 +712,7 @@ public class LanternaMenuEngine {
     }
     // end planetOptions
 
+    // UI for moving around on a planet surface after landing.
     private MenuChoice landingMovement() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.MAIN};
         BasicWindow window = new BasicWindow("Landed");
@@ -735,6 +772,7 @@ public class LanternaMenuEngine {
     }
     // end landingMovement
 
+    // Present a list of mineable resources.
     private MenuChoice mineResources() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.PLANETOPTIONS};
         Exoplanet choice = Main.getChoicePlanet();
@@ -812,6 +850,7 @@ public class LanternaMenuEngine {
     }
     // end mineResources
 
+    // Show the movement control menu
     private MenuChoice showMovementMenu() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.NAVIGATION};
         BasicWindow window = new DevWindow("Movement");
@@ -847,6 +886,7 @@ public class LanternaMenuEngine {
     }
     // end showMovementMenu
 
+    // Show ship and upgrades menu
     private MenuChoice showShipStatusMenu() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.MAIN};
         BasicWindow window = new DevWindow(Main.playerShip.getName() + " Status");
@@ -882,6 +922,7 @@ public class LanternaMenuEngine {
     }
     // end showShipStatusMenu
 
+    // Show inventory
     private MenuChoice showInventoryMenu() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.MAIN};
         BasicWindow window = new DevWindow("Inventory and Crafting");
@@ -916,6 +957,7 @@ public class LanternaMenuEngine {
     }
     // end showInventoryMenu
 
+    // Show available crafting 
     private MenuChoice showCraftingMenu() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.INVENTORY};
         BasicWindow window = new DevWindow("Crafting");
@@ -952,6 +994,7 @@ public class LanternaMenuEngine {
     }
     // end showCraftingMenu
 
+    // Create a TextBox used as for the game console
     private TextBox createConsoleBox() {
         TextBox box = new TextBox(new com.googlecode.lanterna.TerminalSize(80, 12), TextBox.Style.MULTI_LINE);
         box.setReadOnly(true);
@@ -959,6 +1002,7 @@ public class LanternaMenuEngine {
     }
     // end createConsoleBox
 
+    // Refresh console box contents and scroll to bottom.
     private void refreshConsoleBox() {
         if (consoleBox == null) {
             return;
@@ -975,6 +1019,7 @@ public class LanternaMenuEngine {
     }
     // end refreshConsoleBox
 
+    // Do a movement and returns.
     private void moveAndReturn(int moveType, MenuChoice[] nextChoice, BasicWindow window) {
         if (Main.movement(moveType)) {
             GameOutput.println("Successful!");
@@ -987,17 +1032,19 @@ public class LanternaMenuEngine {
     }
     // end moveAndReturn
 
+    // Craft a Copper Wire.
     private void craftCopperWire() {
-        if (inventory.hasItem("Copper Deposit", 2)) {
-            inventory.removeItems("Copper Deposit", 2);
+        if (inventory.hasItem("Copper", 2)) {
+            inventory.removeItems("Copper", 2);
             inventory.addItem("Copper Wire", 1);
             GameOutput.println("Crafted Copper Wire!");
         } else {
-            GameOutput.println("Not enough Copper Deposit.");
+            GameOutput.println("Not enough Copper.");
         }
     }
     // end craftCopperWire
 
+    // Craft a Fuel Cell 
     private void craftFuelCell() {
         if (inventory.hasItem("Hydrogen Gas", 5) && inventory.hasItem("Helium Gas", 1)) {
             inventory.removeItems("Hydrogen Gas", 5);
@@ -1011,6 +1058,7 @@ public class LanternaMenuEngine {
     }
     // end craftFuelCell
 
+    // Craft Iron Mesh
     private void craftIronMesh() {
         if (inventory.hasItem("Iron ore", 2)) {
             inventory.removeItems("Iron ore", 2);
@@ -1022,6 +1070,7 @@ public class LanternaMenuEngine {
     }
     // end craftIronMesh
 
+    // Craft an Advanced Fuel Cell
     private void craftAdvancedFuelCell() {
         if (inventory.hasItem("Uranium", 1)) {
             inventory.removeItems("Uranium", 1);
@@ -1033,6 +1082,7 @@ public class LanternaMenuEngine {
     }
     // end craftAdvancedFuelCell
 
+    // Craft an Advanced Info-Grabber 
     private void craftAdvancedInfoGrabber() {
         if (inventory.hasItem("Uranium", 2) && inventory.hasItem("Ancient Artifact", 1)) {
             inventory.removeItems("Uranium", 2);
@@ -1045,10 +1095,11 @@ public class LanternaMenuEngine {
     }
     // end craftAdvancedInfoGrabber
 
+    // Install the scanner upgrade 
     private void craftScannerUpgrade() {
-        if (inventory.hasItem("Advanced Info-Grabber", 1) && inventory.hasItem("Copper Wire", 5)) {
-            inventory.removeItems("Advanced Info-Grabber", 1);
-            inventory.removeItems("Copper Wire", 5);
+        if (inventory.hasItem("Ancient Artifact", 1) && inventory.hasItem("Copper", 5)) {
+            inventory.removeItems("Ancient Artifact", 1);
+            inventory.removeItems("Copper", 5);
             playerShip.upgradeScan();
             GameOutput.println("Scanner Upgrade installed!");
         } else {
@@ -1057,19 +1108,20 @@ public class LanternaMenuEngine {
     }
     // end craftScannerUpgrade
 
+    // Install the engine upgrade.
     private void craftEngineUpgrade() {
         if (inventory.hasItem("Rare rocky Elements", 3)
                 && inventory.hasItem("Uranium", 2)
                 && inventory.hasItem("Iron ore", 8)
-                && inventory.hasItem("Copper Deposit", 3)
-                && inventory.hasItem("Copper Wire", 3)
-                && inventory.hasItem("Advanced Fuel Cell", 1)) {
+                && inventory.hasItem("Copper", 3)
+                && inventory.hasItem("Gold", 3)
+                && inventory.hasItem("Helium Gas", 1)) {
             inventory.removeItems("Rare rocky Elements", 3);
             inventory.removeItems("Uranium", 2);
             inventory.removeItems("Iron ore", 8);
-            inventory.removeItems("Copper Deposit", 3);
-            inventory.removeItems("Copper Wire", 3);
-            inventory.removeItems("Advanced Fuel Cell", 1);
+            inventory.removeItems("Copper", 3);
+            inventory.removeItems("Gold", 3);
+            inventory.removeItems("Helium Gas", 1);
             playerShip.upgradeEngine();
             GameOutput.println("Engine Upgrade installed!");
         } else {
@@ -1078,9 +1130,10 @@ public class LanternaMenuEngine {
     }
     // end craftEngineUpgrade
 
+     // Increase cargo capacity if enough materials are available.     
     private void craftCargoSpace() {
-        if (inventory.hasItem("Iron Mesh", 2) && inventory.hasItem("Alien Fossils", 3)) {
-            inventory.removeItems("Iron Mesh", 2);
+        if (inventory.hasItem("Iron ore", 4) && inventory.hasItem("Alien Fossils", 3)) {
+            inventory.removeItems("Iron ore", 4);
             inventory.removeItems("Alien Fossils", 3);
             playerShip.upgradeCargo();
             GameOutput.println("Cargo Space upgraded!");
@@ -1090,6 +1143,10 @@ public class LanternaMenuEngine {
     }
     // end craftCargoSpace
 
+    /**
+     * execute a inputed developer commands.
+     * return result message to show
+     */
     private String runDevCommand(String rawCommand) {
         if (rawCommand.isEmpty()) {
             return "No command entered.";
@@ -1153,6 +1210,7 @@ public class LanternaMenuEngine {
     }
     // end runDevCommand
 
+     // Join an array of words into a single string 
     private String joinWords(String[] parts, int start, int end) {
         StringBuilder text = new StringBuilder();
 
