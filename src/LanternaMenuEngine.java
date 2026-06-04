@@ -647,16 +647,7 @@ public class LanternaMenuEngine {
             }));
         }
 
-        if (!isGasOrIceGiant)
-        {
-            buttons.addComponent(new Button("Land", () -> {
-                Main.landing(choice.type(), choice);
-                nextChoice[0] = MenuChoice.LANDINGMOVEMENT;
-                window.close();
-            }));
-        }
-
-               buttons.addComponent(new Button("Mine resources", () -> {
+        buttons.addComponent(new Button("Mine resources", () -> {
             if (!Main.getChoicePlanetScanned()) {
                 GameOutput.println("Scan for resources before mining.");
                 return;

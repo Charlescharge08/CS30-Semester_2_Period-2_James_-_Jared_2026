@@ -48,7 +48,7 @@ public class Resources {
         List<String> r = new ArrayList<>();
 
         r.add("Iron ore");
-        r.add("Copper Deposit");
+        r.add("Copper");
 
 
         if (chance(70)){
@@ -76,7 +76,7 @@ public class Resources {
     private static List<String> rocky(){
         List<String> r = new ArrayList<>();
         r.add("Iron ore");
-        r.add("Copper Deposit");
+        r.add("Copper");
         r.add("Uranium");
 
         if (chance(50)){
@@ -102,7 +102,7 @@ public class Resources {
     private static List<String> subrocky(){
         List<String> r = new ArrayList<>();
         r.add("Iron ore"); 
-        r.add("Copper Deposit");
+        r.add("Copper");
 
         if (chance(70)){
              r.add("Water");
