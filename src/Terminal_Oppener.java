@@ -17,6 +17,7 @@ public class Terminal_Oppener {
             screen.startScreen();
             screen.setCursorPosition(null); 
 
+            // return the started screen to the caller for UI building
             return screen;
 
         } catch (Exception e) {
