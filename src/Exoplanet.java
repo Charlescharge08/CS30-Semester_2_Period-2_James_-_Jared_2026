@@ -8,6 +8,7 @@ public class Exoplanet extends CelestialBody{
     private final String atmosphere;
     private final Star parent;
     private ArrayList<String> resources = new ArrayList<>();
+    // Create an exoplanet with its properties and parent star.
     public Exoplanet(double mass, double radius, String name, String type, boolean hasLife, int moons, double temperature, String atmosphere, Star parent, ArrayList<String> resources) {
         super(mass, radius, name);
         this.type = type;

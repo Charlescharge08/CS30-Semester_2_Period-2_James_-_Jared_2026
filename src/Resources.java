@@ -5,6 +5,12 @@ public class Resources {
 
     public static final String[] RESOURCES = {"Iron ore", "Copper", "Gold", "Water", "Uranium", "Food", "Alien Fossils", "Ancient Artifact", "Helium Gas", "Hydrogen Gas", "Rare rocky Elements", "Weird Alien Carcass"};
     
+    /**
+     * Generate a list of possible resources for a planet type.
+     * Type planet type string
+     * whether the planet has life
+     * return list of resource 
+     */
     public static List<String> planetResources(String Type, boolean hasLife){
 
         List<String> returnValues = null;
@@ -12,14 +18,21 @@ public class Resources {
         switch (Type.toLowerCase()){
             case "superrocky":
                 returnValues = superrocky();
+                break;
             case "rocky":
                 returnValues = rocky();
+                break;
             case "subrocky":
                 returnValues = subrocky();
+                break;
             case "gas giant":
                 returnValues = gasGiant();
+                break;
             case "ice giant":
                 returnValues = iceGiant();
+                break;
+            default:
+                returnValues = new ArrayList<>();
         }
 
         if (hasLife)
@@ -101,7 +114,6 @@ public class Resources {
         return r;
     
     }
-
     private static List<String> gasGiant(){
                 List<String> r = new ArrayList<>();
         r.add("Hydrogen Gas");

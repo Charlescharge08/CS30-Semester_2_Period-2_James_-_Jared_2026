@@ -3,12 +3,16 @@ public class Inventory {
     private HashMap<String, Integer> items;
 
 
-    //The constructor 
-
     public Inventory(){
         items = new HashMap<>();
     }
     
+    /**
+     * Add up to amount of item into the inventory, for cargo space.
+     * If there is not enough space the method adds as much as possible.
+     * item name
+     * amount requested to add
+     */
     public void addItem(String item, int amount){
         int cargoSpace = Main.playerShip.getCargoSpace();
         int usedSpace = getTotalItems();
@@ -35,6 +39,10 @@ public class Inventory {
         }
     }
 
+    /**
+     * Count total amount of all items in inventory.
+     * return total item count
+     */
     private int getTotalItems() {
         int total = 0;
 
@@ -45,8 +53,11 @@ public class Inventory {
         return total;
     }
     
-   //Remove items
-   public void removeItems(String item, int removeAmount){
+    /**
+     * Remove up to an amount of an item if its available.
+     * item name of the item
+     */
+    public void removeItems(String item, int removeAmount){
         if(items.containsKey(item)){
             if (items.get(item) >= removeAmount) {
                 items.put(item, items.get(item) - removeAmount); 
@@ -61,7 +72,11 @@ public class Inventory {
         
     }
 
-    //get the amount of item
+    /**
+     * Get the stored amount of an item (0 if none).
+     * item name
+     * return quantity owned
+     */
     public int getAmount(String item){
         
         if(items.containsKey(item)){
@@ -70,15 +85,24 @@ public class Inventory {
         return 0;
     }
 
-    // print invitory
+    /**
+     * Print the inventory summary.
+     */
     public void printInventory(){
         System.out.println(getInventorySummary());
     }
 
+    /**
+     * Check whether the inventory has at least an amount of an item.
+     * item name
+     * amount needed quantity
+     * return true when available
+     */
     public boolean hasItem(String item, int amount) {
         return items.getOrDefault(item, 0) >= amount;
     }
 
+     //return summary string
     public String getInventorySummary() {
         StringBuilder summary = new StringBuilder("Inventory:");
 
@@ -104,6 +128,7 @@ public class Inventory {
         return summary.toString();
     }
 
+    // Sort an ArrayList of names using insertion sort.
     private void insertionSortAlphabetical(ArrayList<String> itemNames) {
         for (int i = 1; i < itemNames.size(); i++) {
             String current = itemNames.get(i);
@@ -117,6 +142,7 @@ public class Inventory {
             itemNames.set(j + 1, current);
         }
     }
+
 
     private int compareAlphabetical(String left, String right) {
         int compareIgnoreCase = left.compareToIgnoreCase(right);
