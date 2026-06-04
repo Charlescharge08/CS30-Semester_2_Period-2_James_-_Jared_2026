@@ -262,10 +262,10 @@ public class LanternaMenuEngine {
     //Shows the main menu screen
     private MenuChoice showMainMenu() throws IOException {
         final MenuChoice[] nextChoice = {MenuChoice.EXIT};
-        BasicWindow window = new DevWindow("Stellar Terminal");
+        BasicWindow window = new DevWindow("Space Game 2");
         Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
 
-        root.addComponent(new Label("STELLAR TERMINAL"));
+        root.addComponent(new Label("Space Game 2"));
         root.addComponent(new Label(""));
 
         Panel buttons = new Panel(new LinearLayout(Direction.VERTICAL));
