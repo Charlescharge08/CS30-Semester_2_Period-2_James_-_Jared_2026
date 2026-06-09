@@ -10,14 +10,14 @@ public class CelestialBody extends Main{
      */
     public CelestialBody(double mass, double radius, String name)
     {
-        if (mass > 1000)
-        {
-            this.mass = ((int)(mass*100)) / 100;
-        }
-        else
-        {
+        //if (mass > 1000)
+        //{
+        //    this.mass = ((int)(mass*100)) / 100;
+        //}
+        //else
+        //{
             this.mass = mass;
-        }
+        //}
         if (radius > 100)
         {
             this.radius = ((int)(radius*100)) / 100;

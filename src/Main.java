@@ -496,7 +496,7 @@ public class Main {
                 Star saveStar = new Star(mass, Math.pow(mass,0.8), name, type, getColour(type), planets);
                 for (int j = 0; j < planets; j ++)
                 {
-                    double planetMass = Math.pow(10, (int)(-(Math.random()*6)) - 1);
+                    double planetMass = Math.pow(10, -(Math.random()*6) - 1);
                     String planetName = name + "-" + (char)('A' + j);
                     String planetType = getPlanetType(planetMass);
                     String planetAtmosphere = getAtmosphere(planetMass);
