@@ -3,7 +3,7 @@ import java.util.*;
 public class Resources {
     private static Random rand = new Random();
 
-    public static final String[] RESOURCES = {"Iron ore", "Copper", "Gold", "Water", "Uranium", "Food", "Alien Fossils", "Ancient Artifact", "Helium Gas", "Hydrogen Gas", "Rare rocky Elements", "Weird Alien Carcass"};
+    public static final String[] RESOURCES = {"Iron Ore", "Copper", "Gold", "Water", "Uranium", "Food", "Alien Fossils", "Ancient Artifact", "Helium Gas", "Hydrogen Gas", "Rare Rocky Elements", "Weird Alien Carcass"};
     
     /**
      * Generate a list of possible resources for a planet type.
@@ -47,7 +47,7 @@ public class Resources {
     private static List<String> superrocky(){
         List<String> r = new ArrayList<>();
 
-        r.add("Iron ore");
+        r.add("Iron Ore");
         r.add("Copper");
 
 
@@ -61,7 +61,7 @@ public class Resources {
             r.add("Uranium");
         }
         if (chance(40)){
-             r.add("Rare rocky Elements");
+             r.add("Rare Rocky Elements");
         }
         if(chance(30)){
             r.add("Alien Fossils");
@@ -75,7 +75,7 @@ public class Resources {
 
     private static List<String> rocky(){
         List<String> r = new ArrayList<>();
-        r.add("Iron ore");
+        r.add("Iron Ore");
         r.add("Copper");
         r.add("Uranium");
 
@@ -92,7 +92,7 @@ public class Resources {
             r.add("Ancient Artifact");
         }
         if(chance(15)){
-            r.add("Rare rocky Elements");
+            r.add("Rare Rocky Elements");
         }
 
         return r;
@@ -101,7 +101,7 @@ public class Resources {
 
     private static List<String> subrocky(){
         List<String> r = new ArrayList<>();
-        r.add("Iron ore"); 
+        r.add("Iron Ore"); 
         r.add("Copper");
 
         if (chance(70)){
@@ -138,7 +138,7 @@ public class Resources {
              r.add("Alien Fossils");
         }
         if(chance(50)){
-            r.add("Rare rocky Elements");
+            r.add("Rare Rocky Elements");
         }
 
         return r;

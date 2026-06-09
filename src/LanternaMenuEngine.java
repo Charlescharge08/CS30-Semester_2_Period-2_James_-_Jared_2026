@@ -43,12 +43,12 @@ public class LanternaMenuEngine {
     private final String[] craftingRecipes = {
         "Copper Wire (Copper x2)",
         "Fuel Cell (Hydrogen Gas x5, Helium Gas x1)",
-        "Iron Mesh (Iron ore x2)",
-        "Advanced Fuel Cell (Uranium x1)",
+        "Iron Mesh (Iron Ore x2)",
+        "Advanced Fuel Cell (Uranium x1, Iron Mesh x1)",
         "Advanced Info-Grabber (Uranium x2, Ancient Artifact x1)",
-        "Scanner Upgrade (Advanced Info-Grabber x1, Copper x5)",
-        "Engine Upgrade (Rare rocky Elements x3, Uranium x2, Iron ore x8, Copper x3, Gold x3, Helium Gas x1)",
-        "Cargo Space (Iron ore x4, Alien Fossils x3)"
+        "Scanner Upgrade (Advanced Info-Grabber x1, Copper Wire x3)",
+        "Engine Upgrade (Rare Rocky Elements x3, Advanced Fuel Cell x2, Iron Ore x8, Copper Wire x2, Gold x3, Helium Gas x1)",
+        "Cargo Space (Iron Ore x4, Alien Fossils x3)"
     };
 
     private class DevWindow extends BasicWindow {
@@ -1051,20 +1051,21 @@ public class LanternaMenuEngine {
 
     // Craft Iron Mesh
     private void craftIronMesh() {
-        if (inventory.hasItem("Iron ore", 2)) {
-            inventory.removeItems("Iron ore", 2);
+        if (inventory.hasItem("Iron Ore", 2)) {
+            inventory.removeItems("Iron Ore", 2);
             inventory.addItem("Iron Mesh", 1);
             GameOutput.println("Crafted Iron Mesh!");
         } else {
-            GameOutput.println("Not enough Iron ore.");
+            GameOutput.println("Not enough Iron Ore.");
         }
     }
     // end craftIronMesh
 
     // Craft an Advanced Fuel Cell
     private void craftAdvancedFuelCell() {
-        if (inventory.hasItem("Uranium", 1)) {
+        if (inventory.hasItem("Uranium", 1) && inventory.hasItem("Iron Mesh", 1)) {
             inventory.removeItems("Uranium", 1);
+            inventory.removeItems("Iron Mesh", 1);
             inventory.addItem("Advanced Fuel Cell", 1);
             GameOutput.println("Crafted Advanced Fuel Cell!");
         } else {
@@ -1088,9 +1089,9 @@ public class LanternaMenuEngine {
 
     // Install the scanner upgrade 
     private void craftScannerUpgrade() {
-        if (inventory.hasItem("Advanced Info-Grabber", 1) && inventory.hasItem("Copper", 5)) {
+        if (inventory.hasItem("Advanced Info-Grabber", 1) && inventory.hasItem("Copper Wire", 3)) {
             inventory.removeItems("Advanced Info-Grabber", 1);
-            inventory.removeItems("Copper", 5);
+            inventory.removeItems("Copper Wire", 3);
             playerShip.upgradeScan();
             GameOutput.println("Scanner Upgrade installed!");
         } else {
@@ -1101,16 +1102,16 @@ public class LanternaMenuEngine {
 
     // Install the engine upgrade.
     private void craftEngineUpgrade() {
-        if (inventory.hasItem("Rare rocky Elements", 3)
-                && inventory.hasItem("Uranium", 2)
-                && inventory.hasItem("Iron ore", 8)
-                && inventory.hasItem("Copper", 3)
+        if (inventory.hasItem("Rare Rocky Elements", 3)
+                && inventory.hasItem("Advanced Fuel Cell", 2)
+                && inventory.hasItem("Iron Ore", 8)
+                && inventory.hasItem("Copper Wire", 2)
                 && inventory.hasItem("Gold", 3)
                 && inventory.hasItem("Helium Gas", 1)) {
-            inventory.removeItems("Rare rocky Elements", 3);
-            inventory.removeItems("Uranium", 2);
-            inventory.removeItems("Iron ore", 8);
-            inventory.removeItems("Copper", 3);
+            inventory.removeItems("Rare Rocky Elements", 3);
+            inventory.removeItems("Advanced Fuel Cell", 2);
+            inventory.removeItems("Iron Ore", 8);
+            inventory.removeItems("Copper Wire", 2);
             inventory.removeItems("Gold", 3);
             inventory.removeItems("Helium Gas", 1);
             playerShip.upgradeEngine();
@@ -1123,8 +1124,8 @@ public class LanternaMenuEngine {
 
      // Increase cargo capacity if enough materials are available.     
     private void craftCargoSpace() {
-        if (inventory.hasItem("Iron ore", 4) && inventory.hasItem("Alien Fossils", 3)) {
-            inventory.removeItems("Iron ore", 4);
+        if (inventory.hasItem("Iron Ore", 4) && inventory.hasItem("Alien Fossils", 3)) {
+            inventory.removeItems("Iron Ore", 4);
             inventory.removeItems("Alien Fossils", 3);
             playerShip.upgradeCargo();
             GameOutput.println("Cargo Space upgraded!");
