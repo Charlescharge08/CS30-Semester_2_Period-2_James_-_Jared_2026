@@ -496,11 +496,12 @@ public class Main {
                 Star saveStar = new Star(mass, Math.pow(mass,0.8), name, type, getColour(type), planets);
                 for (int j = 0; j < planets; j ++)
                 {
-                    double planetMass = Math.pow(10, -(Math.random()*6) - 1);
+                    double planetMass = Math.pow(10, -(Math.random()*6));
                     String planetName = name + "-" + (char)('A' + j);
-                    String planetType = getPlanetType(planetMass);
-                    String planetAtmosphere = getAtmosphere(planetMass);
                     int planetTemperature = (int)(Math.random()*512);
+                    String planetType = getPlanetType(planetMass, planetTemperature);
+                    String planetAtmosphere = getAtmosphere(planetMass);
+                    
                     boolean planetLife = getLife(planetType, planetAtmosphere, planetTemperature);
                     ArrayList<String> resources = new ArrayList<>(Resources.planetResources(planetType, planetLife));
                     Exoplanet planetSave = new Exoplanet(planetMass, Math.pow(planetMass, 0.8), planetName, planetType, planetLife, getMoons(planetMass), planetTemperature, planetAtmosphere, saveStar, new ArrayList<>(resources));
@@ -644,21 +645,24 @@ public class Main {
     }
     // end getColour
 
-    public static String getPlanetType(double mass)
+    public static String getPlanetType(double mass, double temperature)
     {
-        if (mass > 0.3)
+        if (mass > 0.02)
         {
-            return "Gas Giant";
+            if (temperature < 200)
+            {
+                return "Ice Giant";
+            }
+            else
+            {
+                return "Gas Giant";
+            }
         }
-        else if (mass > 0.03)
-        {
-            return "Ice Giant";
-        }
-        else if (mass > 0.003)
+        else if (mass > 0.002)
         {
             return "Superrocky";
         }
-        else if (mass > 0.0003)
+        else if (mass > 0.0002)
         {
             return "Rocky";
         }

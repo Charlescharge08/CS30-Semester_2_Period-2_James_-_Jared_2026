@@ -41,9 +41,9 @@ public class LanternaMenuEngine {
     private final MultiWindowTextGUI gui;
     private TextBox consoleBox;
     private final String[] craftingRecipes = {
-        "Copper Wire (Copper x2)",
+        "Copper Wire (Copper x2, Water x1)",
         "Fuel Cell (Hydrogen Gas x5, Helium Gas x1)",
-        "Iron Mesh (Iron Ore x2)",
+        "Iron Mesh (Iron Ore x2, Water x1)",
         "Advanced Fuel Cell (Uranium x1, Iron Mesh x1)",
         "Advanced Info-Grabber (Uranium x2, Ancient Artifact x1)",
         "Scanner Upgrade (Advanced Info-Grabber x1, Copper Wire x3)",
@@ -1025,8 +1025,9 @@ public class LanternaMenuEngine {
 
     // Craft a Copper Wire.
     private void craftCopperWire() {
-        if (inventory.hasItem("Copper", 2)) {
+        if (inventory.hasItem("Copper", 2) && inventory.hasItem("Water", 1)) {
             inventory.removeItems("Copper", 2);
+            inventory.removeItems("Water", 1);
             inventory.addItem("Copper Wire", 1);
             GameOutput.println("Crafted Copper Wire!");
         } else {
@@ -1051,8 +1052,9 @@ public class LanternaMenuEngine {
 
     // Craft Iron Mesh
     private void craftIronMesh() {
-        if (inventory.hasItem("Iron Ore", 2)) {
+        if (inventory.hasItem("Iron Ore", 2) && inventory.hasItem("Water", 1)) {
             inventory.removeItems("Iron Ore", 2);
+            inventory.removeItems("Water", 1);
             inventory.addItem("Iron Mesh", 1);
             GameOutput.println("Crafted Iron Mesh!");
         } else {
